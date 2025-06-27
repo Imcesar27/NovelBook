@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.StatsPage"
+             Title="Estadísticas"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="15">
+
+            <!-- Resumen general -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="15"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Resumen de Lectura"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Grid ColumnSpacing="20" RowSpacing="15">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Total de novelas -->
+                        <Frame Grid.Row="0" Grid.Column="0"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="15">
+                            <VerticalStackLayout>
+                                <Label Text="📚" FontSize="24" HorizontalOptions="Center"/>
+                                <Label Text="45"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       HorizontalTextAlignment="Center"/>
+                                <Label Text="Novelas leídas"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Capítulos completados -->
+                        <Frame Grid.Row="0" Grid.Column="1"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="15">
+                            <VerticalStackLayout>
+                                <Label Text="📖" FontSize="24" HorizontalOptions="Center"/>
+                                <Label Text="1,234"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       HorizontalTextAlignment="Center"/>
+                                <Label Text="Capítulos"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Tiempo total -->
+                        <Frame Grid.Row="1" Grid.Column="0"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="15">
+                            <VerticalStackLayout>
+                                <Label Text="⏱️" FontSize="24" HorizontalOptions="Center"/>
+                                <Label Text="248h"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       HorizontalTextAlignment="Center"/>
+                                <Label Text="Tiempo de lectura"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Racha actual -->
+                        <Frame Grid.Row="1" Grid.Column="1"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="15">
+                            <VerticalStackLayout>
+                                <Label Text="🔥" FontSize="24" HorizontalOptions="Center"/>
+                                <Label Text="15"
+                                       FontSize="28"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       HorizontalTextAlignment="Center"/>
+                                <Label Text="Días de racha"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Gráfico de actividad semanal -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="15"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Actividad Semanal"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Gráfico de barras simple -->
+                    <Grid HeightRequest="150">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Barras -->
+                        <Frame Grid.Column="0" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="80"/>
+                        <Label Grid.Column="0" Grid.Row="1"
+                               Text="L" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="1" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="100"/>
+                        <Label Grid.Column="1" Grid.Row="1"
+                               Text="M" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="2" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="60"/>
+                        <Label Grid.Column="2" Grid.Row="1"
+                               Text="M" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="3" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="120"/>
+                        <Label Grid.Column="3" Grid.Row="1"
+                               Text="J" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="4" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="90"/>
+                        <Label Grid.Column="4" Grid.Row="1"
+                               Text="V" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="5" Grid.Row="0"
+                               BackgroundColor="{StaticResource Primary}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="130"/>
+                        <Label Grid.Column="5" Grid.Row="1"
+                               Text="S" 
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"/>
+
+                        <Frame Grid.Column="6" Grid.Row="0"
+                               BackgroundColor="{StaticResource PrimaryLight}"
+                               CornerRadius="5"
+                               Margin="2"
+                               VerticalOptions="End"
+                               HeightRequest="110"/>
+                        <Label Grid.Column="6" Grid.Row="1"
+                               Text="D" 
+                               TextColor="{StaticResource Primary}"
+                               HorizontalTextAlignment="Center"
+                               FontSize="12"
+                               FontAttributes="Bold"/>
+                    </Grid>
+
+                    <Label Text="Promedio: 2.5 horas por día"
+                           TextColor="{StaticResource TextSecondary}"
+                           FontSize="12"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Géneros favoritos -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="15"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Géneros Favoritos"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Romance -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="💕 Romance"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="120"/>
+
+                        <ProgressBar Grid.Column="1"
+                                     Progress="0.8"
+                                     ProgressColor="{StaticResource Primary}"
+                                     BackgroundColor="{StaticResource BackgroundLight}"
+                                     Margin="10,0"/>
+
+                        <Label Grid.Column="2"
+                               Text="35%"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12"/>
+                    </Grid>
+
+                    <!-- Fantasía -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="🐉 Fantasía"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="120"/>
+
+                        <ProgressBar Grid.Column="1"
+                                     Progress="0.6"
+                                     ProgressColor="{StaticResource Primary}"
+                                     BackgroundColor="{StaticResource BackgroundLight}"
+                                     Margin="10,0"/>
+
+                        <Label Grid.Column="2"
+                               Text="25%"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12"/>
+                    </Grid>
+
+                    <!-- Acción -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="⚔️ Acción"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="120"/>
+
+                        <ProgressBar Grid.Column="1"
+                                     Progress="0.5"
+                                     ProgressColor="{StaticResource Primary}"
+                                     BackgroundColor="{StaticResource BackgroundLight}"
+                                     Margin="10,0"/>
+
+                        <Label Grid.Column="2"
+                               Text="20%"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12"/>
+                    </Grid>
+
+                    <!-- Otros -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="📚 Otros"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="120"/>
+
+                        <ProgressBar Grid.Column="1"
+                                     Progress="0.4"
+                                     ProgressColor="{StaticResource Primary}"
+                                     BackgroundColor="{StaticResource BackgroundLight}"
+                                     Margin="10,0"/>
+
+                        <Label Grid.Column="2"
+                               Text="20%"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Logros -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="15"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <HorizontalStackLayout>
+                        <Label Text="Logros Recientes"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="StartAndExpand"/>
+                        <Label Text="Ver todos →"
+                               TextColor="{StaticResource Primary}"
+                               FontSize="14"
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnViewAllAchievements"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Grid ColumnSpacing="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Logro 1 -->
+                        <Frame Grid.Column="0"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="10">
+                            <VerticalStackLayout>
+                                <Label Text="🏆" 
+                                       FontSize="30" 
+                                       HorizontalOptions="Center"/>
+                                <Label Text="Lector Ávido"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalTextAlignment="Center"
+                                       FontAttributes="Bold"/>
+                                <Label Text="100 caps"
+                                       FontSize="10"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Logro 2 -->
+                        <Frame Grid.Column="1"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="10">
+                            <VerticalStackLayout>
+                                <Label Text="⭐" 
+                                       FontSize="30" 
+                                       HorizontalOptions="Center"/>
+                                <Label Text="Maratón"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalTextAlignment="Center"
+                                       FontAttributes="Bold"/>
+                                <Label Text="5h seguidas"
+                                       FontSize="10"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Logro 3 -->
+                        <Frame Grid.Column="2"
+                               BackgroundColor="{StaticResource BackgroundLight}"
+                               CornerRadius="10"
+                               Padding="10">
+                            <VerticalStackLayout>
+                                <Label Text="🔥" 
+                                       FontSize="30" 
+                                       HorizontalOptions="Center"/>
+                                <Label Text="En Racha"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalTextAlignment="Center"
+                                       FontAttributes="Bold"/>
+                                <Label Text="7 días"
+                                       FontSize="10"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="Center"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

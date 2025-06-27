@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.LibraryPage"
+             Title="Mi Librería"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barra de búsqueda -->
+        <SearchBar x:Name="searchBar"
+                   Placeholder="Buscar en mi librería..."
+                   PlaceholderColor="{StaticResource TextMuted}"
+                   TextColor="{StaticResource TextPrimary}"
+                   BackgroundColor="{StaticResource BackgroundMedium}"
+                   Grid.Row="0"
+                   Margin="0,0,0,10"/>
+        
+
+        <!-- Filtros -->
+        <ScrollView Grid.Row="1" 
+                    Orientation="Horizontal"
+                    HeightRequest="50"
+                    Margin="0,0,0,10"
+                    Padding="0,0,0,5">
+            <HorizontalStackLayout x:Name="FilterLayout" Spacing="10">
+                <Button Text="📔 Todos" 
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="15"
+                        Padding="15,5"
+                        Clicked="OnFilterClicked"/>
+                <Button Text="🧾 Leyendo" 
+                        BackgroundColor="{StaticResource BackgroundMedium}"
+                        TextColor="{StaticResource TextSecondary}"
+                        CornerRadius="15"
+                        Padding="15,5"/>
+                <Button Text="✔️ Completados" 
+                        BackgroundColor="{StaticResource BackgroundMedium}"
+                        TextColor="{StaticResource TextSecondary}"
+                        CornerRadius="15"
+                        Padding="15,5"/>
+                <Button Text="⭐ Favoritos" 
+                        BackgroundColor="{StaticResource BackgroundMedium}"
+                        TextColor="{StaticResource TextSecondary}"
+                        CornerRadius="15"
+                        Padding="15,5"/>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Agregar botón de ordenamiento -->
+        <Button Text="⇅"
+                BackgroundColor="{StaticResource BackgroundMedium}"
+                TextColor="{StaticResource TextPrimary}"
+                WidthRequest="40"
+                HeightRequest="40"
+                CornerRadius="20"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                Margin="10"
+                Clicked="OnSortClicked"/>
+
+        <!-- Agregar indicador de carga -->
+        <ActivityIndicator x:Name="LoadingIndicator"
+                   Color="{StaticResource Primary}"
+                   IsVisible="False"
+                   Grid.Row="2"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+
+        <!-- Agregar estado vacío -->
+        <VerticalStackLayout x:Name="EmptyStateLayout"
+                     Grid.Row="2"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Spacing="20"
+                     IsVisible="False">
+            <Label Text="📚"
+                   FontSize="60"
+                   HorizontalOptions="Center"/>
+            <Label x:Name="EmptyStateMessage"
+                   Text="Tu biblioteca está vacía"
+                   TextColor="{StaticResource TextSecondary}"
+                   FontSize="16"
+                   HorizontalOptions="Center"/>
+            <Button Text="Explorar novelas"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    CornerRadius="20"
+                    Padding="20,10"
+                    Command="{Binding GoToExploreCommand}"/>
+        </VerticalStackLayout>
+
+        <!-- Grid de novelas -->
+        <ScrollView Grid.Row="2">
+            <CollectionView x:Name="novelsCollection">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" 
+                                     Span="2" 
+                                     VerticalItemSpacing="10" 
+                                     HorizontalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                               CornerRadius="10"
+                               Padding="0"
+                               HasShadow="True">
+
+                            <!-- Agregar long press al Frame de cada novela -->
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnNovelTapped"/>
+                                <!-- reconocedor de long press -->
+                                <TapGestureRecognizer Tapped="OnNovelLongPressed" 
+                                  NumberOfTapsRequired="1"/>
+                            </Frame.GestureRecognizers>
+                            
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="200"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Imagen de portada -->
+                                <Image Source="novel_placeholder.jpg"
+                                       Aspect="AspectFill"
+                                       Grid.Row="0"/>
+
+                                <!-- Contador de capítulos -->
+                                <Frame BackgroundColor="{StaticResource Primary}"
+                                       CornerRadius="15"
+                                       Padding="8,4"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="Start"
+                                       Margin="5"
+                                       Grid.Row="0">
+                                    <Label Text="12"
+                                           TextColor="White"
+                                           FontSize="12"
+                                           FontAttributes="Bold"/>
+                                </Frame>
+
+                                <!-- Título -->
+                                <Label Text="Nombre de la Novela"
+                                       Grid.Row="1"
+                                       Padding="10,5"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontSize="14"
+                                       MaxLines="2"
+                                       LineBreakMode="WordWrap"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
+</ContentPage>

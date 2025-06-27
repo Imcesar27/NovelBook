@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.RegisterPage"
+             Title="Registro"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
+
+            <!-- Logo y título -->
+            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+
+                <!-- Ícono del libro -->
+                <Image Source="logo_cuatro.png" 
+                   HeightRequest="400" 
+                   WidthRequest="400"
+                   HorizontalOptions="Center"/>
+
+                <!-- Nombre de la app -->
+                <Label Text="NOVELBOOK" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalOptions="Center"/>
+
+                <!-- Subtítulo -->
+                <Label Text="Tu mundo de novelas ligeras" 
+                       FontSize="14"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <!-- Título de la sección -->
+            <Label Text="Llena todos los campos:" 
+                   FontSize="16"
+                   TextColor="{StaticResource TextPrimary}"
+                   HorizontalOptions="Start"
+                   Margin="0,20,0,0"/>
+
+            <!-- Campos de registro -->
+            <VerticalStackLayout Spacing="15">
+                <!-- Campo de nombre -->
+                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="15,10">
+                    <Entry x:Name="NameEntry"
+                           Placeholder="Nombre" 
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           BackgroundColor="Transparent"/>
+                </Frame>
+
+                <!-- Campo de correo -->
+                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="15,10">
+                    <Entry x:Name="EmailEntry"
+                           Placeholder="Correo Electrónico" 
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           Keyboard="Email"
+                           BackgroundColor="Transparent"/>
+                </Frame>
+
+                <!-- Campo de contraseña -->
+                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="15,10">
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="Contraseña" 
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           IsPassword="True"
+                           BackgroundColor="Transparent"/>
+                </Frame>
+
+                <!-- Botón de crear cuenta -->
+                <Button Text="Crear"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="{StaticResource TextPrimary}"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        FontAttributes="Bold"
+                        Margin="0,10,0,0"
+                        Clicked="OnRegisterClicked"/>
+
+                <!-- Línea separadora -->
+                <BoxView BackgroundColor="{StaticResource TextMuted}"
+                         HeightRequest="1"
+                         Margin="0,20,0,10"
+                         Opacity="0.3"/>
+
+                <!-- Enlaces para volver al login -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                    <Label Text="¿Ya tienes cuenta?" 
+                           TextColor="{StaticResource TextSecondary}"/>
+                    <Label Text="Inicia sesión" 
+                           TextColor="{StaticResource Primary}"
+                           FontAttributes="Bold">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLoginTapped"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.LoginPage"
+             Title="LoginPage"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
+
+            <!-- Logo y título -->
+            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                <!-- Ícono del libro -->
+                <Image Source="logo_uno.png" 
+                       HeightRequest="400" 
+                       WidthRequest="400"
+                       HorizontalOptions="Center"/>
+
+                <!-- Nombre de la app 
+                <Label Text="NOVELBOOK" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center"/> -->
+
+                <!-- Subtítulo
+                <Label Text="Tu mundo de novelas ligeras al alcance de tu mano" 
+                       FontSize="14"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"/>  -->
+            </VerticalStackLayout>
+
+            <!-- Sección de inicio de sesión -->
+            <VerticalStackLayout Spacing="15" Margin="0,10,0,0">
+                <Label Text="Iniciar sesión" 
+                       FontSize="20"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center"/>
+
+                <!-- Campo de correo -->
+                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="15,10">
+                    <Entry x:Name="EmailEntry"
+                           Placeholder="Correo Electrónico" 
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           Keyboard="Email"
+                           BackgroundColor="Transparent"/>
+                </Frame>
+
+                <!-- Campo de contraseña -->
+                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="15,10">
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="Contraseña" 
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           IsPassword="True"
+                           BackgroundColor="Transparent"
+                           ReturnType="Go"
+                           Completed="OnPasswordEntryCompleted"/>
+                </Frame>
+
+                <!-- Botón de iniciar sesión -->
+                <Button x:Name="LoginButton"
+                        Text="Entrar"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="{StaticResource TextPrimary}"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        FontAttributes="Bold"
+                        Clicked="OnLoginClicked"/>
+
+                <!-- Texto de inicio con redes sociales -->
+                <Label Text="Iniciar sesión con:"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"
+                       Margin="0,10,0,0"/>
+
+                <!-- Botones de redes sociales -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                    <!-- Botón de Facebook -->
+                    <Frame BackgroundColor="#1877F2" 
+                           CornerRadius="25"
+                           WidthRequest="50"
+                           HeightRequest="50"
+                           Padding="0"
+                           HorizontalOptions="Center">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnFacebookLoginTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="f" 
+                               FontSize="24" 
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Frame>
+
+                    <!-- Botón de Google -->
+                    <Frame BackgroundColor="#DB4437" 
+                           CornerRadius="25"
+                           WidthRequest="50"
+                           HeightRequest="50"
+                           Padding="0"
+                           HorizontalOptions="Center">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGoogleLoginTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="G" 
+                               FontSize="24" 
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Frame>
+                </HorizontalStackLayout>
+
+                <!-- Enlaces de registro e invitado -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="10" Margin="0,20,0,0">
+                    <Label Text="¿No tienes cuenta?" 
+                           TextColor="{StaticResource TextSecondary}"/>
+                    <Label Text="Regístrate" 
+                           TextColor="{StaticResource Primary}"
+                           FontAttributes="Bold">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnRegisterTapped"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                    <Label Text="    Invitado" 
+                           TextColor="{StaticResource TextSecondary}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGuestTapped"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.ReaderPage"
+             Title="Lector"
+             BackgroundColor="{StaticResource BackgroundDark}"
+             Shell.NavBarIsVisible="False">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" 
+              BackgroundColor="{StaticResource BackgroundMedium}"
+              Padding="10"
+              x:Name="HeaderBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Text="←"
+                    FontSize="24"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    Clicked="OnBackClicked"/>
+
+            <VerticalStackLayout Grid.Column="1" 
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center">
+                <Label Text="{Binding NovelTitle}"
+                       FontSize="14"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="TailTruncation"/>
+                <Label Text="{Binding ChapterTitle}"
+                       FontSize="12"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="TailTruncation"/>
+            </VerticalStackLayout>
+
+            <Button Grid.Column="2"
+                    Text="⋮"
+                    FontSize="24"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    Clicked="OnMenuClicked"/>
+        </Grid>
+
+        <!-- Contenido del capítulo -->
+        <ScrollView Grid.Row="1" 
+                    x:Name="ContentScrollView"
+                    Padding="20"
+                    BackgroundColor="{Binding BackgroundColor}"
+                    Scrolled="OnContentScrolled">
+            <ScrollView.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnContentTapped"/>
+            </ScrollView.GestureRecognizers>
+
+            <Label x:Name="ChapterContent"
+                   Text="{Binding ChapterText}"
+                   TextColor="{Binding TextColor}"
+                   FontSize="{Binding FontSize}"
+                   FontFamily="{Binding FontFamily}"
+                   LineHeight="{Binding LineHeight}"
+                   HorizontalTextAlignment="{Binding TextAlignment}"/>
+        </ScrollView>
+
+        <!-- Indicador de progreso -->
+        <ProgressBar Grid.Row="2"
+                     x:Name="ReadingProgress"
+                     Progress="0.3"
+                     ProgressColor="{StaticResource Primary}"
+                     BackgroundColor="{StaticResource BackgroundMedium}"
+                     HeightRequest="3"/>
+
+        <!-- Controles inferiores -->
+        <Grid Grid.Row="3" 
+              BackgroundColor="{StaticResource BackgroundMedium}"
+              Padding="10"
+              x:Name="BottomBar">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="PreviousButton"
+                    Text="← Anterior"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontSize="14"
+                    Clicked="OnPreviousChapterClicked"/>
+
+            <Label Grid.Column="1"
+                   Text="{Binding CurrentPage}"
+                   TextColor="{StaticResource TextSecondary}"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   FontSize="12"/>
+
+            <Label Grid.Column="2"
+                   Text=" | 100%"
+                   TextColor="{StaticResource TextSecondary}"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   FontSize="12"
+                   x:Name="ProgressLabel"/>
+
+            <Button Grid.Column="3"
+                    x:Name="NextButton"
+                    Text="Siguiente →"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontSize="14"
+                    HorizontalOptions="End"
+                    Clicked="OnNextChapterClicked"/>
+        </Grid>
+
+        <!-- Panel de configuración (oculto por defecto) -->
+        <Frame Grid.Row="1" 
+               Grid.RowSpan="3"
+               x:Name="SettingsPanel"
+               BackgroundColor="{StaticResource BackgroundDark}"
+               CornerRadius="20"
+               Margin="20"
+               Padding="20"
+               IsVisible="False"
+               VerticalOptions="End"
+               HeightRequest="400">
+
+            <ScrollView>
+                <VerticalStackLayout Spacing="20">
+                    <Label Text="Configuración de Lectura"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalOptions="Center"/>
+
+                    <!-- Tamaño de texto -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Tamaño"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"
+                               WidthRequest="80"/>
+
+                        <Slider Grid.Column="1"
+                                x:Name="FontSizeSlider"
+                                Minimum="12"
+                                Maximum="24"
+                                Value="16"
+                                ValueChanged="OnFontSizeChanged"
+                                ThumbColor="{StaticResource Primary}"
+                                MinimumTrackColor="{StaticResource Primary}"
+                                MaximumTrackColor="{StaticResource BackgroundMedium}"/>
+
+                        <Label Grid.Column="2"
+                               Text="{Binding Source={x:Reference FontSizeSlider}, Path=Value, StringFormat='{0:F0}'}"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="30"/>
+                    </Grid>
+
+                    <!-- Altura de línea -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Espaciado"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"
+                               WidthRequest="80"/>
+
+                        <Slider Grid.Column="1"
+                                x:Name="LineHeightSlider"
+                                Minimum="1"
+                                Maximum="2"
+                                Value="1.5"
+                                ValueChanged="OnLineHeightChanged"
+                                ThumbColor="{StaticResource Primary}"
+                                MinimumTrackColor="{StaticResource Primary}"
+                                MaximumTrackColor="{StaticResource BackgroundMedium}"/>
+
+                        <Label Grid.Column="2"
+                               Text="{Binding Source={x:Reference LineHeightSlider}, Path=Value, StringFormat='{0:F1}'}"
+                               TextColor="{StaticResource TextPrimary}"
+                               WidthRequest="30"/>
+                    </Grid>
+
+                    <!-- Colores de fondo -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Color de fondo"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Frame WidthRequest="50" 
+                                   HeightRequest="50" 
+                                   CornerRadius="25"
+                                   BackgroundColor="#1A1A1A"
+                                   BorderColor="{StaticResource Primary}"
+                                   Padding="0">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorSelected" CommandParameter="#1A1A1A"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="A" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"
+                                       FontSize="20"/>
+                            </Frame>
+
+                            <Frame WidthRequest="50" 
+                                   HeightRequest="50" 
+                                   CornerRadius="25"
+                                   BackgroundColor="#F5E6D3"
+                                   BorderColor="Transparent"
+                                   Padding="0">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorSelected" CommandParameter="#F5E6D3"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="A" 
+                                       TextColor="#333333" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"
+                                       FontSize="20"/>
+                            </Frame>
+
+                            <Frame WidthRequest="50" 
+                                   HeightRequest="50" 
+                                   CornerRadius="25"
+                                   BackgroundColor="#E8F5E9"
+                                   BorderColor="Transparent"
+                                   Padding="0">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorSelected" CommandParameter="#E8F5E9"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="A" 
+                                       TextColor="#2E7D32" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"
+                                       FontSize="20"/>
+                            </Frame>
+
+                            <Frame WidthRequest="50" 
+                                   HeightRequest="50" 
+                                   CornerRadius="25"
+                                   BackgroundColor="#FFFFFF"
+                                   BorderColor="#E0E0E0"
+                                   Padding="0">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnColorSelected" CommandParameter="#FFFFFF"/>
+                                </Frame.GestureRecognizers>
+                                <Label Text="A" 
+                                       TextColor="#000000" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"
+                                       FontSize="20"/>
+                            </Frame>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Alineación del texto -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Alineación"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Button Text="⬅"
+                                    WidthRequest="60"
+                                    BackgroundColor="{StaticResource BackgroundMedium}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    Clicked="OnAlignmentChanged"
+                                    CommandParameter="Start"/>
+
+                            <Button Text="⬌"
+                                    WidthRequest="60"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="White"
+                                    Clicked="OnAlignmentChanged"
+                                    CommandParameter="Justify"/>
+
+                            <Button Text="➡"
+                                    WidthRequest="60"
+                                    BackgroundColor="{StaticResource BackgroundMedium}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    Clicked="OnAlignmentChanged"
+                                    CommandParameter="End"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Tipo de fuente -->
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Fuente"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Button Text="Original"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="White"
+                                    Padding="15,10"
+                                    CornerRadius="15"
+                                    Clicked="OnFontChanged"
+                                    CommandParameter="OpenSansRegular"/>
+
+                            <Button Text="Serif"
+                                    BackgroundColor="{StaticResource BackgroundMedium}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    Padding="15,10"
+                                    CornerRadius="15"
+                                    Clicked="OnFontChanged"
+                                    CommandParameter="Georgia"/>
+
+                            <Button Text="Mono"
+                                    BackgroundColor="{StaticResource BackgroundMedium}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    Padding="15,10"
+                                    CornerRadius="15"
+                                    Clicked="OnFontChanged"
+                                    CommandParameter="Consolas"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Botón cerrar -->
+                    <Button Text="Cerrar"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="20"
+                            Clicked="OnCloseSettingsClicked"/>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Frame>
+    </Grid>
+</ContentPage>

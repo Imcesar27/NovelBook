@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.DownloadsPage"
+             Title="Descargas"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Información de almacenamiento -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource BackgroundMedium}"
+               CornerRadius="10"
+               Margin="10"
+               Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0"
+                       Text="Espacio usado"
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="14"/>
+
+                <ProgressBar Grid.Row="1"
+                             Progress="0.35"
+                             ProgressColor="{StaticResource Primary}"
+                             BackgroundColor="{StaticResource BackgroundLight}"
+                             HeightRequest="10"
+                             Margin="0,10"/>
+
+                <HorizontalStackLayout Grid.Row="2" Spacing="10">
+                    <Label TextColor="{StaticResource TextPrimary}"
+                           FontSize="12">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="350 MB" FontAttributes="Bold"/>
+                                <Span Text=" de 1 GB usado" TextColor="{StaticResource TextSecondary}"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label Text="•" TextColor="{StaticResource TextMuted}"/>
+                    <Label Text="15 novelas descargadas"
+                           TextColor="{StaticResource TextSecondary}"
+                           FontSize="12"/>
+                </HorizontalStackLayout>
+            </Grid>
+        </Frame>
+
+        <!-- Opciones de gestión -->
+        <HorizontalStackLayout Grid.Row="1" 
+                             Spacing="10"
+                             Padding="10,0"
+                             HorizontalOptions="End">
+            <Button Text="Seleccionar"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextPrimary}"
+                    CornerRadius="15"
+                    Padding="15,5"
+                    FontSize="12"
+                    Clicked="OnSelectClicked"/>
+            <Button Text="Ordenar"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextPrimary}"
+                    CornerRadius="15"
+                    Padding="15,5"
+                    FontSize="12"
+                    Clicked="OnSortClicked"/>
+        </HorizontalStackLayout>
+
+        <!-- Lista de descargas -->
+        <ScrollView Grid.Row="2" Padding="10">
+            <CollectionView x:Name="DownloadsList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                               CornerRadius="10"
+                               Padding="15"
+                               Margin="0,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Portada -->
+                                <Frame Grid.Column="0"
+                                       CornerRadius="5"
+                                       Padding="0"
+                                       HeightRequest="100"
+                                       WidthRequest="80">
+                                    <Grid>
+                                        <Image Source="{Binding CoverImage}"
+                                               Aspect="AspectFill"/>
+                                        <!-- Indicador de descarga -->
+                                        <Frame BackgroundColor="#AA000000"
+                                               CornerRadius="5"
+                                               Padding="5"
+                                               HorizontalOptions="End"
+                                               VerticalOptions="End"
+                                               Margin="5">
+                                            <Label Text="📥"
+                                                   TextColor="White"
+                                                   FontSize="16"/>
+                                        </Frame>
+                                    </Grid>
+                                </Frame>
+
+                                <!-- Información -->
+                                <VerticalStackLayout Grid.Column="1" 
+                                                   Padding="10,0"
+                                                   VerticalOptions="Center">
+                                    <Label Text="{Binding Title}"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           FontSize="15"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"
+                                           MaxLines="2"/>
+                                    <Label Text="{Binding Author}"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           FontSize="12"
+                                           LineBreakMode="TailTruncation"/>
+                                    <Grid Margin="0,5,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="0"
+                                               TextColor="{StaticResource TextMuted}"
+                                               FontSize="11">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="📁 "/>
+                                                    <Span Text="{Binding Size}"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Label Grid.Column="1"
+                                               Text=" • "
+                                               TextColor="{StaticResource TextMuted}"
+                                               FontSize="11"/>
+
+                                        <Label Grid.Column="2"
+                                               TextColor="{StaticResource TextMuted}"
+                                               FontSize="11">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="📖 "/>
+                                                    <Span Text="{Binding ChapterCount}"/>
+                                                    <Span Text=" capítulos"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </Grid>
+                                    <Label Text="{Binding DownloadDate}"
+                                           TextColor="{StaticResource TextMuted}"
+                                           FontSize="10"/>
+                                </VerticalStackLayout>
+
+                                <!-- Botón de menú -->
+                                <Button Grid.Column="2"
+                                        Text="⋮"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{StaticResource TextSecondary}"
+                                        FontSize="20"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        VerticalOptions="Center"
+                                        Clicked="OnMenuClicked"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Estado vacío -->
+        <VerticalStackLayout x:Name="EmptyState"
+                           Grid.Row="2"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Spacing="20"
+                           IsVisible="False">
+            <Label Text="📥"
+                   FontSize="60"
+                   HorizontalOptions="Center"/>
+            <Label Text="No hay descargas"
+                   TextColor="{StaticResource TextSecondary}"
+                   FontSize="16"
+                   HorizontalOptions="Center"/>
+            <Label Text="Descarga novelas para leer sin conexión"
+                   TextColor="{StaticResource TextMuted}"
+                   FontSize="14"
+                   HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+
+        <!-- Modo selección (oculto por defecto) -->
+        <Grid Grid.Row="2"
+              x:Name="SelectionBar"
+              BackgroundColor="{StaticResource BackgroundMedium}"
+              Padding="15"
+              VerticalOptions="End"
+              IsVisible="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0"
+                   x:Name="SelectionLabel"
+                   Text="0 seleccionados"
+                   TextColor="{StaticResource TextPrimary}"
+                   VerticalOptions="Center"/>
+
+            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                <Button Text="Eliminar"
+                        BackgroundColor="{StaticResource Error}"
+                        TextColor="White"
+                        CornerRadius="15"
+                        Padding="15,8"
+                        FontSize="12"
+                        Clicked="OnDeleteSelectedClicked"/>
+                <Button Text="Cancelar"
+                        BackgroundColor="{StaticResource BackgroundLight}"
+                        TextColor="{StaticResource TextPrimary}"
+                        CornerRadius="15"
+                        Padding="15,8"
+                        FontSize="12"
+                        Clicked="OnCancelSelectionClicked"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

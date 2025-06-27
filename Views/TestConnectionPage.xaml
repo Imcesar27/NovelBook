@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.TestConnectionPage"
+             Title="Test de Conexión"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
+        <Label Text="Prueba de Conexión a Base de Datos"
+               FontSize="24"
+               TextColor="{StaticResource TextPrimary}"
+               HorizontalOptions="Center"/>
+
+        <Button Text="Probar Conexión"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                Clicked="OnTestConnectionClicked"/>
+
+        <Label x:Name="ResultLabel"
+               TextColor="{StaticResource TextSecondary}"
+               HorizontalOptions="Center"
+               HorizontalTextAlignment="Center"/>
+
+        <ActivityIndicator x:Name="LoadingIndicator"
+                          Color="{StaticResource Primary}"
+                          IsVisible="False"/>
+    </VerticalStackLayout>
+</ContentPage>

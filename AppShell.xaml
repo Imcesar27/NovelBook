@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="NovelBook.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:NovelBook"
+    xmlns:views="clr-namespace:NovelBook.Views"
+    Shell.FlyoutBackgroundColor="{StaticResource BackgroundDark}"
+    Shell.FlyoutHeaderBehavior="CollapseOnScroll">
+
+    <!-- Estilo del Shell -->
+    <Shell.Resources>
+        <ResourceDictionary>
+            <!-- Estilo para los items del menú -->
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource BackgroundDark}" />
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Shell.TitleColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Shell.DisabledColor" Value="{StaticResource TextMuted}" />
+                <Setter Property="Shell.UnselectedColor" Value="{StaticResource TextSecondary}" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource BackgroundDark}" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource TextPrimary}"/>
+                <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource TextSecondary}"/>
+                <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource TextPrimary}"/>
+            </Style>
+            <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+            
+            <!-- Personalizar el ícono del menú -->
+            <Style TargetType="Shell" ApplyToDerivedTypes="True">
+                <Setter Property="Shell.ForegroundColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource BackgroundDark}" />
+                <Setter Property="Shell.TitleColor" Value="{StaticResource TextPrimary}" />
+                <Setter Property="Shell.NavBarHasShadow" Value="True"/>
+                
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <!-- Header del menú lateral -->
+    <Shell.FlyoutHeader>
+        <Grid BackgroundColor="{StaticResource BackgroundMedium}" 
+              HeightRequest="200"
+              Padding="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Logo -->
+            <Label Text="📚" 
+                   FontSize="60"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Grid.Row="0"/>
+
+            <!-- Título -->
+            <Label Text="NOVELBOOK" 
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   HorizontalOptions="Center"
+                   Grid.Row="1"/>
+
+            <!-- Subtítulo -->
+            <Label Text="Tu biblioteca personal"
+                   FontSize="14"
+                   TextColor="{StaticResource TextSecondary}"
+                   HorizontalOptions="Center"
+                   Grid.Row="2"
+                   Margin="0,0,0,10"/>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <!-- Items del menú principal con TabBar -->
+    <TabBar>
+        <!-- Librería Personal -->
+        <Tab Title="📚 Librería" Icon="library_icon.png">
+            <ShellContent Title="Mi Librería" 
+                          ContentTemplate="{DataTemplate views:LibraryPage}"/>
+        </Tab>
+
+        <!-- Explorar -->
+        <Tab Title="🌐 Explorar" Icon="explore_icon.png">
+            <ShellContent Title="Explorar Novelas" 
+                          ContentTemplate="{DataTemplate views:ExplorePage}"/>
+        </Tab>
+
+        <!-- Historial -->
+        <Tab Title="📝 Historial" Icon="history_icon.png">
+            <ShellContent Title="Historial de Lectura" 
+                          ContentTemplate="{DataTemplate views:HistoryPage}"/>
+        </Tab>
+
+        <!-- Más opciones -->
+        <Tab Title="➕ Más" Icon="more_icon.png">
+            <ShellContent Title="Más Opciones" 
+                          ContentTemplate="{DataTemplate views:MorePage}"/>
+        </Tab>
+    </TabBar>
+
+    <!-- Items del menú lateral (Flyout) -->
+    <FlyoutItem Title="⚙️ Configuración" Icon="settings_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="📥 Descargas" Icon="download_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate views:DownloadsPage}"/>
+    </FlyoutItem>
+
+    <FlyoutItem Title="📊 Estadísticas" Icon="stats_icon.png">
+        <ShellContent ContentTemplate="{DataTemplate views:StatsPage}"/>
+    </FlyoutItem>
+
+    <!-- Footer del menú con opciones adicionales -->
+    <Shell.FlyoutFooter>
+        <VerticalStackLayout Padding="10,10" 
+                           BackgroundColor="{StaticResource BackgroundMedium}">
+            <Button Text="🔐 Cerrar Sesión"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="{StaticResource TextPrimary}"
+                    Margin="10"
+                    Clicked="OnLogoutClicked"/>
+        </VerticalStackLayout>
+    </Shell.FlyoutFooter>
+
+</Shell>

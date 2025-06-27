@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.AddChapterPage"
+             Title="Agregar Capítulo"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <!-- Información de la novela -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image x:Name="NovelCover"
+                           WidthRequest="60"
+                           HeightRequest="80"
+                           Aspect="AspectFill"/>
+
+                    <VerticalStackLayout Grid.Column="1" 
+                                       Padding="10,0,0,0"
+                                       VerticalOptions="Center">
+                        <Label x:Name="NovelTitle"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label x:Name="ChapterInfo"
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Información del capítulo -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Información del Capítulo"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Número de capítulo -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="Capítulo #"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"
+                               WidthRequest="100"/>
+
+                        <Entry x:Name="ChapterNumberEntry"
+                               Grid.Column="1"
+                               Keyboard="Numeric"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="{StaticResource BackgroundLight}"/>
+                    </Grid>
+
+                    <!-- Título del capítulo -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Título del Capítulo *"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Entry x:Name="ChapterTitleEntry"
+                               Placeholder="Ej: El comienzo de todo"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextPrimary}"
+                               BackgroundColor="{StaticResource BackgroundLight}"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Contenido del capítulo -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Contenido del Capítulo *"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Barra de herramientas -->
+                    <ScrollView Orientation="Horizontal" HeightRequest="50">
+                        <HorizontalStackLayout Spacing="10">
+                            <Button Text="B"
+                                    FontAttributes="Bold"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    Clicked="OnBoldClicked"/>
+                            <Button Text="I"
+                                    FontAttributes="Italic"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    Clicked="OnItalicClicked"/>
+                            <Button Text="U̲"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    Clicked="OnUnderlineClicked"/>
+
+                            <BoxView WidthRequest="1" 
+                                     BackgroundColor="{StaticResource TextMuted}" 
+                                     Margin="5,5"/>
+
+                            <Button Text="¶"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Nuevo párrafo"
+                                    Clicked="OnParagraphClicked"/>
+
+                            <Button Text="---"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="50"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Línea divisora"
+                                    Clicked="OnDividerClicked"/>
+
+                            <Button Text="« »"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="50"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Diálogo"
+                                    Clicked="OnDialogClicked"/>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                    <Editor x:Name="ContentEditor"
+                            Placeholder="Escribe el contenido del capítulo..."
+                            PlaceholderColor="{StaticResource TextMuted}"
+                            TextColor="{StaticResource TextPrimary}"
+                            BackgroundColor="{StaticResource BackgroundLight}"
+                            HeightRequest="400"
+                            AutoSize="TextChanges"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label x:Name="WordCountLabel"
+                               Text="0 palabras"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="12"
+                               HorizontalOptions="Start"/>
+
+                        <Label x:Name="CharCountLabel"
+                               Grid.Column="1"
+                               Text="0 caracteres"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="12"
+                               HorizontalOptions="End"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Vista previa -->
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="20">
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout>
+                        <Label Text="Vista Previa"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="StartAndExpand"/>
+                        <Switch x:Name="PreviewSwitch"
+                                OnColor="{StaticResource Primary}"
+                                Toggled="OnPreviewToggled"/>
+                    </HorizontalStackLayout>
+
+                    <Frame x:Name="PreviewFrame"
+                           BackgroundColor="{StaticResource BackgroundLight}"
+                           CornerRadius="5"
+                           Padding="15"
+                           IsVisible="False">
+                        <Label x:Name="PreviewLabel"
+                               TextColor="{StaticResource TextPrimary}"
+                               LineHeight="1.5"/>
+                    </Frame>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Botones de acción -->
+            <Grid ColumnSpacing="10" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Text="Cancelar"
+                        BackgroundColor="{StaticResource BackgroundMedium}"
+                        TextColor="{StaticResource TextPrimary}"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        Clicked="OnCancelClicked"/>
+
+                <Button Grid.Column="1"
+                        Text="Publicar Capítulo"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        FontAttributes="Bold"
+                        Clicked="OnPublishClicked"/>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
