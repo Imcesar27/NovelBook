@@ -82,8 +82,9 @@
         </Tab>
 
         <!-- Explorar -->
-        <Tab Title="🌐 Explorar" Icon="explore_icon.png">
+        <Tab Title="🌐 Explorar" Icon="explore_icon.png" Route="ExploreTab">
             <ShellContent Title="Explorar Novelas" 
+                          Route="ExplorePage"
                           ContentTemplate="{DataTemplate views:ExplorePage}"/>
         </Tab>
 

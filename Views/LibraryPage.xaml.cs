@@ -24,21 +24,22 @@ public class LibraryDisplayItem
     public DateTime AddedAt { get; set; }
 
     /// <summary>
-    /// ARREGLO 6: Convierte un UserLibraryItem a LibraryDisplayItem con cálculos correctos
+    /// Convierte un UserLibraryItem a LibraryDisplayItem con cálculos de capítulos
     /// </summary>
     public static async Task<LibraryDisplayItem> FromUserLibraryItem(UserLibraryItem item, ImageService imageService)
     {
         var coverImage = await imageService.GetCoverImageAsync(item.Novel.CoverImage);
 
-        // ARREGLO 6: Cálculos de progreso corregidos
+        // Cálculos de capítulos
         int totalChapters = item.Novel.ChapterCount;
-        int lastRead = item.LastReadChapter;
+        int lastReadChapter = item.LastReadChapter;
 
-        // Calcular capítulos sin leer correctamente
-        int unreadCount = Math.Max(0, totalChapters - lastRead);
+        // Los capítulos sin leer son: total - último leído
+        // Si tienes 5 capítulos y leíste hasta el 3, te quedan 2 por leer
+        int unreadCount = Math.Max(0, totalChapters - lastReadChapter);
 
-        // Calcular progreso como porcentaje (0.0 - 1.0)
-        double progress = totalChapters > 0 ? (double)lastRead / totalChapters : 0.0;
+        // El progreso es el porcentaje de capítulos leídos
+        double progress = totalChapters > 0 ? (double)lastReadChapter / totalChapters : 0.0;
 
         return new LibraryDisplayItem
         {
@@ -48,9 +49,9 @@ public class LibraryDisplayItem
             Author = item.Novel.Author,
             CoverImageSource = coverImage,
             ChapterCount = totalChapters,
-            LastReadChapter = lastRead,
+            LastReadChapter = lastReadChapter, // Este es el número del último capítulo leído
             UnreadCount = unreadCount,
-            Progress = progress, // 0.0 = 0%, 1.0 = 100%
+            Progress = progress,
             IsFavorite = item.IsFavorite,
             ReadingStatus = item.ReadingStatus,
             AddedAt = item.AddedAt
@@ -116,7 +117,22 @@ public partial class LibraryPage : ContentPage
                 return;
             }
 
-            // Obtener novelas de la librería del usuario
+            // NUEVO: Sincronizar progreso antes de cargar
+            var chapterService = new ChapterService(_databaseService);
+
+            // Obtener lista inicial para sincronizar
+            _libraryItems = await _libraryService.GetUserLibraryAsync();
+
+            // Sincronizar el progreso de cada novela
+            foreach (var item in _libraryItems)
+            {
+                await chapterService.SyncUserLibraryProgressAsync(
+                    AuthService.CurrentUser.Id,
+                    item.NovelId
+                );
+            }
+
+            // Volver a cargar con datos actualizados
             _libraryItems = await _libraryService.GetUserLibraryAsync();
 
             if (_libraryItems == null || _libraryItems.Count == 0)
@@ -179,7 +195,7 @@ public partial class LibraryPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 3: Tap simple mejorado
+    /// Tap simple
     /// </summary>
     private async void OnNovelTapped(object sender, EventArgs e)
     {
@@ -206,7 +222,7 @@ public partial class LibraryPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 3: Long press separado y funcional
+    /// Long press separado y funcional
     /// </summary>
     private async void OnNovelLongPressed(object sender, EventArgs e)
     {
@@ -338,7 +354,7 @@ public partial class LibraryPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 2: Filtros actualizados con todos los estados
+    /// Filtros actualizados con todos los estados
     /// </summary>
     private void ApplyFilter(string filterText)
     {
@@ -460,32 +476,29 @@ public partial class LibraryPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 1: Navegación a explorar arreglada
+    /// Navega a la página de explorar cuando no hay novelas en la biblioteca
     /// </summary>
     private async void OnExploreNovelsClicked(object sender, EventArgs e)
     {
         try
         {
-            // Usar GoToAsync con ruta específica
-            await Shell.Current.GoToAsync("//ExplorePage");
+            // Obtener el AppShell actual
+            if (Shell.Current is AppShell appShell)
+            {
+                await appShell.NavigateToExplorePage();
+            }
+            else
+            {
+                // Método alternativo
+                await Shell.Current.GoToAsync("//ExplorePage");
+            }
         }
         catch (Exception ex)
         {
-            try
-            {
-                // Método alternativo si falla el primero
-                await Shell.Current.GoToAsync("///ExplorePage");
-            }
-            catch
-            {
-                // Último recurso - cambiar tab manualmente
-                if (Shell.Current is AppShell appShell)
-                {
-                    appShell.CurrentItem = appShell.Items.FirstOrDefault(item =>
-                        item.Route.Contains("Explorar") || item.Title.Contains("Explorar"));
-                }
-            }
-            System.Diagnostics.Debug.WriteLine($"Error navegando a explorar: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error navegando: {ex.Message}");
+
+            // Último recurso
+            await DisplayAlert("Info", "Por favor, selecciona la pestaña 'Explorar' manualmente", "OK");
         }
     }
 }

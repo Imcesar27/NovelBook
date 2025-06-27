@@ -6,12 +6,12 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        // ARREGLO 4: Navegación mejorada y segura
+        // Navegación segura
         this.Navigated += OnShellNavigated;
     }
 
     /// <summary>
-    /// ARREGLO 4: Maneja la navegación de forma segura
+    /// Maneja la navegación de forma segura
     /// </summary>
     private async void OnShellNavigated(object sender, ShellNavigatedEventArgs e)
     {
@@ -31,7 +31,7 @@ public partial class AppShell : Shell
     }
 
     /// <summary>
-    /// ARREGLO 4: Limpia la pila de navegación de forma segura
+    /// Limpia la pila de navegación de forma segura
     /// </summary>
     private async Task CleanNavigationStackSafely()
     {
@@ -107,6 +107,36 @@ public partial class AppShell : Shell
             {
                 System.Diagnostics.Debug.WriteLine($"Error en logout: {ex.Message}");
             }
+        }
+    }
+
+    /// <summary>
+    /// Método público para cambiar al tab de Explorar
+    /// </summary>
+    public async Task NavigateToExplorePage()
+    {
+        try
+        {
+            // Buscar el tab de Explorar
+            if (this.CurrentItem is TabBar tabBar)
+            {
+                var exploreTab = tabBar.Items.FirstOrDefault(tab =>
+                    tab.Title.Contains("Explorar") ||
+                    tab.Items.Any(item => item.Route == "ExplorePage"));
+
+                if (exploreTab != null)
+                {
+                    // Cambiar al tab
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        tabBar.CurrentItem = exploreTab;
+                    });
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error navegando a Explorar: {ex.Message}");
         }
     }
 }

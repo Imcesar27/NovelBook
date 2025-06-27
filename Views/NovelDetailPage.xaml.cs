@@ -15,6 +15,10 @@ public partial class NovelDetailPage : ContentPage
     private int _novelId;
     private Novel _novel;
 
+    // Variables para manejar el estado de los filtros
+    private List<dynamic> _allChapters = new List<dynamic>();
+    private string _currentChapterFilter = "Todos";
+
     /// <summary>
     /// Constructor principal que recibe el ID de la novela a mostrar
     /// </summary>
@@ -42,8 +46,12 @@ public partial class NovelDetailPage : ContentPage
     {
         base.OnAppearing();
 
-        // Recargar y verificar estado de biblioteca cada vez que aparece la página
-        await CheckAndUpdateLibraryStatus();
+        // Recargar estado cada vez que aparece la página
+        if (_novel != null)
+        {
+            await CheckAndUpdateLibraryStatus();
+            await UpdateReadButtonStatus();
+        }
     }
 
     /// <summary>
@@ -82,8 +90,11 @@ public partial class NovelDetailPage : ContentPage
                     LoadGenres();
                 });
 
-                // ARREGLO 5: Verificar estado de biblioteca y actualizar botón
+                // Verificar estado de biblioteca
                 await CheckAndUpdateLibraryStatus();
+
+                // Actualizar estado del botón de lectura
+                await UpdateReadButtonStatus();
 
                 // Cargar lista de capítulos
                 await LoadChaptersAsync();
@@ -99,7 +110,130 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 5: Verifica estado de biblioteca y actualiza botón - MEJORADO
+    /// Actualiza el botón de lectura según el progreso del usuario
+    /// </summary>
+   /* private async Task UpdateReadButtonStatus()
+    {
+        try
+        {
+            if (AuthService.CurrentUser == null || _novel == null)
+            {
+                // Usuario no logueado o novela no cargada
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    var readButton = this.FindByName<Button>("ReadButton");
+                    if (readButton != null)
+                    {
+                        readButton.Text = "Leer";
+                    }
+                });
+                return;
+            }
+
+            // Obtener el progreso del usuario para esta novela
+            var libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
+            var userLibrary = await libraryService.GetUserLibraryAsync();
+            var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var readButton = this.FindByName<Button>("ReadButton");
+                if (readButton != null)
+                {
+                    if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                    {
+                        // El usuario ya ha leído capítulos
+                        if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
+                        {
+                            // Ha completado todos los capítulos
+                            readButton.Text = "Releer";
+                        }
+                        else
+                        {
+                            // Tiene capítulos pendientes
+                            int nextChapter = novelInLibrary.LastReadChapter + 1;
+                            readButton.Text = $"Resumir Cap. {nextChapter}";
+                        }
+                    }
+                    else
+                    {
+                        // No ha empezado a leer
+                        readButton.Text = "Leer";
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando botón de lectura: {ex.Message}");
+        }
+    }*/
+
+    private async Task UpdateReadButtonStatus()
+    {
+        try
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var readButton = this.FindByName<Button>("ReadButton");
+                if (readButton == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("ERROR: No se encontró el botón ReadButton");
+                    return;
+                }
+
+                // Valor por defecto
+                readButton.Text = "Leer";
+            });
+
+            if (AuthService.CurrentUser == null || _novel == null)
+            {
+                return;
+            }
+
+            // Sincronizar progreso primero
+            var chapterService = new ChapterService(_databaseService);
+            await chapterService.SyncUserLibraryProgressAsync(AuthService.CurrentUser.Id, _novelId);
+
+            // Obtener el progreso actualizado
+            var userLibrary = await _libraryService.GetUserLibraryAsync();
+            var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                var readButton = this.FindByName<Button>("ReadButton");
+                if (readButton != null)
+                {
+                    if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                    {
+                        if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
+                        {
+                            readButton.Text = "Releer";
+                            System.Diagnostics.Debug.WriteLine($"Botón actualizado a: Releer");
+                        }
+                        else
+                        {
+                            int nextChapter = novelInLibrary.LastReadChapter + 1;
+                            readButton.Text = $"Resumir Cap. {nextChapter}";
+                            System.Diagnostics.Debug.WriteLine($"Botón actualizado a: Resumir Cap. {nextChapter}");
+                        }
+                    }
+                    else
+                    {
+                        readButton.Text = "Leer";
+                        System.Diagnostics.Debug.WriteLine("Botón actualizado a: Leer");
+                    }
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando botón: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Verifica estado de biblioteca y actualiza botón
     /// </summary>
     private async Task CheckAndUpdateLibraryStatus()
     {
@@ -128,7 +262,7 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 5: Busca el botón de agregar a biblioteca de forma más robusta
+    /// Busca el botón de agregar a biblioteca
     /// </summary>
     private Button FindAddToLibraryButton()
     {
@@ -163,7 +297,7 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 5: Búsqueda recursiva mejorada
+    /// Búsqueda recursiva
     /// </summary>
     private Button FindButtonRecursively(IView element)
     {
@@ -201,7 +335,7 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 5: Actualiza la apariencia del botón
+    /// Actualiza la apariencia del botón
     /// </summary>
     private void UpdateButtonAppearance(Button button, bool isInLibrary)
     {
@@ -300,22 +434,29 @@ public partial class NovelDetailPage : ContentPage
     {
         try
         {
-            // Obtener capítulos desde la base de datos
             var chapters = await _novelService.GetChaptersAsync(_novelId);
 
+            // Obtener capítulos leídos si hay usuario logueado
+            var readChapters = new HashSet<int>();
+            if (AuthService.CurrentUser != null)
+            {
+                readChapters = await GetReadChaptersAsync();
+            }
+
             // Transformar datos para mostrar en UI
-            var chapterDisplay = chapters.Select(ch => new
+            _allChapters = chapters.Select(ch => new
             {
                 Id = ch.Id,
                 Title = $"Capítulo {ch.ChapterNumber}: {ch.Title}",
                 Date = ch.CreatedAt.ToString("dd/MM/yyyy"),
-                TitleColor = "#FFFFFF" // TODO: Implementar sistema de capítulos leídos
-            }).ToList();
+                TitleColor = readChapters.Contains(ch.Id) ? "#808080" : "#FFFFFF", // Gris si está leído
+                ChapterNumber = ch.ChapterNumber
+            }).Cast<dynamic>().ToList();
 
             // Actualizar UI en hilo principal
             Device.BeginInvokeOnMainThread(() =>
             {
-                ChaptersList.ItemsSource = chapterDisplay;
+                ChaptersList.ItemsSource = _allChapters;
             });
         }
         catch (Exception ex)
@@ -331,8 +472,41 @@ public partial class NovelDetailPage : ContentPage
     {
         if (_novel != null && _novel.ChapterCount > 0)
         {
-            // Pasar información real al lector
-            await Navigation.PushAsync(new ReaderPage(_novelId, 0, _novel.Title));
+            int chapterToRead = 0; // 0 significa continuar donde quedó
+
+            // Si el usuario está logueado, verificar su progreso
+            if (AuthService.CurrentUser != null)
+            {
+                var userLibrary = await _libraryService.GetUserLibraryAsync();
+                var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+
+                if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                {
+                    // Si ya leyó capítulos, continuar con el siguiente
+                    if (novelInLibrary.LastReadChapter < _novel.ChapterCount)
+                    {
+                        // Obtener el ID del siguiente capítulo
+                        var chapters = await _novelService.GetChaptersAsync(_novelId);
+                        var nextChapter = chapters.FirstOrDefault(c => c.ChapterNumber == novelInLibrary.LastReadChapter + 1);
+                        if (nextChapter != null)
+                        {
+                            chapterToRead = nextChapter.Id;
+                        }
+                    }
+                    else
+                    {
+                        // Si completó todos, empezar desde el primero (releer)
+                        var chapters = await _novelService.GetChaptersAsync(_novelId);
+                        var firstChapter = chapters.FirstOrDefault();
+                        if (firstChapter != null)
+                        {
+                            chapterToRead = firstChapter.Id;
+                        }
+                    }
+                }
+            }
+
+            await Navigation.PushAsync(new ReaderPage(_novelId, chapterToRead, _novel.Title));
         }
         else
         {
@@ -341,7 +515,7 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 5: Maneja agregar/quitar de biblioteca - MEJORADO
+    /// Maneja agregar/quitar de biblioteca
     /// </summary>
     private async void OnAddToLibraryClicked(object sender, EventArgs e)
     {
@@ -495,6 +669,153 @@ public partial class NovelDetailPage : ContentPage
             }
         }
     }
+
+    /// <summary>
+    /// Maneja el filtrado de capítulos en la página de detalles
+    /// </summary>
+    private async void OnChapterFilterClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            _currentChapterFilter = button.Text;
+
+            // Actualizar visual de botones
+            UpdateChapterFilterButtons(button);
+
+            // Aplicar filtro
+            await ApplyChapterFilter();
+        }
+    }
+
+    /// <summary>
+    /// Actualiza el estado visual de los botones de filtro
+    /// </summary>
+    private void UpdateChapterFilterButtons(Button selectedButton)
+    {
+        // Buscar el contenedor de botones de filtro
+        var parent = selectedButton.Parent as HorizontalStackLayout;
+        if (parent != null)
+        {
+            foreach (var child in parent.Children)
+            {
+                if (child is Button btn)
+                {
+                    if (btn == selectedButton)
+                    {
+                        btn.BackgroundColor = Color.FromArgb("#8B5CF6");
+                        btn.TextColor = Colors.White;
+                    }
+                    else
+                    {
+                        btn.BackgroundColor = Color.FromArgb("#2D2D2D");
+                        btn.TextColor = Color.FromArgb("#B0B0B0");
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Aplica el filtro seleccionado a la lista de capítulos
+    /// </summary>
+    private async Task ApplyChapterFilter()
+    {
+        if (_allChapters.Count == 0) return;
+
+        var filteredChapters = new List<dynamic>();
+
+        switch (_currentChapterFilter)
+        {
+            case "Todos":
+                filteredChapters = _allChapters;
+                break;
+
+            case "Sin leer":
+                // Obtener capítulos no leídos
+                if (AuthService.CurrentUser != null)
+                {
+                    var readChapters = await GetReadChaptersAsync();
+                    filteredChapters = _allChapters.Where(ch => !readChapters.Contains((int)ch.Id)).ToList();
+                }
+                else
+                {
+                    filteredChapters = _allChapters; // Si no hay usuario, mostrar todos
+                }
+                break;
+
+            case "↓↑": // Invertir orden
+                filteredChapters = _allChapters.AsEnumerable().Reverse().ToList();
+                _allChapters = filteredChapters; // Actualizar la lista principal
+                break;
+        }
+
+        Device.BeginInvokeOnMainThread(() =>
+        {
+            ChaptersList.ItemsSource = filteredChapters;
+        });
+    }
+
+    /// <summary>
+    /// Obtiene los IDs de capítulos ya leídos por el usuario
+    /// </summary>
+    private async Task<HashSet<int>> GetReadChaptersAsync()
+    {
+        var readChapters = new HashSet<int>();
+
+        try
+        {
+            using var connection = _databaseService.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"SELECT DISTINCT chapter_id 
+                     FROM reading_progress 
+                     WHERE user_id = @userId 
+                     AND chapter_id IN (SELECT id FROM chapters WHERE novel_id = @novelId)
+                     AND is_completed = 1";
+
+            using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", AuthService.CurrentUser.Id);
+            command.Parameters.AddWithValue("@novelId", _novelId);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                readChapters.Add(reader.GetInt32(0));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo capítulos leídos: {ex.Message}");
+        }
+
+        return readChapters;
+    }
+
+    /// <summary>
+    /// Maneja la búsqueda de capítulos
+    /// </summary>
+    private void OnChapterSearchTextChanged(object sender, TextChangedEventArgs e)
+    {
+        var searchText = e.NewTextValue?.ToLower() ?? "";
+
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            // Si no hay búsqueda, aplicar filtro actual
+            _ = ApplyChapterFilter();
+        }
+        else
+        {
+            // Filtrar por texto
+            var searchResults = _allChapters.Where(ch =>
+                ch.Title.ToLower().Contains(searchText)).ToList();
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ChaptersList.ItemsSource = searchResults;
+            });
+        }
+    }
+
 
     // Constructor temporal para compatibilidad
     public NovelDetailPage() : this(1)

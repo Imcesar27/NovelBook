@@ -99,6 +99,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0"
+                        x:Name="ReadButton"
                         Text="Leer"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
@@ -201,7 +202,8 @@
                         <SearchBar Placeholder="Buscar capítulo..."
                                    PlaceholderColor="{StaticResource TextMuted}"
                                    TextColor="{StaticResource TextPrimary}"
-                                   BackgroundColor="{StaticResource BackgroundMedium}"/>
+                                   BackgroundColor="{StaticResource BackgroundMedium}"
+                                   TextChanged="OnChapterSearchTextChanged"/>
 
                         <HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
                             <Button Text="Todos"
@@ -209,19 +211,22 @@
                                     TextColor="White"
                                     CornerRadius="15"
                                     Padding="15,5"
-                                    FontSize="12"/>
+                                    FontSize="12"
+                                    Clicked="OnChapterFilterClicked"/>
                             <Button Text="Sin leer"
                                     BackgroundColor="{StaticResource BackgroundMedium}"
                                     TextColor="{StaticResource TextSecondary}"
                                     CornerRadius="15"
                                     Padding="15,5"
-                                    FontSize="12"/>
+                                    FontSize="12"
+                                    Clicked="OnChapterFilterClicked"/>
                             <Button Text="↓↑"
                                     BackgroundColor="{StaticResource BackgroundMedium}"
                                     TextColor="{StaticResource TextSecondary}"
                                     CornerRadius="15"
                                     Padding="10,5"
-                                    FontSize="12"/>
+                                    FontSize="12"
+                                    Clicked="OnChapterFilterClicked"/>
                         </HorizontalStackLayout>
 
                         <!-- Lista de capítulos -->
