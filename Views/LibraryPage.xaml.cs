@@ -1,378 +1,491 @@
+﻿using Microsoft.Maui.Controls;
 using NovelBook.Services;
 using NovelBook.Models;
 
 namespace NovelBook.Views;
 
+/// <summary>
+/// Clase para representar una novela en la UI de la librería personal
+/// </summary>
+public class LibraryDisplayItem
+{
+    public int LibraryItemId { get; set; }  // ID del registro en user_library
+    public int NovelId { get; set; }        // ID de la novela
+    public string Title { get; set; }
+    public string Author { get; set; }
+    public ImageSource CoverImageSource { get; set; }
+    public int ChapterCount { get; set; }
+    public int LastReadChapter { get; set; }
+    public int UnreadCount { get; set; }
+    public bool ShowUnreadBadge => UnreadCount > 0;
+    public double Progress { get; set; }
+    public bool IsFavorite { get; set; }
+    public string ReadingStatus { get; set; }
+    public DateTime AddedAt { get; set; }
+
+    /// <summary>
+    /// ARREGLO 6: Convierte un UserLibraryItem a LibraryDisplayItem con cálculos correctos
+    /// </summary>
+    public static async Task<LibraryDisplayItem> FromUserLibraryItem(UserLibraryItem item, ImageService imageService)
+    {
+        var coverImage = await imageService.GetCoverImageAsync(item.Novel.CoverImage);
+
+        // ARREGLO 6: Cálculos de progreso corregidos
+        int totalChapters = item.Novel.ChapterCount;
+        int lastRead = item.LastReadChapter;
+
+        // Calcular capítulos sin leer correctamente
+        int unreadCount = Math.Max(0, totalChapters - lastRead);
+
+        // Calcular progreso como porcentaje (0.0 - 1.0)
+        double progress = totalChapters > 0 ? (double)lastRead / totalChapters : 0.0;
+
+        return new LibraryDisplayItem
+        {
+            LibraryItemId = item.Id,
+            NovelId = item.Novel.Id,
+            Title = item.Novel.Title,
+            Author = item.Novel.Author,
+            CoverImageSource = coverImage,
+            ChapterCount = totalChapters,
+            LastReadChapter = lastRead,
+            UnreadCount = unreadCount,
+            Progress = progress, // 0.0 = 0%, 1.0 = 100%
+            IsFavorite = item.IsFavorite,
+            ReadingStatus = item.ReadingStatus,
+            AddedAt = item.AddedAt
+        };
+    }
+}
+
 public partial class LibraryPage : ContentPage
 {
+    // Servicios para manejar datos
     private readonly LibraryService _libraryService;
     private readonly DatabaseService _databaseService;
     private readonly ImageService _imageService;
 
-    private List<UserLibraryItem> _allLibraryItems = new List<UserLibraryItem>();
-    private List<UserLibraryItem> _filteredItems = new List<UserLibraryItem>();
-    private string _currentFilter = "all";
-    private string _currentSort = "recent";
+    // Lista para almacenar las novelas de la librería
+    private List<UserLibraryItem> _libraryItems;
+    private List<UserLibraryItem> _filteredItems;
+
+    // Estado actual del filtro
+    private string _currentFilter = "📔 Todos";
+
+    // ARREGLO 3: Variables para long press mejorado
+    private bool _isProcessingTap = false;
 
     public LibraryPage()
     {
         InitializeComponent();
 
+        // Inicializar servicios
         _databaseService = new DatabaseService();
         _libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
         _imageService = new ImageService(_databaseService);
-    }
 
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        await LoadLibrary();
+        // Inicializar listas
+        _libraryItems = new List<UserLibraryItem>();
+        _filteredItems = new List<UserLibraryItem>();
     }
 
     /// <summary>
-    /// Carga todas las novelas de la biblioteca del usuario
+    /// Se ejecuta cada vez que aparece la página - carga los datos actualizados
     /// </summary>
-    private async Task LoadLibrary()
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadLibraryAsync();
+    }
+
+    /// <summary>
+    /// Carga las novelas de la librería personal del usuario
+    /// </summary>
+    private async Task LoadLibraryAsync()
     {
         try
         {
-            // Verificar si hay usuario logueado
-            if (AuthService.CurrentUser == null)
-            {
-                ShowEmptyState("Inicia sesi�n para ver tu biblioteca");
-                return;
-            }
-
             // Mostrar indicador de carga
-            novelsCollection.IsVisible = false;
-            EmptyStateLayout.IsVisible = false;
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            // Cargar biblioteca desde la base de datos
-            _allLibraryItems = await _libraryService.GetUserLibraryAsync();
-
-            if (_allLibraryItems.Count == 0)
+            // Verificar si hay usuario logueado
+            if (AuthService.CurrentUser == null)
             {
-                ShowEmptyState("Tu biblioteca est� vac�a");
+                ShowEmptyState("Inicia sesión para ver tu biblioteca");
+                return;
             }
-            else
+
+            // Obtener novelas de la librería del usuario
+            _libraryItems = await _libraryService.GetUserLibraryAsync();
+
+            if (_libraryItems == null || _libraryItems.Count == 0)
             {
-                // Aplicar filtro y ordenamiento actuales
-                await ApplyFilterAndSort();
+                ShowEmptyState("Tu biblioteca está vacía");
+                return;
+            }
+
+            // Procesar las novelas para mostrar en la UI
+            var displayItems = new List<LibraryDisplayItem>();
+
+            foreach (var item in _libraryItems)
+            {
+                var displayItem = await LibraryDisplayItem.FromUserLibraryItem(item, _imageService);
+                displayItems.Add(displayItem);
+            }
+
+            // Actualizar la interfaz en el hilo principal
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                novelsCollection.ItemsSource = displayItems;
+                EmptyStateLayout.IsVisible = false;
                 novelsCollection.IsVisible = true;
+            });
+
+            // Aplicar filtro actual
+            ApplyFilter(_currentFilter);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando librería: {ex.Message}");
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ShowEmptyState("Error al cargar la biblioteca");
+            });
+        }
+        finally
+        {
+            // Ocultar indicador de carga
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                LoadingIndicator.IsVisible = false;
+                LoadingIndicator.IsRunning = false;
+            });
+        }
+    }
+
+    /// <summary>
+    /// Muestra el estado vacío con un mensaje personalizado
+    /// </summary>
+    private void ShowEmptyState(string message)
+    {
+        Device.BeginInvokeOnMainThread(() =>
+        {
+            EmptyStateMessage.Text = message;
+            EmptyStateLayout.IsVisible = true;
+            novelsCollection.IsVisible = false;
+            LoadingIndicator.IsVisible = false;
+        });
+    }
+
+    /// <summary>
+    /// ARREGLO 3: Tap simple mejorado
+    /// </summary>
+    private async void OnNovelTapped(object sender, EventArgs e)
+    {
+        if (_isProcessingTap) return;
+
+        try
+        {
+            _isProcessingTap = true;
+
+            if (sender is Frame frame && frame.BindingContext is LibraryDisplayItem novel)
+            {
+                await Navigation.PushAsync(new NovelDetailPage(novel.NovelId));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al cargar biblioteca: " + ex.Message, "OK");
+            await DisplayAlert("Error", "No se pudo abrir la novela", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error al abrir novela: {ex.Message}");
         }
         finally
         {
-            LoadingIndicator.IsVisible = false;
-            LoadingIndicator.IsRunning = false;
+            _isProcessingTap = false;
         }
     }
 
     /// <summary>
-    /// Aplica el filtro y ordenamiento actual
+    /// ARREGLO 3: Long press separado y funcional
     /// </summary>
-    private async Task ApplyFilterAndSort()
+    private async void OnNovelLongPressed(object sender, EventArgs e)
     {
-        // Aplicar filtro
-        _filteredItems = _currentFilter switch
+        if (_isProcessingTap) return;
+
+        try
         {
-            "reading" => _allLibraryItems.Where(i => i.ReadingStatus == "reading").ToList(),
-            "completed" => _allLibraryItems.Where(i => i.ReadingStatus == "completed").ToList(),
-            "favorites" => _allLibraryItems.Where(i => i.IsFavorite).ToList(),
-            _ => _allLibraryItems
-        };
-
-        // Aplicar ordenamiento
-        _filteredItems = _currentSort switch
-        {
-            "recent" => _filteredItems.OrderByDescending(i => i.AddedAt).ToList(),
-            "alphabetical" => _filteredItems.OrderBy(i => i.Novel.Title).ToList(),
-            "lastRead" => _filteredItems.OrderByDescending(i => i.LastReadChapter).ToList(),
-            _ => _filteredItems
-        };
-
-        // Convertir a DisplayItems
-        var displayItems = new List<LibraryDisplayItem>();
-        foreach (var item in _filteredItems)
-        {
-            // Cargar imagen
-            var coverImage = await _imageService.GetCoverImageAsync(item.Novel.CoverImage);
-
-            // Calcular cap�tulos sin leer
-            var unreadChapters = Math.Max(0, item.Novel.ChapterCount - item.LastReadChapter);
-
-            displayItems.Add(new LibraryDisplayItem
+            if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
             {
-                LibraryItemId = item.Id,
-                NovelId = item.NovelId,
-                Title = item.Novel.Title,
-                CoverImageSource = coverImage,
-                UnreadCount = unreadChapters,
-                ShowUnreadBadge = unreadChapters > 0,
-                IsFavorite = item.IsFavorite,
-                ReadingStatus = item.ReadingStatus,
-                Progress = item.Novel.ChapterCount > 0 ?
-                    (double)item.LastReadChapter / item.Novel.ChapterCount : 0
-            });
+                // Vibración para feedback
+                try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+
+                var action = await DisplayActionSheet(
+                    $"Opciones para: {novel.Title}",
+                    "Cancelar",
+                    null,
+                    "Marcar como favorito",
+                    "Cambiar estado de lectura",
+                    "Eliminar de biblioteca");
+
+                await HandleNovelAction(action, novel.NovelId);
+            }
         }
-
-        novelsCollection.ItemsSource = displayItems;
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en long press: {ex.Message}");
+        }
     }
 
     /// <summary>
-    /// Muestra el estado vac�o con un mensaje
+    /// Maneja las acciones del menú contextual
     /// </summary>
-    private void ShowEmptyState(string message)
+    private async Task HandleNovelAction(string action, int novelId)
     {
-        EmptyStateLayout.IsVisible = true;
-        EmptyStateMessage.Text = message;
-        novelsCollection.IsVisible = false;
+        try
+        {
+            switch (action)
+            {
+                case "Marcar como favorito":
+                    await _libraryService.ToggleFavoriteAsync(novelId);
+                    await LoadLibraryAsync(); // Recargar para actualizar UI
+                    break;
+
+                case "Cambiar estado de lectura":
+                    var newStatus = await DisplayActionSheet(
+                        "Nuevo estado",
+                        "Cancelar",
+                        null,
+                        "Leyendo",
+                        "Completado",
+                        "En pausa",
+                        "Planeo leer");
+
+                    if (newStatus != "Cancelar" && !string.IsNullOrEmpty(newStatus))
+                    {
+                        var statusMap = new Dictionary<string, string>
+                        {
+                            {"Leyendo", "reading"},
+                            {"Completado", "completed"},
+                            {"En pausa", "paused"},
+                            {"Planeo leer", "plan_to_read"}
+                        };
+
+                        if (statusMap.ContainsKey(newStatus))
+                        {
+                            await _libraryService.UpdateReadingStatusAsync(novelId, statusMap[newStatus]);
+                            await LoadLibraryAsync();
+                        }
+                    }
+                    break;
+
+                case "Eliminar de biblioteca":
+                    var confirm = await DisplayAlert(
+                        "Confirmar",
+                        "¿Eliminar esta novela de tu biblioteca?",
+                        "Sí",
+                        "No");
+
+                    if (confirm)
+                    {
+                        await _libraryService.RemoveFromLibraryAsync(novelId);
+                        await LoadLibraryAsync();
+                    }
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudo realizar la acción", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error en acción: {ex.Message}");
+        }
     }
 
     /// <summary>
-    /// Maneja el cambio de filtros
+    /// Maneja los filtros de la librería
     /// </summary>
-    private async void OnFilterClicked(object sender, EventArgs e)
+    private void OnFilterClicked(object sender, EventArgs e)
     {
         if (sender is Button button)
         {
-            // Actualizar apariencia de botones
+            // Actualizar estado visual de los botones
             UpdateFilterButtons(button);
 
-            // Obtener el nuevo filtro
-            _currentFilter = button.Text.ToLower() switch
-            {
-                "leyendo" => "reading",
-                "completados" => "completed",
-                "favoritos" => "favorites",
-                _ => "all"
-            };
-
             // Aplicar filtro
-            await ApplyFilterAndSort();
+            ApplyFilter(button.Text);
         }
     }
 
     /// <summary>
-    /// Actualiza la apariencia de los botones de filtro
+    /// Actualiza el estado visual de los botones de filtro
     /// </summary>
-    private void UpdateFilterButtons(Button activeButton)
+    private void UpdateFilterButtons(Button selectedButton)
     {
-        var filterButtons = FilterLayout.Children.OfType<Button>();
-        foreach (var btn in filterButtons)
+        // Resetear todos los botones a estado no seleccionado
+        foreach (var child in FilterLayout.Children)
         {
-            if (btn == activeButton)
-            {
-                btn.BackgroundColor = Color.FromArgb("#8B5CF6");
-                btn.TextColor = Colors.White;
-            }
-            else
+            if (child is Button btn)
             {
                 btn.BackgroundColor = Color.FromArgb("#2D2D2D");
                 btn.TextColor = Color.FromArgb("#B0B0B0");
             }
         }
+
+        // Marcar el botón seleccionado
+        selectedButton.BackgroundColor = Color.FromArgb("#8B5CF6");
+        selectedButton.TextColor = Colors.White;
+
+        _currentFilter = selectedButton.Text;
     }
 
     /// <summary>
-    /// Maneja la b�squeda en la biblioteca
+    /// ARREGLO 2: Filtros actualizados con todos los estados
     /// </summary>
-    private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+    private void ApplyFilter(string filterText)
+    {
+        if (_libraryItems == null) return;
+
+        List<UserLibraryItem> filteredItems = filterText switch
+        {
+            "🧾 Leyendo" => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
+            "✔️ Completados" => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
+            "⭐ Favoritos" => _libraryItems.Where(x => x.IsFavorite).ToList(),
+            "⏸️ En pausa" => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
+            "📋 Planeo leer" => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
+            _ => _libraryItems // "📔 Todos"
+        };
+
+        // Actualizar la colección mostrada
+        UpdateDisplayItems(filteredItems);
+    }
+
+    /// <summary>
+    /// Actualiza los elementos mostrados en la interfaz
+    /// </summary>
+    private async void UpdateDisplayItems(List<UserLibraryItem> items)
+    {
+        var displayItems = new List<LibraryDisplayItem>();
+
+        foreach (var item in items)
+        {
+            var displayItem = await LibraryDisplayItem.FromUserLibraryItem(item, _imageService);
+            displayItems.Add(displayItem);
+        }
+
+        Device.BeginInvokeOnMainThread(() =>
+        {
+            novelsCollection.ItemsSource = displayItems;
+
+            if (displayItems.Count == 0)
+            {
+                var filterName = _currentFilter.Replace("📔 ", "").Replace("🧾 ", "").Replace("✔️ ", "").Replace("⭐ ", "").Replace("⏸️ ", "").Replace("📋 ", "");
+                ShowEmptyState($"No hay novelas en: {filterName}");
+            }
+            else
+            {
+                EmptyStateLayout.IsVisible = false;
+                novelsCollection.IsVisible = true;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Maneja la búsqueda en tiempo real
+    /// </summary>
+    private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
     {
         var searchText = e.NewTextValue?.ToLower() ?? "";
 
         if (string.IsNullOrWhiteSpace(searchText))
         {
-            // Si no hay texto, mostrar todos
-            await ApplyFilterAndSort();
+            // Si no hay búsqueda, aplicar filtro actual
+            ApplyFilter(_currentFilter);
         }
         else
         {
-            // Filtrar por b�squeda
-            var searchResults = _filteredItems.Where(i =>
-                i.Novel.Title.ToLower().Contains(searchText) ||
-                i.Novel.Author.ToLower().Contains(searchText)
-            ).ToList();
-
-            // Convertir a DisplayItems
-            var displayItems = new List<LibraryDisplayItem>();
-            foreach (var item in searchResults)
+            // Filtrar por texto de búsqueda
+            if (_libraryItems != null)
             {
-                var coverImage = await _imageService.GetCoverImageAsync(item.Novel.CoverImage);
-                var unreadChapters = Math.Max(0, item.Novel.ChapterCount - item.LastReadChapter);
+                var searchResults = _libraryItems.Where(x =>
+                    x.Novel.Title.ToLower().Contains(searchText) ||
+                    x.Novel.Author.ToLower().Contains(searchText)).ToList();
 
-                displayItems.Add(new LibraryDisplayItem
-                {
-                    LibraryItemId = item.Id,
-                    NovelId = item.NovelId,
-                    Title = item.Novel.Title,
-                    CoverImageSource = coverImage,
-                    UnreadCount = unreadChapters,
-                    ShowUnreadBadge = unreadChapters > 0,
-                    IsFavorite = item.IsFavorite,
-                    ReadingStatus = item.ReadingStatus,
-                    Progress = item.Novel.ChapterCount > 0 ?
-                        (double)item.LastReadChapter / item.Novel.ChapterCount : 0
-                });
-            }
-
-            novelsCollection.ItemsSource = displayItems;
-        }
-    }
-
-    /// <summary>
-    /// Maneja el tap en una novela
-    /// </summary>
-    private async void OnNovelTapped(object sender, EventArgs e)
-    {
-        if (sender is Frame frame && frame.BindingContext is LibraryDisplayItem item)
-        {
-            await Navigation.PushAsync(new NovelDetailPage(item.NovelId));
-        }
-    }
-
-    /// <summary>
-    /// Maneja el long press para mostrar opciones
-    /// </summary>
-    private async void OnNovelLongPressed(object sender, EventArgs e)
-    {
-        if (sender is Frame frame && frame.BindingContext is LibraryDisplayItem item)
-        {
-            var action = await DisplayActionSheet(
-                item.Title,
-                "Cancelar",
-                "Eliminar de biblioteca",
-                "Marcar como favorito",
-                "Cambiar estado de lectura",
-                "Ver detalles"
-            );
-
-            switch (action)
-            {
-                case "Eliminar de biblioteca":
-                    await RemoveFromLibrary(item);
-                    break;
-                case "Marcar como favorito":
-                    await ToggleFavorite(item);
-                    break;
-                case "Cambiar estado de lectura":
-                    await ChangeReadingStatus(item);
-                    break;
-                case "Ver detalles":
-                    await Navigation.PushAsync(new NovelDetailPage(item.NovelId));
-                    break;
-            }
-        }
-    }
-
-    private async Task RemoveFromLibrary(LibraryDisplayItem item)
-    {
-        var confirm = await DisplayAlert(
-            "Confirmar",
-            $"�Eliminar '{item.Title}' de tu biblioteca?",
-            "S�", "No"
-        );
-
-        if (confirm)
-        {
-            var success = await _libraryService.RemoveFromLibraryAsync(item.NovelId);
-            if (success)
-            {
-                await LoadLibrary();
-            }
-        }
-    }
-
-    private async Task ToggleFavorite(LibraryDisplayItem item)
-    {
-        var success = await _libraryService.ToggleFavoriteAsync(item.NovelId);
-        if (success)
-        {
-            await LoadLibrary();
-        }
-    }
-
-    private async Task ChangeReadingStatus(LibraryDisplayItem item)
-    {
-        var newStatus = await DisplayActionSheet(
-            "Cambiar estado",
-            "Cancelar",
-            null,
-            "Leyendo",
-            "Completado",
-            "Abandonado",
-            "Planeado"
-        );
-
-        if (newStatus != "Cancelar" && newStatus != null)
-        {
-            var statusMap = new Dictionary<string, string>
-            {
-                { "Leyendo", "reading" },
-                { "Completado", "completed" },
-                { "Abandonado", "dropped" },
-                { "Planeado", "plan_to_read" }
-            };
-
-            var success = await _libraryService.UpdateReadingStatusAsync(
-                item.NovelId,
-                statusMap[newStatus]
-            );
-
-            if (success)
-            {
-                await LoadLibrary();
+                UpdateDisplayItems(searchResults);
             }
         }
     }
 
     /// <summary>
-    /// Mostrar men� de ordenamiento
+    /// Maneja la ordenación de novelas
     /// </summary>
     private async void OnSortClicked(object sender, EventArgs e)
     {
-        var action = await DisplayActionSheet(
+        var sortOption = await DisplayActionSheet(
             "Ordenar por",
             "Cancelar",
             null,
-            "M�s reciente",
-            "Alfab�tico",
-            "�ltimo le�do"
-        );
+            "Añadido recientemente",
+            "Título (A-Z)",
+            "Título (Z-A)",
+            "Último leído",
+            "Más capítulos",
+            "Menos capítulos");
 
-        _currentSort = action switch
+        if (sortOption != "Cancelar" && !string.IsNullOrEmpty(sortOption))
         {
-            "M�s reciente" => "recent",
-            "Alfab�tico" => "alphabetical",
-            "�ltimo le�do" => "lastRead",
-            _ => _currentSort
-        };
-
-        if (action != "Cancelar" && action != null)
-        {
-            await ApplyFilterAndSort();
+            ApplySort(sortOption);
         }
     }
-}
 
-/// <summary>
-/// Clase para mostrar items en la UI
-/// </summary>
-public class LibraryDisplayItem
-{
-    public int LibraryItemId { get; set; }
-    public int NovelId { get; set; }
-    public string Title { get; set; }
-    public ImageSource CoverImageSource { get; set; }
-    public int UnreadCount { get; set; }
-    public bool ShowUnreadBadge { get; set; }
-    public bool IsFavorite { get; set; }
-    public string ReadingStatus { get; set; }
-    public double Progress { get; set; }
+    /// <summary>
+    /// Aplica la ordenación seleccionada
+    /// </summary>
+    private void ApplySort(string sortOption)
+    {
+        if (_libraryItems == null) return;
+
+        List<UserLibraryItem> sortedItems = sortOption switch
+        {
+            "Añadido recientemente" => _libraryItems.OrderByDescending(x => x.AddedAt).ToList(),
+            "Título (A-Z)" => _libraryItems.OrderBy(x => x.Novel.Title).ToList(),
+            "Título (Z-A)" => _libraryItems.OrderByDescending(x => x.Novel.Title).ToList(),
+            "Último leído" => _libraryItems.OrderByDescending(x => x.LastReadChapter).ToList(),
+            "Más capítulos" => _libraryItems.OrderByDescending(x => x.Novel.ChapterCount).ToList(),
+            "Menos capítulos" => _libraryItems.OrderBy(x => x.Novel.ChapterCount).ToList(),
+            _ => _libraryItems
+        };
+
+        // Aplicar el filtro actual a los elementos ordenados
+        _libraryItems = sortedItems;
+        ApplyFilter(_currentFilter);
+    }
+
+    /// <summary>
+    /// ARREGLO 1: Navegación a explorar arreglada
+    /// </summary>
+    private async void OnExploreNovelsClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            // Usar GoToAsync con ruta específica
+            await Shell.Current.GoToAsync("//ExplorePage");
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                // Método alternativo si falla el primero
+                await Shell.Current.GoToAsync("///ExplorePage");
+            }
+            catch
+            {
+                // Último recurso - cambiar tab manualmente
+                if (Shell.Current is AppShell appShell)
+                {
+                    appShell.CurrentItem = appShell.Items.FirstOrDefault(item =>
+                        item.Route.Contains("Explorar") || item.Title.Contains("Explorar"));
+                }
+            }
+            System.Diagnostics.Debug.WriteLine($"Error navegando a explorar: {ex.Message}");
+        }
+    }
 }

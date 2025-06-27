@@ -19,7 +19,6 @@ public partial class NovelDetailPage : ContentPage
     /// Constructor principal que recibe el ID de la novela a mostrar
     /// </summary>
     /// <param name="novelId">ID de la novela en la base de datos</param>
-   
     public NovelDetailPage(int novelId)
     {
         InitializeComponent();
@@ -37,7 +36,19 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
+    /// ARREGLO 6: Se ejecuta cada vez que aparece la página para actualizar estado
+    /// </summary>
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        // Recargar y verificar estado de biblioteca cada vez que aparece la página
+        await CheckAndUpdateLibraryStatus();
+    }
+
+    /// <summary>
     /// Carga todos los detalles de la novela desde la base de datos
+    /// ACTUALIZADO: Con verificación mejorada de biblioteca
     /// </summary>
     private async Task LoadNovelDetailsAsync()
     {
@@ -71,25 +82,8 @@ public partial class NovelDetailPage : ContentPage
                     LoadGenres();
                 });
 
-                // Verificar si el usuario tiene esta novela en su biblioteca
-                if (AuthService.CurrentUser != null)
-                {
-                    var isInLibrary = await _libraryService.IsInLibraryAsync(_novelId);
-
-                    Device.BeginInvokeOnMainThread(() =>
-                    {
-                        if (isInLibrary)
-                        {
-                            // Buscar el botón por su nombre x:Name
-                            var addButton = this.FindByName<Button>("AddToLibraryButton");
-                            if (addButton != null)
-                            {
-                                addButton.Text = "✓ En biblioteca";
-                                addButton.BackgroundColor = Color.FromArgb("#10B981");
-                            }
-                        }
-                    });
-                }
+                // ARREGLO 5: Verificar estado de biblioteca y actualizar botón
+                await CheckAndUpdateLibraryStatus();
 
                 // Cargar lista de capítulos
                 await LoadChaptersAsync();
@@ -101,6 +95,127 @@ public partial class NovelDetailPage : ContentPage
             {
                 await DisplayAlert("Error", "Error al cargar detalles: " + ex.Message, "OK");
             });
+        }
+    }
+
+    /// <summary>
+    /// ARREGLO 5: Verifica estado de biblioteca y actualiza botón - MEJORADO
+    /// </summary>
+    private async Task CheckAndUpdateLibraryStatus()
+    {
+        if (AuthService.CurrentUser != null)
+        {
+            try
+            {
+                var isInLibrary = await _libraryService.IsInLibraryAsync(_novelId);
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    // Buscar todos los botones que podrían ser el de agregar
+                    var addButton = FindAddToLibraryButton();
+
+                    if (addButton != null)
+                    {
+                        UpdateButtonAppearance(addButton, isInLibrary);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error verificando biblioteca: {ex.Message}");
+            }
+        }
+    }
+
+    /// <summary>
+    /// ARREGLO 5: Busca el botón de agregar a biblioteca de forma más robusta
+    /// </summary>
+    private Button FindAddToLibraryButton()
+    {
+        // Método 1: Buscar por nombre
+        try
+        {
+            var button = this.FindByName<Button>("AddToLibraryButton");
+            if (button != null) return button;
+        }
+        catch { }
+
+        // Método 2: Buscar en la grilla de botones de acción
+        try
+        {
+            var actionGrid = this.Content.FindByName<Grid>("ActionButtonsGrid");
+            if (actionGrid != null)
+            {
+                foreach (var child in actionGrid.Children)
+                {
+                    if (child is Button btn &&
+                        (btn.Text.Contains("Agregar") || btn.Text.Contains("biblioteca")))
+                    {
+                        return btn;
+                    }
+                }
+            }
+        }
+        catch { }
+
+        // Método 3: Búsqueda recursiva por texto
+        return FindButtonRecursively(this.Content);
+    }
+
+    /// <summary>
+    /// ARREGLO 5: Búsqueda recursiva mejorada
+    /// </summary>
+    private Button FindButtonRecursively(IView element)
+    {
+        if (element is Button button)
+        {
+            if (button.Text != null &&
+                (button.Text.Contains("Agregar") ||
+                 button.Text.Contains("biblioteca") ||
+                 button.Text.Contains("✓ En")))
+            {
+                return button;
+            }
+        }
+
+        if (element is Layout layout)
+        {
+            foreach (var child in layout.Children)
+            {
+                var result = FindButtonRecursively(child);
+                if (result != null) return result;
+            }
+        }
+
+        if (element is ContentView contentView && contentView.Content != null)
+        {
+            return FindButtonRecursively(contentView.Content);
+        }
+
+        if (element is ScrollView scrollView && scrollView.Content != null)
+        {
+            return FindButtonRecursively(scrollView.Content);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// ARREGLO 5: Actualiza la apariencia del botón
+    /// </summary>
+    private void UpdateButtonAppearance(Button button, bool isInLibrary)
+    {
+        if (isInLibrary)
+        {
+            button.Text = "✓ En biblioteca";
+            button.BackgroundColor = Color.FromArgb("#10B981");
+            button.TextColor = Colors.White;
+        }
+        else
+        {
+            button.Text = "+ Agregar";
+            button.BackgroundColor = Color.FromArgb("#2D2D2D");
+            button.TextColor = Color.FromArgb("#FFFFFF");
         }
     }
 
@@ -226,38 +341,86 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// Maneja agregar/quitar de la biblioteca del usuario
+    /// ARREGLO 5: Maneja agregar/quitar de biblioteca - MEJORADO
     /// </summary>
     private async void OnAddToLibraryClicked(object sender, EventArgs e)
     {
-        // Verificar si hay usuario logueado
         if (AuthService.CurrentUser == null)
         {
             await DisplayAlert("Info", "Debes iniciar sesión para agregar a tu biblioteca", "OK");
             return;
         }
 
-        var button = sender as Button;
+        if (sender is Button button)
+        {
+            try
+            {
+                // Deshabilitar botón durante la operación
+                button.IsEnabled = false;
+                var originalText = button.Text;
+                button.Text = "Procesando...";
 
-        // Si no está en biblioteca, agregar
-        if (button.Text == "+ Agregar")
-        {
-            var success = await _libraryService.AddToLibraryAsync(_novelId);
-            if (success)
-            {
-                button.Text = "✓ En biblioteca";
-                button.BackgroundColor = Color.FromArgb("#10B981");
-                await DisplayAlert("Éxito", "Novela agregada a tu biblioteca", "OK");
+                // Verificar estado actual en la base de datos
+                bool isCurrentlyInLibrary = await _libraryService.IsInLibraryAsync(_novelId);
+                bool success = false;
+
+                if (!isCurrentlyInLibrary)
+                {
+                    // Agregar a biblioteca
+                    success = await _libraryService.AddToLibraryAsync(_novelId);
+                    if (success)
+                    {
+                        UpdateButtonAppearance(button, true);
+                        await DisplayAlert("Éxito", "Novela agregada a tu biblioteca", "OK");
+                    }
+                    else
+                    {
+                        button.Text = originalText;
+                        await DisplayAlert("Error", "No se pudo agregar a la biblioteca", "OK");
+                    }
+                }
+                else
+                {
+                    // Confirmar eliminación
+                    bool confirm = await DisplayAlert(
+                        "Confirmar",
+                        "¿Quitar esta novela de tu biblioteca?",
+                        "Sí",
+                        "No");
+
+                    if (confirm)
+                    {
+                        success = await _libraryService.RemoveFromLibraryAsync(_novelId);
+                        if (success)
+                        {
+                            UpdateButtonAppearance(button, false);
+                            await DisplayAlert("Info", "Novela eliminada de tu biblioteca", "OK");
+                        }
+                        else
+                        {
+                            button.Text = originalText;
+                            await DisplayAlert("Error", "No se pudo eliminar de la biblioteca", "OK");
+                        }
+                    }
+                    else
+                    {
+                        // Usuario canceló, restaurar estado
+                        button.Text = originalText;
+                    }
+                }
             }
-        }
-        // Si ya está en biblioteca, quitar
-        else
-        {
-            var success = await _libraryService.RemoveFromLibraryAsync(_novelId);
-            if (success)
+            catch (Exception ex)
             {
-                button.Text = "+ Agregar";
-                button.BackgroundColor = Color.FromArgb("#2D2D2D");
+                System.Diagnostics.Debug.WriteLine($"Error en biblioteca: {ex.Message}");
+                await DisplayAlert("Error", "Error al procesar la solicitud", "OK");
+
+                // Restaurar estado del botón
+                await CheckAndUpdateLibraryStatus();
+            }
+            finally
+            {
+                // Rehabilitar botón
+                button.IsEnabled = true;
             }
         }
     }

@@ -1,5 +1,6 @@
-﻿using NovelBook.Models;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using NovelBook.Models;
+using System.Data;
 
 namespace NovelBook.Services;
 
@@ -99,6 +100,9 @@ public class ChapterService
     /// <summary>
     /// Guarda el progreso de lectura del usuario
     /// </summary>
+ // <summary>
+    /// ARREGLO 6: Guarda el progreso de lectura con cálculos correctos
+    /// </summary>
     public async Task SaveReadingProgressAsync(int userId, int chapterId, decimal progress, int lastPosition, bool isCompleted)
     {
         // Verificar modo incógnito
@@ -112,7 +116,27 @@ public class ChapterService
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
 
-            var query = @"IF EXISTS (SELECT 1 FROM reading_progress WHERE user_id = @userId AND chapter_id = @chapterId)
+            // ARREGLO 6: Obtener información del capítulo primero
+            var chapterQuery = "SELECT novel_id, chapter_number FROM chapters WHERE id = @chapterId";
+            using var chapterCommand = new SqlCommand(chapterQuery, connection);
+            chapterCommand.Parameters.AddWithValue("@chapterId", chapterId);
+
+            int novelId = 0;
+            int chapterNumber = 0;
+
+            using (var reader = await chapterCommand.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    novelId = reader.GetInt32("novel_id");
+                    chapterNumber = reader.GetInt32("chapter_number");
+                }
+            }
+
+            if (novelId == 0) return; // Capítulo no encontrado
+
+            // Guardar progreso del capítulo
+            var progressQuery = @"IF EXISTS (SELECT 1 FROM reading_progress WHERE user_id = @userId AND chapter_id = @chapterId)
                          UPDATE reading_progress 
                          SET progress = @progress, 
                              last_position = @lastPosition, 
@@ -123,7 +147,7 @@ public class ChapterService
                          INSERT INTO reading_progress (user_id, chapter_id, progress, last_position, is_completed)
                          VALUES (@userId, @chapterId, @progress, @lastPosition, @isCompleted)";
 
-            using var command = new SqlCommand(query, connection);
+            using var command = new SqlCommand(progressQuery, connection);
             command.Parameters.AddWithValue("@userId", userId);
             command.Parameters.AddWithValue("@chapterId", chapterId);
             command.Parameters.AddWithValue("@progress", progress);
@@ -132,8 +156,14 @@ public class ChapterService
 
             await command.ExecuteNonQueryAsync();
 
-            // También actualizar el historial de lectura
-            await UpdateReadingHistoryAsync(userId, chapterId, isCompleted);
+            // ARREGLO 6: Actualizar historial de lectura
+            await UpdateReadingHistoryAsync(userId, chapterId, novelId, isCompleted);
+
+            // ARREGLO 6: Actualizar último capítulo leído en user_library SOLO si se completó
+            if (isCompleted)
+            {
+                await UpdateUserLibraryProgressAsync(userId, novelId, chapterNumber);
+            }
         }
         catch (Exception ex)
         {
@@ -181,18 +211,12 @@ public class ChapterService
     /// <summary>
     /// Actualiza el historial de lectura
     /// </summary>
-    private async Task UpdateReadingHistoryAsync(int userId, int chapterId, bool isCompleted)
+    private async Task UpdateReadingHistoryAsync(int userId, int chapterId, int novelId, bool isCompleted)
     {
         try
         {
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
-
-            // Obtener novel_id del capítulo
-            var getNovelQuery = "SELECT novel_id FROM chapters WHERE id = @chapterId";
-            using var getNovelCmd = new SqlCommand(getNovelQuery, connection);
-            getNovelCmd.Parameters.AddWithValue("@chapterId", chapterId);
-            var novelId = (int)await getNovelCmd.ExecuteScalarAsync();
 
             // Insertar o actualizar historial
             var query = @"IF NOT EXISTS (SELECT 1 FROM reading_history 
@@ -211,25 +235,40 @@ public class ChapterService
             command.Parameters.AddWithValue("@isCompleted", isCompleted);
 
             await command.ExecuteNonQueryAsync();
-
-            // Actualizar el último capítulo leído en user_library
-            if (isCompleted)
-            {
-                var updateLibraryQuery = @"UPDATE user_library 
-                                         SET last_read_chapter = @chapterNumber
-                                         WHERE user_id = @userId AND novel_id = @novelId";
-
-                using var updateCmd = new SqlCommand(updateLibraryQuery, connection);
-                updateCmd.Parameters.AddWithValue("@userId", userId);
-                updateCmd.Parameters.AddWithValue("@novelId", novelId);
-                updateCmd.Parameters.AddWithValue("@chapterNumber", await GetChapterNumberAsync(chapterId));
-
-                await updateCmd.ExecuteNonQueryAsync();
-            }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error actualizando historial: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// ARREGLO 6: Actualiza el progreso en user_library de forma correcta
+    /// </summary>
+    private async Task UpdateUserLibraryProgressAsync(int userId, int novelId, int chapterNumber)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            // ARREGLO 6: Solo actualizar si el capítulo leído es mayor al actual
+            var updateLibraryQuery = @"UPDATE user_library 
+                                     SET last_read_chapter = @chapterNumber
+                                     WHERE user_id = @userId 
+                                     AND novel_id = @novelId 
+                                     AND last_read_chapter < @chapterNumber";
+
+            using var updateCmd = new SqlCommand(updateLibraryQuery, connection);
+            updateCmd.Parameters.AddWithValue("@userId", userId);
+            updateCmd.Parameters.AddWithValue("@novelId", novelId);
+            updateCmd.Parameters.AddWithValue("@chapterNumber", chapterNumber);
+
+            await updateCmd.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando user_library: {ex.Message}");
         }
     }
 
