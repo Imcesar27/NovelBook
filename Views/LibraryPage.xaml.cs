@@ -199,35 +199,69 @@ public partial class LibraryPage : ContentPage
     /// </summary>
     private async void OnNovelTapped(object sender, EventArgs e)
     {
-        if (_isProcessingTap) return;
-
         try
         {
-            _isProcessingTap = true;
+            LibraryDisplayItem novel = null;
 
-            if (sender is Frame frame && frame.BindingContext is LibraryDisplayItem novel)
+            // Buscar el item de diferentes maneras
+            if (sender is Frame frame)
             {
+                novel = frame.BindingContext as LibraryDisplayItem;
+            }
+            else if (sender is Grid grid)
+            {
+                novel = grid.BindingContext as LibraryDisplayItem;
+            }
+
+            if (novel != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Abriendo novela: {novel.Title} (ID: {novel.NovelId})");
                 await Navigation.PushAsync(new NovelDetailPage(novel.NovelId));
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No se pudo obtener el contexto de la novela");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudo abrir la novela", "OK");
-            System.Diagnostics.Debug.WriteLine($"Error al abrir novela: {ex.Message}");
-        }
-        finally
-        {
-            _isProcessingTap = false;
+            await DisplayAlert("Error", $"No se pudo abrir la novela: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error completo: {ex}");
         }
     }
 
     /// <summary>
     /// Long press separado y funcional
     /// </summary>
+
+    // <summary>
+    /// Maneja el click en el botón de menú (tres puntos)
+    /// </summary>
+    private async void OnNovelMenuClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
+            {
+                var action = await DisplayActionSheet(
+                    $"Opciones para: {novel.Title}",
+                    "Cancelar",
+                    null,
+                    novel.IsFavorite ? "Quitar de favoritos" : "Marcar como favorito",
+                    "Cambiar estado de lectura",
+                    "Eliminar de biblioteca");
+
+                await HandleNovelAction(action, novel.NovelId);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en menú: {ex.Message}");
+        }
+    }
+
     private async void OnNovelLongPressed(object sender, EventArgs e)
     {
-        if (_isProcessingTap) return;
-
         try
         {
             if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
@@ -262,6 +296,7 @@ public partial class LibraryPage : ContentPage
             switch (action)
             {
                 case "Marcar como favorito":
+                case "Quitar de favoritos":
                     await _libraryService.ToggleFavoriteAsync(novelId);
                     await LoadLibraryAsync(); // Recargar para actualizar UI
                     break;
@@ -501,4 +536,6 @@ public partial class LibraryPage : ContentPage
             await DisplayAlert("Info", "Por favor, selecciona la pestaña 'Explorar' manualmente", "OK");
         }
     }
+
+
 }

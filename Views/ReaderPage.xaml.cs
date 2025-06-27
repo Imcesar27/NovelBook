@@ -23,6 +23,9 @@ public partial class ReaderPage : ContentPage
 
     // Progreso de lectura
     private double _lastScrollY = 0;
+    private bool _isChapterCompleted = false;
+    private bool _hasReachedEnd = false;
+
 
 
     /// <summary>
@@ -62,7 +65,7 @@ public partial class ReaderPage : ContentPage
     }
 
 
-    private void OnContentScrolled(object sender, ScrolledEventArgs e)
+    private async void OnContentScrolled(object sender, ScrolledEventArgs e)
     {
         _lastScrollY = e.ScrollY;
 
@@ -70,15 +73,37 @@ public partial class ReaderPage : ContentPage
         var scrollView = sender as ScrollView;
         if (scrollView != null && scrollView.ContentSize.Height > 0)
         {
-            _scrollProgress = e.ScrollY / (scrollView.ContentSize.Height - scrollView.Height);
-            _scrollProgress = Math.Max(0, Math.Min(1, _scrollProgress)); // Clamp entre 0 y 1
+            // Calcular el progreso real considerando el viewport
+            var contentHeight = scrollView.ContentSize.Height;
+            var viewportHeight = scrollView.Height;
+            var maxScroll = contentHeight - viewportHeight;
 
-            // Actualizar barra de progreso
-            Device.BeginInvokeOnMainThread(() =>
+            if (maxScroll > 0)
+            {
+                _scrollProgress = e.ScrollY / maxScroll;
+                _scrollProgress = Math.Max(0, Math.Min(1, _scrollProgress));
+            }
+            else
+            {
+                _scrollProgress = 1; // Si el contenido es más pequeño que el viewport
+            }
+
+            // Actualizar UI
+            Device.BeginInvokeOnMainThread(async () =>
             {
                 ReadingProgress.Progress = _scrollProgress;
                 var percentage = (int)(_scrollProgress * 100);
                 ProgressLabel.Text = $" | {percentage}%";
+
+                // Marcar como completado cuando llegue al 95% o más
+                if (percentage >= 95 && !_hasReachedEnd)
+                {
+                    _hasReachedEnd = true;
+                    System.Diagnostics.Debug.WriteLine($"Capítulo alcanzó el final: {percentage}%");
+
+                    // Guardar como completado
+                    await SaveProgress(true);
+                }
             });
         }
     }
@@ -86,10 +111,16 @@ public partial class ReaderPage : ContentPage
     /// <summary>
     /// Carga el contenido del capítulo
     /// </summary>
-    private async Task LoadChapterAsync()  // Cambiar de void a Task
+    private async Task LoadChapterAsync()  
     {
         try
         {
+            // Resetear flags
+            _isChapterCompleted = false;
+            _hasReachedEnd = false;
+
+            _isChapterCompleted = false; // Resetear estado
+
             // Si chapterId es 0, buscar el último capítulo leído
             if (_chapterId == 0 && AuthService.CurrentUser != null)
             {
@@ -211,8 +242,17 @@ public partial class ReaderPage : ContentPage
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
+        // Verificar si debe marcarse como completado
+        bool shouldComplete = _scrollProgress >= 0.95;
+
         // Guardar progreso antes de salir
-        await SaveProgress();
+        await SaveProgress(shouldComplete);
+
+        if (shouldComplete)
+        {
+            System.Diagnostics.Debug.WriteLine("Capítulo marcado como completado");
+        }
+
         await Navigation.PopAsync();
     }
 
@@ -250,6 +290,7 @@ public partial class ReaderPage : ContentPage
         }
         else
         {
+            await SaveProgress(true);
             await DisplayAlert("Fin", "Has llegado al último capítulo disponible", "OK");
         }
     }
@@ -374,9 +415,21 @@ public partial class ReaderPage : ContentPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+
         // Guardar progreso al salir
-        Task.Run(async () => await SaveProgress());
+        Task.Run(async () =>
+        {
+            // Si el progreso es mayor al 95%, marcar como completado
+            bool shouldComplete = _scrollProgress >= 0.95;
+            await SaveProgress(shouldComplete);
+
+            if (shouldComplete)
+            {
+                System.Diagnostics.Debug.WriteLine("Marcando capítulo como completado al salir");
+            }
+        });
     }
+
 
     /// <summary>
     /// ViewModel para el lector de novelas

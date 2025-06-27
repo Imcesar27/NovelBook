@@ -40,7 +40,7 @@ public partial class NovelDetailPage : ContentPage
     }
 
     /// <summary>
-    /// ARREGLO 6: Se ejecuta cada vez que aparece la página para actualizar estado
+    /// Se ejecuta cada vez que aparece la página para actualizar estado
     /// </summary>
     protected override async void OnAppearing()
     {
@@ -56,7 +56,6 @@ public partial class NovelDetailPage : ContentPage
 
     /// <summary>
     /// Carga todos los detalles de la novela desde la base de datos
-    /// ACTUALIZADO: Con verificación mejorada de biblioteca
     /// </summary>
     private async Task LoadNovelDetailsAsync()
     {
@@ -112,62 +111,62 @@ public partial class NovelDetailPage : ContentPage
     /// <summary>
     /// Actualiza el botón de lectura según el progreso del usuario
     /// </summary>
-   /* private async Task UpdateReadButtonStatus()
-    {
-        try
-        {
-            if (AuthService.CurrentUser == null || _novel == null)
-            {
-                // Usuario no logueado o novela no cargada
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    var readButton = this.FindByName<Button>("ReadButton");
-                    if (readButton != null)
-                    {
-                        readButton.Text = "Leer";
-                    }
-                });
-                return;
-            }
+    /* private async Task UpdateReadButtonStatus()
+     {
+         try
+         {
+             if (AuthService.CurrentUser == null || _novel == null)
+             {
+                 // Usuario no logueado o novela no cargada
+                 Device.BeginInvokeOnMainThread(() =>
+                 {
+                     var readButton = this.FindByName<Button>("ReadButton");
+                     if (readButton != null)
+                     {
+                         readButton.Text = "Leer";
+                     }
+                 });
+                 return;
+             }
 
-            // Obtener el progreso del usuario para esta novela
-            var libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
-            var userLibrary = await libraryService.GetUserLibraryAsync();
-            var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+             // Obtener el progreso del usuario para esta novela
+             var libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
+             var userLibrary = await libraryService.GetUserLibraryAsync();
+             var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                var readButton = this.FindByName<Button>("ReadButton");
-                if (readButton != null)
-                {
-                    if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
-                    {
-                        // El usuario ya ha leído capítulos
-                        if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
-                        {
-                            // Ha completado todos los capítulos
-                            readButton.Text = "Releer";
-                        }
-                        else
-                        {
-                            // Tiene capítulos pendientes
-                            int nextChapter = novelInLibrary.LastReadChapter + 1;
-                            readButton.Text = $"Resumir Cap. {nextChapter}";
-                        }
-                    }
-                    else
-                    {
-                        // No ha empezado a leer
-                        readButton.Text = "Leer";
-                    }
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error actualizando botón de lectura: {ex.Message}");
-        }
-    }*/
+             Device.BeginInvokeOnMainThread(() =>
+             {
+                 var readButton = this.FindByName<Button>("ReadButton");
+                 if (readButton != null)
+                 {
+                     if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                     {
+                         // El usuario ya ha leído capítulos
+                         if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
+                         {
+                             // Ha completado todos los capítulos
+                             readButton.Text = "Releer";
+                         }
+                         else
+                         {
+                             // Tiene capítulos pendientes
+                             int nextChapter = novelInLibrary.LastReadChapter + 1;
+                             readButton.Text = $"Resumir Cap. {nextChapter}";
+                         }
+                     }
+                     else
+                     {
+                         // No ha empezado a leer
+                         readButton.Text = "Leer";
+                     }
+                 }
+             });
+         }
+         catch (Exception ex)
+         {
+             System.Diagnostics.Debug.WriteLine($"Error actualizando botón de lectura: {ex.Message}");
+         }
+     }*/
 
     private async Task UpdateReadButtonStatus()
     {
@@ -181,48 +180,61 @@ public partial class NovelDetailPage : ContentPage
                     System.Diagnostics.Debug.WriteLine("ERROR: No se encontró el botón ReadButton");
                     return;
                 }
-
-                // Valor por defecto
-                readButton.Text = "Leer";
+                readButton.Text = "Leer"; // Valor por defecto
             });
 
-            if (AuthService.CurrentUser == null || _novel == null)
-            {
-                return;
-            }
+            if (AuthService.CurrentUser == null || _novel == null) return;
 
             // Sincronizar progreso primero
             var chapterService = new ChapterService(_databaseService);
             await chapterService.SyncUserLibraryProgressAsync(AuthService.CurrentUser.Id, _novelId);
 
-            // Obtener el progreso actualizado
+            // Obtener información actualizada
             var userLibrary = await _libraryService.GetUserLibraryAsync();
             var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+
+            // Obtener el progreso actual del usuario
+            var currentProgress = await GetCurrentReadingProgress();
 
             Device.BeginInvokeOnMainThread(() =>
             {
                 var readButton = this.FindByName<Button>("ReadButton");
                 if (readButton != null)
                 {
-                    if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                    // Si hay progreso de lectura pero no está en biblioteca, agregarlo primero
+                    if (novelInLibrary == null && currentProgress != null)
                     {
+                        readButton.Text = "Continuar lectura";
+                    }
+                    else if (novelInLibrary != null)
+                    {
+                        // Si completó todos los capítulos
                         if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
                         {
                             readButton.Text = "Releer";
-                            System.Diagnostics.Debug.WriteLine($"Botón actualizado a: Releer");
+                        }
+                        // Si hay progreso parcial en algún capítulo
+                        else if (currentProgress != null && !currentProgress.Value.IsCompleted)
+                        {
+                            readButton.Text = $"Continuar Cap. {currentProgress.Value.ChapterNumber}";
+                        }
+                        // Si completó algunos capítulos pero no todos
+                        else if (novelInLibrary.LastReadChapter > 0)
+                        {
+                            int nextChapter = novelInLibrary.LastReadChapter + 1;
+                            readButton.Text = $"Leer Cap. {nextChapter}";
                         }
                         else
                         {
-                            int nextChapter = novelInLibrary.LastReadChapter + 1;
-                            readButton.Text = $"Resumir Cap. {nextChapter}";
-                            System.Diagnostics.Debug.WriteLine($"Botón actualizado a: Resumir Cap. {nextChapter}");
+                            readButton.Text = "Leer";
                         }
                     }
                     else
                     {
                         readButton.Text = "Leer";
-                        System.Diagnostics.Debug.WriteLine("Botón actualizado a: Leer");
                     }
+
+                    System.Diagnostics.Debug.WriteLine($"Botón actualizado a: {readButton.Text}");
                 }
             });
         }
@@ -230,6 +242,41 @@ public partial class NovelDetailPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine($"Error actualizando botón: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// Obtiene el progreso de lectura actual del usuario
+    /// </summary>
+    private async Task<(int ChapterNumber, bool IsCompleted)?> GetCurrentReadingProgress()
+    {
+        try
+        {
+            using var connection = _databaseService.GetConnection();
+            await connection.OpenAsync();
+
+            // Buscar el último capítulo con progreso
+            var query = @"SELECT TOP 1 c.chapter_number, rp.is_completed, rp.progress
+                     FROM reading_progress rp
+                     JOIN chapters c ON rp.chapter_id = c.id
+                     WHERE rp.user_id = @userId AND c.novel_id = @novelId
+                     ORDER BY c.chapter_number DESC";
+
+            using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", AuthService.CurrentUser.Id);
+            command.Parameters.AddWithValue("@novelId", _novelId);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                return (reader.GetInt32(0), reader.GetBoolean(1));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo progreso actual: {ex.Message}");
+        }
+
+        return null;
     }
 
     /// <summary>
