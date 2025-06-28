@@ -242,18 +242,49 @@ public partial class ReaderPage : ContentPage
 
     private async void OnBackClicked(object sender, EventArgs e)
     {
-        // Verificar si debe marcarse como completado
-        bool shouldComplete = _scrollProgress >= 0.95;
-
-        // Guardar progreso antes de salir
-        await SaveProgress(shouldComplete);
-
-        if (shouldComplete)
+        try
         {
-            System.Diagnostics.Debug.WriteLine("Capítulo marcado como completado");
-        }
+            // Guardar progreso antes de salir (si estás en el reader)
+            if (this is ReaderPage)
+            {
+                await SaveProgress(_scrollProgress >= 0.95);
 
-        await Navigation.PopAsync();
+                if (AuthService.CurrentUser != null)
+                {
+                    var chapterService = new ChapterService(_databaseService);
+                    await chapterService.SyncUserLibraryProgressAsync(AuthService.CurrentUser.Id, _novelId);
+                }
+            }
+
+            // Verificar si podemos hacer pop
+            if (Navigation.NavigationStack.Count > 1)
+            {
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                // Si no hay stack, volver al tab anterior
+                await Shell.Current.GoToAsync("..");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en navegación back: {ex.Message}");
+
+            // Último recurso - volver a la biblioteca
+            try
+            {
+                await Shell.Current.GoToAsync("//LibraryPage");
+            }
+            catch
+            {
+                // Si todo falla, solo cerrar la página actual
+                if (Navigation.NavigationStack.Count > 1)
+                {
+                    Navigation.RemovePage(this);
+                }
+            }
+        }
     }
 
     private void OnMenuClicked(object sender, EventArgs e)

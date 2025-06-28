@@ -91,12 +91,14 @@
         <!-- Historial -->
         <Tab Title="📝 Historial" Icon="history_icon.png">
             <ShellContent Title="Historial de Lectura" 
+                          Route="HistoryPage"
                           ContentTemplate="{DataTemplate views:HistoryPage}"/>
         </Tab>
 
         <!-- Más opciones -->
         <Tab Title="➕ Más" Icon="more_icon.png">
             <ShellContent Title="Más Opciones" 
+                          Route="MorePage"
                           ContentTemplate="{DataTemplate views:MorePage}"/>
         </Tab>
     </TabBar>

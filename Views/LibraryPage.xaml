@@ -22,220 +22,222 @@
                    Margin="0,0,0,10"
                    TextChanged="OnSearchTextChanged"/>
 
-        <!-- Filtros completos con todos los estados -->
-        <ScrollView Grid.Row="1" 
-                    Orientation="Horizontal"
-                    HeightRequest="50"
-                    Margin="0,0,0,10"
-                    Padding="0,0,0,5">
-            <HorizontalStackLayout x:Name="FilterLayout" Spacing="10">
-                <Button Text="📔 Todos" 
+        <!-- Filtros y botón de ordenamiento -->
+        <Grid Grid.Row="1">
+            <ScrollView Orientation="Horizontal"
+                        HeightRequest="50"
+                        Margin="0,0,0,10"
+                        Padding="0,0,0,5">
+                <HorizontalStackLayout x:Name="FilterLayout" Spacing="10">
+                    <Button Text="📔 Todos" 
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                    <Button Text="🧾 Leyendo" 
+                            BackgroundColor="{StaticResource BackgroundMedium}"
+                            TextColor="{StaticResource TextSecondary}"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                    <Button Text="✔️ Completados" 
+                            BackgroundColor="{StaticResource BackgroundMedium}"
+                            TextColor="{StaticResource TextSecondary}"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                    <Button Text="⭐ Favoritos" 
+                            BackgroundColor="{StaticResource BackgroundMedium}"
+                            TextColor="{StaticResource TextSecondary}"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                    <Button Text="⏸️ En pausa" 
+                            BackgroundColor="{StaticResource BackgroundMedium}"
+                            TextColor="{StaticResource TextSecondary}"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                    <Button Text="📋 Planeo leer" 
+                            BackgroundColor="{StaticResource BackgroundMedium}"
+                            TextColor="{StaticResource TextSecondary}"
+                            CornerRadius="15"
+                            Padding="15,5"
+                            Clicked="OnFilterClicked"/>
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <!-- Botón de ordenamiento -->
+            <Button Text="⇅"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextPrimary}"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    CornerRadius="20"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start"
+                    Margin="10"
+                    Clicked="OnSortClicked"/>
+        </Grid>
+
+        <!-- CONTENEDOR PRINCIPAL para Row 2 -->
+        <Grid Grid.Row="2">
+            <!-- ScrollView con CollectionView -->
+            <ScrollView x:Name="CollectionScrollView" IsVisible="True">
+                <CollectionView x:Name="novelsCollection">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" 
+                                         Span="2" 
+                                         VerticalItemSpacing="10" 
+                                         HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                                   CornerRadius="10"
+                                   Padding="0"
+                                   HasShadow="True">
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="200"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- SOLO tap gesture en el Frame principal -->
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnNovelTapped"/>
+                                    </Grid.GestureRecognizers>
+
+                                    <!-- Imagen de portada -->
+                                    <Image Source="{Binding CoverImageSource}"
+                                           Aspect="AspectFill"
+                                           Grid.Row="0"/>
+
+                                    <!-- Contador de capítulos sin leer -->
+                                    <Frame BackgroundColor="{StaticResource Primary}"
+                                           CornerRadius="15"
+                                           Padding="8,4"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Start"
+                                           Margin="5"
+                                           Grid.Row="0"
+                                           IsVisible="{Binding ShowUnreadBadge}">
+                                        <Label Text="{Binding UnreadCount}"
+                                               TextColor="White"
+                                               FontSize="12"
+                                               FontAttributes="Bold"/>
+                                    </Frame>
+
+                                    <!-- Indicador de favorito -->
+                                    <Frame BackgroundColor="#FFD700"
+                                           CornerRadius="15"
+                                           Padding="6,4"
+                                           HorizontalOptions="Start"
+                                           VerticalOptions="Start"
+                                           Margin="5"
+                                           Grid.Row="0"
+                                           IsVisible="{Binding IsFavorite}">
+                                        <Label Text="⭐"
+                                               TextColor="White"
+                                               FontSize="12"/>
+                                    </Frame>
+
+                                    <!-- Botón de menú (tres puntos) para opciones -->
+                                    <Button Text="⋮"
+                                            BackgroundColor="{StaticResource BackgroundMedium}"
+                                            TextColor="White"
+                                            FontSize="20"
+                                            WidthRequest="40"
+                                            HeightRequest="40"
+                                            CornerRadius="20"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Start"
+                                            Margin="5"
+                                            Grid.Row="0"
+                                            Clicked="OnNovelMenuClicked"
+                                            Opacity="0.8"/>
+
+                                    <!-- Título y información -->
+                                    <VerticalStackLayout Grid.Row="1" 
+                                                       Padding="10,8"
+                                                       Spacing="4">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               MaxLines="2"
+                                               LineBreakMode="TailTruncation"/>
+
+                                        <Label Text="{Binding Author}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontSize="12"
+                                               LineBreakMode="TailTruncation"/>
+
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="📖 "/>
+                                                        <Span Text="{Binding ChapterCount}"/>
+                                                        <Span Text=" caps"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                            <Label TextColor="{StaticResource TextMuted}"
+                                                   FontSize="11">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="📚 "/>
+                                                        <Span Text="{Binding LastReadChapter}"/>
+                                                        <Span Text=" leído"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+
+            <!-- Indicador de carga -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               Color="{StaticResource Primary}"
+                               IsVisible="False"
+                               IsRunning="False"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+            <!-- Estado vacío - AL FINAL para estar encima -->
+            <VerticalStackLayout x:Name="EmptyStateLayout"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Spacing="20"
+                                 IsVisible="False"
+                                 BackgroundColor="{StaticResource BackgroundDark}">
+                <Label Text="📚"
+                       FontSize="60"
+                       HorizontalOptions="Center"/>
+                <Label x:Name="EmptyStateMessage"
+                       Text="Tu biblioteca está vacía"
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="16"
+                       HorizontalOptions="Center"/>
+                <Button Text="Explorar novelas"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-                <Button Text="🧾 Leyendo" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-                <Button Text="✔️ Completados" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-                <Button Text="⭐ Favoritos" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-                <Button Text="⏸️ En pausa" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-                <Button Text="📋 Planeo leer" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"
-                        Clicked="OnFilterClicked"/>
-            </HorizontalStackLayout>
-        </ScrollView>
-
-        <!-- Botón de ordenamiento -->
-        <Button Text="⇅"
-                BackgroundColor="{StaticResource BackgroundMedium}"
-                TextColor="{StaticResource TextPrimary}"
-                WidthRequest="40"
-                HeightRequest="40"
-                CornerRadius="20"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                Margin="10"
-                Grid.Row="1"
-                Clicked="OnSortClicked"/>
-
-        <!-- Indicador de carga -->
-        <ActivityIndicator x:Name="LoadingIndicator"
-                   Color="{StaticResource Primary}"
-                   IsVisible="False"
-                   IsRunning="False"
-                   Grid.Row="2"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"/>
-
-        <!-- Estado vacío -->
-        <VerticalStackLayout x:Name="EmptyStateLayout"
-                     Grid.Row="2"
-                     VerticalOptions="Center"
-                     HorizontalOptions="Center"
-                     Spacing="20"
-                     IsVisible="False">
-            <Label Text="📚"
-                   FontSize="60"
-                   HorizontalOptions="Center"/>
-            <Label x:Name="EmptyStateMessage"
-                   Text="Tu biblioteca está vacía"
-                   TextColor="{StaticResource TextSecondary}"
-                   FontSize="16"
-                   HorizontalOptions="Center"/>
-            <!-- ARREGLO 1: Navegación corregida -->
-            <Button Text="Explorar novelas"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
-                    CornerRadius="20"
-                    Padding="20,10"
-                    Clicked="OnExploreNovelsClicked"/>
-        </VerticalStackLayout>
-
-        <!-- Grid de novelas -->
-        <ScrollView Grid.Row="2">
-            <CollectionView x:Name="novelsCollection">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" 
-                                     Span="2" 
-                                     VerticalItemSpacing="10" 
-                                     HorizontalItemSpacing="10"/>
-                </CollectionView.ItemsLayout>
-
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
-                               CornerRadius="10"
-                               Padding="0"
-                               HasShadow="True">
-
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="200"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- SOLO tap gesture en el Frame principal -->
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnNovelTapped"/>
-                                </Grid.GestureRecognizers>
-
-                                <!-- Imagen de portada -->
-                                <Image Source="{Binding CoverImageSource}"
-                                       Aspect="AspectFill"
-                                       Grid.Row="0"/>
-
-                                <!-- Contador de capítulos sin leer -->
-                                <Frame BackgroundColor="{StaticResource Primary}"
-                                       CornerRadius="15"
-                                       Padding="8,4"
-                                       HorizontalOptions="Start"
-                                       VerticalOptions="`"
-                                       Margin="5"
-                                       Grid.Row="0"
-                                       IsVisible="{Binding ShowUnreadBadge}">
-                                    <Label Text="{Binding UnreadCount}"
-                                           TextColor="White"
-                                           FontSize="12"
-                                           FontAttributes="Bold"/>
-                                </Frame>
-
-                                <!-- Indicador de favorito -->
-                                <Frame BackgroundColor="#FFD700"
-                                       CornerRadius="15"
-                                       Padding="6,4"
-                                       HorizontalOptions="Start"
-                                       VerticalOptions="Start"
-                                       Margin="5"
-                                       Grid.Row="0"
-                                       IsVisible="{Binding IsFavorite}">
-                                    <Label Text="⭐"
-                                           TextColor="White"
-                                           FontSize="12"/>
-                                </Frame>
-
-                                <!-- Botón de menú (tres puntos) para opciones -->
-                                <Button Text="⋮"
-                                        BackgroundColor="{StaticResource BackgroundMedium}"
-                                        TextColor="White"
-                                        FontSize="20"
-                                        WidthRequest="40"
-                                        HeightRequest="40"
-                                        CornerRadius="20"
-                                        HorizontalOptions="End"
-                                        VerticalOptions="Start"
-                                        Margin="5"
-                                        Grid.Row="0"
-                                        Clicked="OnNovelMenuClicked"
-                                        Opacity="0.8"/>
-
-                                <!-- Título y información -->
-                                <VerticalStackLayout Grid.Row="1" 
-                                   Padding="10,8"
-                                   Spacing="4">
-                                    <Label Text="{Binding Title}"
-                                           TextColor="{StaticResource TextPrimary}"
-                                           FontSize="14"
-                                           FontAttributes="Bold"
-                                           MaxLines="2"
-                                           LineBreakMode="TailTruncation"/>
-
-                                    <Label Text="{Binding Author}"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           FontSize="12"
-                                           LineBreakMode="TailTruncation"/>
-
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Label TextColor="{StaticResource TextMuted}"
-                               FontSize="11">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="📖 "/>
-                                                    <Span Text="{Binding ChapterCount}"/>
-                                                    <Span Text=" caps"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-
-                                        <Label TextColor="{StaticResource TextMuted}"
-                               FontSize="11">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="📚 "/>
-                                                    <Span Text="{Binding LastReadChapter}"/>
-                                                    <Span Text=" leído"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
+                        CornerRadius="20"
+                        Padding="20,10"
+                        Clicked="OnExploreNovelsClicked"
+                        HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Grid>
     </Grid>
 </ContentPage>

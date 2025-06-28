@@ -6,6 +6,12 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
+        // Registrar rutas para navegación
+        Routing.RegisterRoute("LibraryPage", typeof(Views.LibraryPage));
+        Routing.RegisterRoute("ExplorePage", typeof(Views.ExplorePage));
+        Routing.RegisterRoute("HistoryPage", typeof(Views.HistoryPage));
+        Routing.RegisterRoute("MorePage", typeof(Views.MorePage));
+
         // Navegación segura
         this.Navigated += OnShellNavigated;
     }
@@ -113,30 +119,48 @@ public partial class AppShell : Shell
     /// <summary>
     /// Método público para cambiar al tab de Explorar
     /// </summary>
+    /// <summary>
+    /// Navega al tab de Explorar
+    /// </summary>
     public async Task NavigateToExplorePage()
     {
         try
         {
-            // Buscar el tab de Explorar
+            // Método 1: Cambiar de tab directamente
             if (this.CurrentItem is TabBar tabBar)
             {
+                // Buscar el tab de Explorar por título o route
                 var exploreTab = tabBar.Items.FirstOrDefault(tab =>
                     tab.Title.Contains("Explorar") ||
-                    tab.Items.Any(item => item.Route == "ExplorePage"));
+                    tab.Route == "ExploreTab");
 
                 if (exploreTab != null)
                 {
-                    // Cambiar al tab
-                    Device.BeginInvokeOnMainThread(() =>
+                    // Cambiar al tab en el UI thread
+                    await Device.InvokeOnMainThreadAsync(() =>
                     {
-                        tabBar.CurrentItem = exploreTab;
+                        Shell.Current.CurrentItem = exploreTab;
                     });
+                    return;
                 }
             }
+
+            // Método 2: Usar navegación por ruta
+            await Shell.Current.GoToAsync("//ExploreTab");
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error navegando a Explorar: {ex.Message}");
+
+            // Método 3: Último recurso
+            try
+            {
+                await Shell.Current.GoToAsync("//ExplorePage");
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("Fallo navegación alternativa");
+            }
         }
     }
 }

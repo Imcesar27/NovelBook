@@ -79,6 +79,7 @@ public partial class LibraryPage : ContentPage
     public LibraryPage()
     {
         InitializeComponent();
+        DebugShellStructure();
 
         // Inicializar servicios
         _databaseService = new DatabaseService();
@@ -96,7 +97,74 @@ public partial class LibraryPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await LoadLibraryAsync();
+
+        try
+        {
+            System.Diagnostics.Debug.WriteLine($"LibraryPage.OnAppearing - Filtro actual: {_currentFilter}");
+
+            // Si estamos en un filtro vacío, volver a "Todos"
+            if (_libraryItems != null && _libraryItems.Count > 0)
+            {
+                var currentFilteredItems = GetFilteredItems(_currentFilter);
+                if (currentFilteredItems.Count == 0 && _currentFilter != "📔 Todos")
+                {
+                    System.Diagnostics.Debug.WriteLine("Filtro vacío detectado, cambiando a Todos");
+
+                    // Resetear visualmente el filtro
+                    ResetFilterToAll();
+
+                    // Aplicar filtro "Todos"
+                    _currentFilter = "📔 Todos";
+                }
+            }
+
+            // Siempre recargar la biblioteca
+            await LoadLibraryAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en OnAppearing: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Resetea visualmente el filtro a "Todos"
+    /// </summary>
+    private void ResetFilterToAll()
+    {
+        Device.BeginInvokeOnMainThread(() =>
+        {
+            if (FilterLayout != null && FilterLayout.Children.Count > 0)
+            {
+                // Buscar el botón "Todos"
+                var todosButton = FilterLayout.Children
+                    .OfType<Button>()
+                    .FirstOrDefault(b => b.Text.Contains("Todos"));
+
+                if (todosButton != null)
+                {
+                    UpdateFilterButtons(todosButton);
+                }
+            }
+        });
+    }
+
+    /// <summary>
+    /// Obtiene los items filtrados sin actualizar la UI
+    /// </summary>
+    private List<UserLibraryItem> GetFilteredItems(string filterText)
+    {
+        if (_libraryItems == null) return new List<UserLibraryItem>();
+
+        return filterText switch
+        {
+            "🧾 Leyendo" => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
+            "✔️ Completados" => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
+            "⭐ Favoritos" => _libraryItems.Where(x => x.IsFavorite).ToList(),
+            "⏸️ En pausa" => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
+            "📋 Planeo leer" => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
+            _ => _libraryItems
+        };
     }
 
     /// <summary>
@@ -106,9 +174,21 @@ public partial class LibraryPage : ContentPage
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine("LoadLibraryAsync - Iniciando carga");
+
             // Mostrar indicador de carga
-            LoadingIndicator.IsVisible = true;
-            LoadingIndicator.IsRunning = true;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (LoadingIndicator != null)
+                {
+                    LoadingIndicator.IsVisible = true;
+                    LoadingIndicator.IsRunning = true;
+                }
+
+                // Ocultar temporalmente la colección
+                if (novelsCollection != null)
+                    novelsCollection.IsVisible = false;
+            });
 
             // Verificar si hay usuario logueado
             if (AuthService.CurrentUser == null)
@@ -117,23 +197,26 @@ public partial class LibraryPage : ContentPage
                 return;
             }
 
-            // NUEVO: Sincronizar progreso antes de cargar
+            // Sincronizar progreso
             var chapterService = new ChapterService(_databaseService);
-
-            // Obtener lista inicial para sincronizar
             _libraryItems = await _libraryService.GetUserLibraryAsync();
 
-            // Sincronizar el progreso de cada novela
-            foreach (var item in _libraryItems)
+            System.Diagnostics.Debug.WriteLine($"Novelas cargadas: {_libraryItems?.Count ?? 0}");
+
+            // Sincronizar progreso de cada novela
+            if (_libraryItems != null && _libraryItems.Count > 0)
             {
-                await chapterService.SyncUserLibraryProgressAsync(
-                    AuthService.CurrentUser.Id,
-                    item.NovelId
-                );
-            }
+                foreach (var item in _libraryItems)
+                {
+                    await chapterService.SyncUserLibraryProgressAsync(
+                        AuthService.CurrentUser.Id,
+                        item.NovelId
+                    );
+                }
 
-            // Volver a cargar con datos actualizados
-            _libraryItems = await _libraryService.GetUserLibraryAsync();
+                // Recargar con datos actualizados
+                _libraryItems = await _libraryService.GetUserLibraryAsync();
+            }
 
             if (_libraryItems == null || _libraryItems.Count == 0)
             {
@@ -141,43 +224,50 @@ public partial class LibraryPage : ContentPage
                 return;
             }
 
-            // Procesar las novelas para mostrar en la UI
-            var displayItems = new List<LibraryDisplayItem>();
-
-            foreach (var item in _libraryItems)
-            {
-                var displayItem = await LibraryDisplayItem.FromUserLibraryItem(item, _imageService);
-                displayItems.Add(displayItem);
-            }
-
-            // Actualizar la interfaz en el hilo principal
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                novelsCollection.ItemsSource = displayItems;
-                EmptyStateLayout.IsVisible = false;
-                novelsCollection.IsVisible = true;
-            });
-
-            // Aplicar filtro actual
-            ApplyFilter(_currentFilter);
+            // Aplicar el filtro actual y mostrar
+            await RefreshDisplay();
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error cargando librería: {ex.Message}");
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                ShowEmptyState("Error al cargar la biblioteca");
-            });
+            ShowEmptyState("Error al cargar la biblioteca");
         }
         finally
         {
-            // Ocultar indicador de carga
             Device.BeginInvokeOnMainThread(() =>
             {
-                LoadingIndicator.IsVisible = false;
-                LoadingIndicator.IsRunning = false;
+                if (LoadingIndicator != null)
+                {
+                    LoadingIndicator.IsVisible = false;
+                    LoadingIndicator.IsRunning = false;
+                }
             });
         }
+    }
+
+    /// <summary>
+    /// Refresca la visualización con el filtro actual
+    /// </summary>
+    private async Task RefreshDisplay()
+    {
+        if (_libraryItems == null) return;
+
+        // Obtener items filtrados
+        var filteredItems = GetFilteredItems(_currentFilter);
+
+        System.Diagnostics.Debug.WriteLine($"RefreshDisplay - Filtro: {_currentFilter}, Items: {filteredItems.Count}");
+
+        // Si el filtro actual no tiene items pero hay items en total, cambiar a "Todos"
+        if (filteredItems.Count == 0 && _libraryItems.Count > 0 && _currentFilter != "📔 Todos")
+        {
+            System.Diagnostics.Debug.WriteLine("Filtro vacío, cambiando a Todos");
+            _currentFilter = "📔 Todos";
+            filteredItems = _libraryItems;
+            ResetFilterToAll();
+        }
+
+        // Procesar para mostrar
+        await UpdateDisplayItems(filteredItems);
     }
 
     /// <summary>
@@ -187,10 +277,26 @@ public partial class LibraryPage : ContentPage
     {
         Device.BeginInvokeOnMainThread(() =>
         {
+            // Ocultar la colección y su ScrollView
+            if (novelsCollection != null)
+                novelsCollection.IsVisible = false;
+
+            // Si tienes un ScrollView padre, ocúltalo también
+            var scrollView = this.FindByName<ScrollView>("CollectionScrollView");
+            if (scrollView != null)
+                scrollView.IsVisible = false;
+
+            // Mostrar el estado vacío
             EmptyStateMessage.Text = message;
             EmptyStateLayout.IsVisible = true;
-            novelsCollection.IsVisible = false;
             LoadingIndicator.IsVisible = false;
+
+            // Asegurar que el EmptyStateLayout esté al frente
+            if (EmptyStateLayout.Parent is Grid parentGrid)
+            {
+                parentGrid.Children.Remove(EmptyStateLayout);
+                parentGrid.Children.Add(EmptyStateLayout); // Re-agregar al final
+            }
         });
     }
 
@@ -395,24 +501,16 @@ public partial class LibraryPage : ContentPage
     {
         if (_libraryItems == null) return;
 
-        List<UserLibraryItem> filteredItems = filterText switch
-        {
-            "🧾 Leyendo" => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
-            "✔️ Completados" => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
-            "⭐ Favoritos" => _libraryItems.Where(x => x.IsFavorite).ToList(),
-            "⏸️ En pausa" => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
-            "📋 Planeo leer" => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
-            _ => _libraryItems // "📔 Todos"
-        };
+        _currentFilter = filterText;
+        var filteredItems = GetFilteredItems(filterText);
 
-        // Actualizar la colección mostrada
-        UpdateDisplayItems(filteredItems);
+        // Actualizar la visualización
+        Task.Run(async () => await UpdateDisplayItems(filteredItems));
     }
-
     /// <summary>
     /// Actualiza los elementos mostrados en la interfaz
     /// </summary>
-    private async void UpdateDisplayItems(List<UserLibraryItem> items)
+    private async Task UpdateDisplayItems(List<UserLibraryItem> items)
     {
         var displayItems = new List<LibraryDisplayItem>();
 
@@ -424,17 +522,29 @@ public partial class LibraryPage : ContentPage
 
         Device.BeginInvokeOnMainThread(() =>
         {
-            novelsCollection.ItemsSource = displayItems;
+            System.Diagnostics.Debug.WriteLine($"Actualizando UI con {displayItems.Count} items");
+
+            if (novelsCollection != null)
+            {
+                novelsCollection.ItemsSource = null; // Forzar refresh
+                novelsCollection.ItemsSource = displayItems;
+                novelsCollection.IsVisible = true;
+            }
+
+            var scrollView = this.FindByName<ScrollView>("CollectionScrollView");
+            if (scrollView != null)
+                scrollView.IsVisible = true;
 
             if (displayItems.Count == 0)
             {
-                var filterName = _currentFilter.Replace("📔 ", "").Replace("🧾 ", "").Replace("✔️ ", "").Replace("⭐ ", "").Replace("⏸️ ", "").Replace("📋 ", "");
+                var filterName = _currentFilter.Replace("📔 ", "").Replace("🧾 ", "")
+                    .Replace("✔️ ", "").Replace("⭐ ", "").Replace("⏸️ ", "").Replace("📋 ", "");
                 ShowEmptyState($"No hay novelas en: {filterName}");
             }
             else
             {
-                EmptyStateLayout.IsVisible = false;
-                novelsCollection.IsVisible = true;
+                if (EmptyStateLayout != null)
+                    EmptyStateLayout.IsVisible = false;
             }
         });
     }
@@ -513,29 +623,75 @@ public partial class LibraryPage : ContentPage
     /// <summary>
     /// Navega a la página de explorar cuando no hay novelas en la biblioteca
     /// </summary>
+    /// <summary>
+    /// Navega a la página de explorar cuando no hay novelas
+    /// </summary>
+    /// 
+
     private async void OnExploreNovelsClicked(object sender, EventArgs e)
     {
         try
         {
-            // Obtener el AppShell actual
-            if (Shell.Current is AppShell appShell)
+            // NO usar Navigation.PushAsync - usar Shell navigation
+            if (Shell.Current?.CurrentItem is TabBar tabBar)
             {
-                await appShell.NavigateToExplorePage();
-            }
-            else
-            {
-                // Método alternativo
-                await Shell.Current.GoToAsync("//ExplorePage");
+                // Buscar y activar el tab de Explorar
+                var exploreTab = tabBar.Items.FirstOrDefault(x => x.Title.Contains("Explorar"));
+                if (exploreTab != null)
+                {
+                    await Device.InvokeOnMainThreadAsync(() =>
+                    {
+                        Shell.Current.CurrentItem = exploreTab;
+                    });
+                }
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error navegando: {ex.Message}");
 
-            // Último recurso
-            await DisplayAlert("Info", "Por favor, selecciona la pestaña 'Explorar' manualmente", "OK");
+            // Si falla, intentar navegación por ruta
+            try
+            {
+                await Shell.Current.GoToAsync("//ExplorePage");
+            }
+            catch
+            {
+                await DisplayAlert("Error", "No se pudo navegar a Explorar", "OK");
+            }
         }
     }
 
+
+
+    private void DebugShellStructure()
+    {
+        System.Diagnostics.Debug.WriteLine("=== ESTRUCTURA SHELL ===");
+
+        if (Shell.Current != null)
+        {
+            System.Diagnostics.Debug.WriteLine($"Shell.Current: {Shell.Current.GetType().Name}");
+            System.Diagnostics.Debug.WriteLine($"CurrentItem: {Shell.Current.CurrentItem?.GetType().Name}");
+
+            if (Shell.Current.CurrentItem is TabBar tabBar)
+            {
+                System.Diagnostics.Debug.WriteLine($"CurrentItem en TabBar: {tabBar.CurrentItem?.Title}");
+
+                foreach (var item in tabBar.Items)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Tab: {item.Title}");
+                    if (item.Items.Count > 0)
+                    {
+                        foreach (var content in item.Items)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"  - Content: {content.Title}, Route: {content.Route}");
+                        }
+                    }
+                }
+            }
+        }
+
+        System.Diagnostics.Debug.WriteLine("========================");
+    }
 
 }
