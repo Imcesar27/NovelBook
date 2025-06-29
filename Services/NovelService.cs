@@ -548,4 +548,70 @@ public class NovelService
             return false;
         }
     }
+
+    // Agregar estos métodos al NovelService.cs
+
+    /// <summary>
+    /// Obtiene todos los géneros disponibles
+    /// </summary>
+    public async Task<List<string>> GetAllGenresAsync()
+    {
+        var genres = new List<string>();
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = "SELECT name FROM genres ORDER BY name";
+            using var command = new SqlCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                genres.Add(reader.GetString(0));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo géneros: {ex.Message}");
+        }
+
+        return genres;
+    }
+
+    /// <summary>
+    /// Obtiene los géneros de una novela específica
+    /// </summary>
+    public async Task<List<string>> GetNovelGenresAsync(int novelId)
+    {
+        var genres = new List<string>();
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"SELECT g.name 
+                     FROM genres g
+                     INNER JOIN novel_genres ng ON g.id = ng.genre_id
+                     WHERE ng.novel_id = @novelId
+                     ORDER BY g.name";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@novelId", novelId);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                genres.Add(reader.GetString(0));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo géneros de la novela: {ex.Message}");
+        }
+
+        return genres;
+    }
 }
