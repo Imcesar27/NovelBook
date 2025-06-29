@@ -12,6 +12,12 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("HistoryPage", typeof(Views.HistoryPage));
         Routing.RegisterRoute("MorePage", typeof(Views.MorePage));
 
+        Routing.RegisterRoute(nameof(Views.CreateNovelPage), typeof(Views.CreateNovelPage));
+        Routing.RegisterRoute(nameof(Views.EditNovelPage), typeof(Views.EditNovelPage));
+        Routing.RegisterRoute(nameof(Views.ManageNovelsPage), typeof(Views.ManageNovelsPage));
+        Routing.RegisterRoute(nameof(Views.ManageGenresPage), typeof(Views.ManageGenresPage));
+
+
         // Navegación segura
         this.Navigated += OnShellNavigated;
     }

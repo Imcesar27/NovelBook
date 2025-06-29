@@ -362,4 +362,190 @@ public class NovelService
 
         return chapters;
     }
+
+    /// <summary>
+    /// Elimina una novela y todos sus datos relacionados
+    /// </summary>
+    /// <param name="novelId">ID de la novela a eliminar</param>
+    /// <returns>true si se eliminó correctamente, false en caso contrario</returns>
+    public async Task<bool> DeleteNovelAsync(int novelId)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            // La eliminación en cascada debería encargarse de todo
+            // (capítulos, géneros, reseñas, etc.)
+            var query = "DELETE FROM novels WHERE id = @id";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@id", novelId);
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error eliminando novela: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Actualiza una novela existente
+    /// </summary>
+    public async Task<bool> UpdateNovelAsync(int novelId, string title, string author,
+        string synopsis, string status, List<string> genres, byte[] coverImage, string imageType)
+    {
+        using var connection = _database.GetConnection();
+        await connection.OpenAsync();
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            // 1. Actualizar información básica de la novela
+            var updateQuery = @"UPDATE novels 
+                              SET title = @title, 
+                                  author = @author, 
+                                  synopsis = @synopsis, 
+                                  status = @status,
+                                  updated_at = GETDATE()
+                              WHERE id = @id";
+
+            using var updateCommand = new SqlCommand(updateQuery, connection, transaction);
+            updateCommand.Parameters.AddWithValue("@id", novelId);
+            updateCommand.Parameters.AddWithValue("@title", title);
+            updateCommand.Parameters.AddWithValue("@author", author);
+            updateCommand.Parameters.AddWithValue("@synopsis", synopsis);
+            updateCommand.Parameters.AddWithValue("@status", status);
+
+            await updateCommand.ExecuteNonQueryAsync();
+
+            // 2. Actualizar imagen si se proporcionó una nueva
+            if (coverImage != null && coverImage.Length > 0)
+            {
+                // Primero, eliminar imagen anterior si existe
+                var deleteImageQuery = "DELETE FROM novel_covers WHERE novel_id = @novelId";
+                using var deleteImageCommand = new SqlCommand(deleteImageQuery, connection, transaction);
+                deleteImageCommand.Parameters.AddWithValue("@novelId", novelId);
+                await deleteImageCommand.ExecuteNonQueryAsync();
+
+                // Insertar nueva imagen
+                var imageQuery = @"INSERT INTO novel_covers (novel_id, image_data, image_type) 
+                                 VALUES (@novelId, @imageData, @imageType)";
+
+                using var imageCommand = new SqlCommand(imageQuery, connection, transaction);
+                imageCommand.Parameters.AddWithValue("@novelId", novelId);
+                imageCommand.Parameters.AddWithValue("@imageData", coverImage);
+                imageCommand.Parameters.AddWithValue("@imageType", imageType ?? "image/jpeg");
+
+                await imageCommand.ExecuteNonQueryAsync();
+
+                // Actualizar URL de la imagen en la novela
+                var updateImageUrlQuery = "UPDATE novels SET cover_image = @url WHERE id = @id";
+                using var updateImageUrlCommand = new SqlCommand(updateImageUrlQuery, connection, transaction);
+                updateImageUrlCommand.Parameters.AddWithValue("@url", $"db://covers/{novelId}");
+                updateImageUrlCommand.Parameters.AddWithValue("@id", novelId);
+                await updateImageUrlCommand.ExecuteNonQueryAsync();
+            }
+
+            // 3. Actualizar géneros
+            // Primero eliminar todos los géneros actuales
+            var deleteGenresQuery = "DELETE FROM novel_genres WHERE novel_id = @novelId";
+            using var deleteGenresCommand = new SqlCommand(deleteGenresQuery, connection, transaction);
+            deleteGenresCommand.Parameters.AddWithValue("@novelId", novelId);
+            await deleteGenresCommand.ExecuteNonQueryAsync();
+
+            // Insertar nuevos géneros
+            foreach (var genre in genres)
+            {
+                var genreQuery = @"INSERT INTO novel_genres (novel_id, genre_id)
+                                 SELECT @novelId, id FROM genres WHERE name = @genreName";
+
+                using var genreCommand = new SqlCommand(genreQuery, connection, transaction);
+                genreCommand.Parameters.AddWithValue("@novelId", novelId);
+                genreCommand.Parameters.AddWithValue("@genreName", genre);
+
+                await genreCommand.ExecuteNonQueryAsync();
+            }
+
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            System.Diagnostics.Debug.WriteLine($"Error actualizando novela: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Elimina un capítulo específico
+    /// </summary>
+    public async Task<bool> DeleteChapterAsync(int chapterId)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            // Obtener información del capítulo antes de eliminarlo
+            var getInfoQuery = "SELECT novel_id FROM chapters WHERE id = @id";
+            using var getInfoCommand = new SqlCommand(getInfoQuery, connection, transaction);
+            getInfoCommand.Parameters.AddWithValue("@id", chapterId);
+
+            var novelId = await getInfoCommand.ExecuteScalarAsync();
+            if (novelId == null)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+
+            // Primero eliminar registros relacionados en reading_history
+            var deleteHistoryQuery = "DELETE FROM reading_history WHERE chapter_id = @chapterId";
+            using var deleteHistoryCommand = new SqlCommand(deleteHistoryQuery, connection, transaction);
+            deleteHistoryCommand.Parameters.AddWithValue("@chapterId", chapterId);
+            await deleteHistoryCommand.ExecuteNonQueryAsync();
+
+            // Eliminar registros en reading_progress
+            var deleteProgressQuery = "DELETE FROM reading_progress WHERE chapter_id = @chapterId";
+            using var deleteProgressCommand = new SqlCommand(deleteProgressQuery, connection, transaction);
+            deleteProgressCommand.Parameters.AddWithValue("@chapterId", chapterId);
+            await deleteProgressCommand.ExecuteNonQueryAsync();
+
+            // Eliminar registros en downloads si existen
+            var deleteDownloadsQuery = "DELETE FROM downloads WHERE chapter_id = @chapterId";
+            using var deleteDownloadsCommand = new SqlCommand(deleteDownloadsQuery, connection, transaction);
+            deleteDownloadsCommand.Parameters.AddWithValue("@chapterId", chapterId);
+            await deleteDownloadsCommand.ExecuteNonQueryAsync();
+
+            // Ahora sí eliminar el capítulo
+            var deleteQuery = "DELETE FROM chapters WHERE id = @id";
+            using var deleteCommand = new SqlCommand(deleteQuery, connection, transaction);
+            deleteCommand.Parameters.AddWithValue("@id", chapterId);
+            await deleteCommand.ExecuteNonQueryAsync();
+
+            // Actualizar el conteo de capítulos en la novela
+            var updateCountQuery = @"UPDATE novels 
+                                   SET chapter_count = (SELECT COUNT(*) FROM chapters WHERE novel_id = @novelId),
+                                       updated_at = GETDATE()
+                                   WHERE id = @novelId";
+
+            using var updateCommand = new SqlCommand(updateCountQuery, connection, transaction);
+            updateCommand.Parameters.AddWithValue("@novelId", novelId);
+            await updateCommand.ExecuteNonQueryAsync();
+
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error eliminando capítulo: {ex.Message}");
+            return false;
+        }
+    }
 }

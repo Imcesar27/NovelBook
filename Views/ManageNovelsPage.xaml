@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.ManageNovelsPage"
+             Title="Gestionar Novelas"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+       <!-- Header personalizado -->
+        <Grid Grid.Row="0"
+              BackgroundColor="{StaticResource BackgroundMedium}"
+              Padding="10"
+              HeightRequest="56">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Text="←"
+                    FontSize="24"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    WidthRequest="48"
+                    HeightRequest="48"
+                    Clicked="OnBackButtonClicked"/>
+
+            <Label Grid.Column="1"
+                   Text="Gestionar Novelas"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </Grid>
+
+        <!-- Barra de búsqueda y estadísticas -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource BackgroundMedium}"
+               CornerRadius="10"
+               Margin="10"
+               Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Estadísticas -->
+                <HorizontalStackLayout Grid.Row="0" 
+                                     Spacing="20" 
+                                     HorizontalOptions="Center"
+                                     Margin="0,0,0,10">
+                    <Label TextColor="{StaticResource TextPrimary}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="📚 Total: " TextColor="{StaticResource TextSecondary}"/>
+                                <Span Text="0" FontAttributes="Bold" x:Name="TotalNovelsLabel"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Label TextColor="{StaticResource TextPrimary}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="✅ Activas: " TextColor="{StaticResource TextSecondary}"/>
+                                <Span Text="0" FontAttributes="Bold" x:Name="ActiveNovelsLabel"/>
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </HorizontalStackLayout>
+
+                <!-- Buscador -->
+                <SearchBar Grid.Row="1"
+                           x:Name="SearchBar"
+                           Placeholder="Buscar novela..."
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           BackgroundColor="{StaticResource BackgroundLight}"
+                           TextChanged="OnSearchTextChanged"/>
+            </Grid>
+        </Frame>
+
+        <!-- Botón para agregar nueva novela -->
+        <Grid Grid.Row="1" Margin="10,0,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Text="+ Nueva Novela"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="20"
+                    HeightRequest="45"
+                    Margin="0,0,5,0"
+                    Clicked="OnAddNovelClicked"/>
+
+            <Button Grid.Column="1"
+                    Text="🏷️ Géneros"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextPrimary}"
+                    FontAttributes="Bold"
+                    CornerRadius="20"
+                    HeightRequest="45"
+                    WidthRequest="100"
+                    Margin="5,0,0,0"
+                    Clicked="OnManageGenresClicked"/>
+        </Grid>
+
+        <!-- Lista de novelas -->
+        <ScrollView Grid.Row="2">
+            <CollectionView x:Name="NovelsCollection"
+                            Margin="10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                               CornerRadius="10"
+                               Padding="15"
+                               Margin="0,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Portada -->
+                                <Frame Grid.Column="0"
+                                       CornerRadius="5"
+                                       Padding="0"
+                                       HeightRequest="100"
+                                       WidthRequest="80">
+                                    <Image Source="{Binding CoverImageSource}"
+                                           Aspect="AspectFill"/>
+                                </Frame>
+
+                                <!-- Información -->
+                                <VerticalStackLayout Grid.Column="1" 
+                                                   Padding="10,0"
+                                                   Spacing="5">
+                                    <Label Text="{Binding Title}"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"/>
+
+                                    <Label Text="{Binding Author}"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           LineBreakMode="TailTruncation"/>
+
+                                    <HorizontalStackLayout Spacing="15">
+                                        <Label TextColor="{StaticResource TextMuted}"
+                                               FontSize="12">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="📖 "/>
+                                                    <Span Text="{Binding ChapterCount}"/>
+                                                    <Span Text=" caps"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                        <Frame BackgroundColor="{Binding StatusColor}"
+                                               CornerRadius="10"
+                                               Padding="8,4"
+                                               VerticalOptions="Center">
+                                            <Label Text="{Binding StatusText}"
+                                                   TextColor="White"
+                                                   FontSize="11"/>
+                                        </Frame>
+                                    </HorizontalStackLayout>
+
+                                    <Label Text="{Binding UpdatedAtText}"
+                                           TextColor="{StaticResource TextMuted}"
+                                           FontSize="11"/>
+                                </VerticalStackLayout>
+
+                                <!-- Botones de acción -->
+                                <VerticalStackLayout Grid.Column="2"
+                                                   Spacing="5"
+                                                   VerticalOptions="Center">
+                                    <!-- Botón Editar -->
+                                    <Button Text="✏️"
+                                            BackgroundColor="{StaticResource Primary}"
+                                            TextColor="White"
+                                            WidthRequest="40"
+                                            HeightRequest="40"
+                                            CornerRadius="20"
+                                            FontSize="18"
+                                            Clicked="OnEditNovelClicked"
+                                            CommandParameter="{Binding Id}"/>
+
+                                    <!-- Botón Eliminar -->
+                                    <Button Text="🗑️"
+                                            BackgroundColor="{StaticResource Error}"
+                                            TextColor="White"
+                                            WidthRequest="40"
+                                            HeightRequest="40"
+                                            CornerRadius="20"
+                                            FontSize="18"
+                                            Clicked="OnDeleteNovelClicked"
+                                            CommandParameter="{Binding Id}"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Indicador de carga -->
+        <ActivityIndicator Grid.Row="2"
+                          x:Name="LoadingIndicator"
+                          Color="{StaticResource Primary}"
+                          IsVisible="False"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center"/>
+
+        <!-- Estado vacío -->
+        <VerticalStackLayout Grid.Row="2"
+                           x:Name="EmptyState"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Spacing="20"
+                           IsVisible="False">
+            <Label Text="📚"
+                   FontSize="60"
+                   HorizontalOptions="Center"/>
+            <Label Text="No hay novelas registradas"
+                   TextColor="{StaticResource TextSecondary}"
+                   FontSize="16"
+                   HorizontalOptions="Center"/>
+            <Button Text="Agregar primera novela"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    CornerRadius="20"
+                    Padding="20,10"
+                    Clicked="OnAddNovelClicked"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

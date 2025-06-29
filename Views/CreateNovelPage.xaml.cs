@@ -219,10 +219,20 @@ public partial class CreateNovelPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Se ejecuta cuando aparece la página
+    /// </summary>
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        // Deshabilitar navegación de Shell
+        Shell.SetNavBarIsVisible(this, false);
+    }
+
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var confirm = await DisplayAlert("Confirmar", "¿Deseas cancelar? Se perderán los cambios", "Sí", "No");
-        if (confirm)
+        bool answer = await DisplayAlert("Cancelar", "¿Deseas cancelar la creación de la novela?", "Sí", "No");
+        if (answer)
         {
             await Navigation.PopAsync();
         }

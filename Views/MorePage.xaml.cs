@@ -63,12 +63,13 @@ public partial class MorePage : ContentPage
                     break;
 
                 case "ManageNovels":
-                    await DisplayAlert("Gestionar", "Gestionar novelas - Próximamente", "OK");
+                    await Shell.Current.GoToAsync(nameof(ManageNovelsPage));
                     break;
 
                 case "Logout": 
                     await HandleLogout();
                     break;
+
 
             }
         }

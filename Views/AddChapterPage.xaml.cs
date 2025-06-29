@@ -29,6 +29,7 @@ public partial class AddChapterPage : ContentPage
         ContentEditor.TextChanged += OnContentTextChanged;
     }
 
+
     private void OnContentTextChanged(object sender, TextChangedEventArgs e)
     {
         var text = e.NewTextValue ?? "";

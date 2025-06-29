@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.ManageGenresPage"
+             Title="Gestionar Géneros"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header personalizado -->
+        <Grid Grid.Row="0"
+              BackgroundColor="{StaticResource BackgroundMedium}"
+              Padding="10"
+              HeightRequest="56">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Text="←"
+                    FontSize="24"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource TextPrimary}"
+                    WidthRequest="48"
+                    HeightRequest="48"
+                    Clicked="OnBackButtonClicked"/>
+
+            <Label Grid.Column="1"
+                   Text="Gestionar Géneros"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+        </Grid>
+
+
+        <!-- Agregar nuevo género -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource BackgroundMedium}"
+               CornerRadius="10"
+               Margin="10"
+               Padding="15">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Agregar Nuevo Género"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"/>
+
+                <Grid ColumnSpacing="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Entry Grid.Column="0"
+                           x:Name="NewGenreEntry"
+                           Placeholder="Nombre del género"
+                           PlaceholderColor="{StaticResource TextMuted}"
+                           TextColor="{StaticResource TextPrimary}"
+                           BackgroundColor="{StaticResource BackgroundLight}"
+                           Completed="OnAddGenreClicked"/>
+
+                    <Button Grid.Column="1"
+                            Text="Agregar"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            CornerRadius="10"
+                            Clicked="OnAddGenreClicked"/>
+                </Grid>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Estadísticas -->
+        <Label Grid.Row="1"
+               x:Name="StatsLabel"
+               Text="Total de géneros: 0"
+               TextColor="{StaticResource TextSecondary}"
+               HorizontalOptions="Center"
+               Margin="0,0,0,10"/>
+
+        <!-- Lista de géneros -->
+        <ScrollView Grid.Row="2">
+            <CollectionView x:Name="GenresCollection"
+                            Margin="10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                               CornerRadius="10"
+                               Padding="15"
+                               Margin="0,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Nombre del género -->
+                                <Label Grid.Column="0"
+                                       Text="{Binding Name}"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       FontSize="16"
+                                       VerticalOptions="Center"/>
+
+                                <!-- Contador de novelas -->
+                                <Label Grid.Column="1"
+                                       Text="{Binding NovelCountText}"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       FontSize="12"
+                                       VerticalOptions="Center"
+                                       Margin="0,0,10,0"/>
+
+                                <!-- Botón eliminar -->
+                                <Button Grid.Column="2"
+                                        Text="🗑️"
+                                        BackgroundColor="{StaticResource Error}"
+                                        TextColor="White"
+                                        WidthRequest="40"
+                                        HeightRequest="40"
+                                        CornerRadius="20"
+                                        FontSize="18"
+                                        Clicked="OnDeleteGenreClicked"
+                                        CommandParameter="{Binding Id}"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <!-- Indicador de carga -->
+        <ActivityIndicator Grid.Row="2"
+                          x:Name="LoadingIndicator"
+                          Color="{StaticResource Primary}"
+                          IsVisible="False"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center"/>
+
+        <!-- Estado vacío -->
+        <VerticalStackLayout Grid.Row="2"
+                           x:Name="EmptyState"
+                           VerticalOptions="Center"
+                           HorizontalOptions="Center"
+                           Spacing="20"
+                           IsVisible="False">
+            <Label Text="🏷️"
+                   FontSize="60"
+                   HorizontalOptions="Center"/>
+            <Label Text="No hay géneros registrados"
+                   TextColor="{StaticResource TextSecondary}"
+                   FontSize="16"
+                   HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
