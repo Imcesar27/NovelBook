@@ -6,17 +6,19 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
-        // Registrar rutas para navegación
-        Routing.RegisterRoute("LibraryPage", typeof(Views.LibraryPage));
-        Routing.RegisterRoute("ExplorePage", typeof(Views.ExplorePage));
-        Routing.RegisterRoute("HistoryPage", typeof(Views.HistoryPage));
-        Routing.RegisterRoute("MorePage", typeof(Views.MorePage));
+        // IMPORTANTE: NO registrar rutas que ya están definidas en AppShell.xaml
+        // Las siguientes líneas están COMENTADAS porque causan duplicación:
+        // Routing.RegisterRoute("LibraryPage", typeof(Views.LibraryPage));
+        // Routing.RegisterRoute("ExplorePage", typeof(Views.ExplorePage));
+        // Routing.RegisterRoute("HistoryPage", typeof(Views.HistoryPage));
+        // Routing.RegisterRoute("MorePage", typeof(Views.MorePage));
 
+        // Solo registrar rutas para páginas que NO están en tabs o shell content
+        // Estas son páginas que se navegan por código (no están en AppShell.xaml)
         Routing.RegisterRoute(nameof(Views.CreateNovelPage), typeof(Views.CreateNovelPage));
         Routing.RegisterRoute(nameof(Views.EditNovelPage), typeof(Views.EditNovelPage));
         Routing.RegisterRoute(nameof(Views.ManageNovelsPage), typeof(Views.ManageNovelsPage));
         Routing.RegisterRoute(nameof(Views.ManageGenresPage), typeof(Views.ManageGenresPage));
-
 
         // Navegación segura
         this.Navigated += OnShellNavigated;
@@ -122,9 +124,6 @@ public partial class AppShell : Shell
         }
     }
 
-    /// <summary>
-    /// Método público para cambiar al tab de Explorar
-    /// </summary>
     /// <summary>
     /// Navega al tab de Explorar
     /// </summary>

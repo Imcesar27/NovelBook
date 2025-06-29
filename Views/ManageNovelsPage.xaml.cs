@@ -261,7 +261,34 @@ public partial class ManageNovelsPage : ContentPage
     /// </summary>
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            // Intentar hacer pop de la página actual
+            if (Navigation.NavigationStack.Count > 1)
+            {
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                // Si no hay stack, volver usando Shell
+                await Shell.Current.GoToAsync("..");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error navegando hacia atrás: {ex.Message}");
+
+            // Como último recurso, volver al tab de Más
+            try
+            {
+                await Shell.Current.GoToAsync("//MoreTab");
+            }
+            catch
+            {
+                // Si todo falla, mostrar mensaje
+                await DisplayAlert("Error", "No se pudo volver a la página anterior", "OK");
+            }
+        }
 
     }
 }
