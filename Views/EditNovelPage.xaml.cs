@@ -97,6 +97,9 @@ public partial class EditNovelPage : ContentPage
                     case "paused":     // Mantener compatibilidad por si acaso
                         StatusPicker.SelectedIndex = 2; // En pausa
                         break;
+                    case "cancelled":
+                        StatusPicker.SelectedIndex = 3; // Cancelada
+                        break;
                     default:
                         StatusPicker.SelectedIndex = 0;
                         break;
@@ -606,6 +609,7 @@ public partial class EditNovelPage : ContentPage
                 0 => "ongoing",    // En curso
                 1 => "completed",  // Completado
                 2 => "hiatus",     // En pausa (cambiar de "paused" a "hiatus")
+                3 => "cancelled",  // Cancelada
                 _ => "ongoing"
             };
 

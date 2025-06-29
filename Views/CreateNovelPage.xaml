@@ -51,6 +51,7 @@
                                 <x:String>En curso</x:String>
                                 <x:String>Completado</x:String>
                                 <x:String>En pausa</x:String>
+                                <x:String>Cancelada</x:String>
                             </Picker.Items>
                         </Picker>
                     </VerticalStackLayout>
@@ -58,39 +59,10 @@
                     <!-- Géneros -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Géneros"
-                               TextColor="{StaticResource TextPrimary}"/>
+           TextColor="{StaticResource TextPrimary}"/>
                         <ScrollView Orientation="Horizontal" HeightRequest="50">
                             <HorizontalStackLayout x:Name="GenresLayout" Spacing="10" Padding="0,0,0,5">
-                                <Button Text="Romance" 
-                                        BackgroundColor="{StaticResource BackgroundLight}"
-                                        TextColor="{StaticResource TextSecondary}"
-                                        CornerRadius="15"
-                                        Padding="15,5"
-                                        Clicked="OnGenreClicked"/>
-                                <Button Text="Fantasía" 
-                                        BackgroundColor="{StaticResource BackgroundLight}"
-                                        TextColor="{StaticResource TextSecondary}"
-                                        CornerRadius="15"
-                                        Padding="15,5"
-                                        Clicked="OnGenreClicked"/>
-                                <Button Text="Acción" 
-                                        BackgroundColor="{StaticResource BackgroundLight}"
-                                        TextColor="{StaticResource TextSecondary}"
-                                        CornerRadius="15"
-                                        Padding="15,5"
-                                        Clicked="OnGenreClicked"/>
-                                <Button Text="Drama" 
-                                        BackgroundColor="{StaticResource BackgroundLight}"
-                                        TextColor="{StaticResource TextSecondary}"
-                                        CornerRadius="15"
-                                        Padding="15,5"
-                                        Clicked="OnGenreClicked"/>
-                                <Button Text="Comedia" 
-                                        BackgroundColor="{StaticResource BackgroundLight}"
-                                        TextColor="{StaticResource TextSecondary}"
-                                        CornerRadius="15"
-                                        Padding="15,5"
-                                        Clicked="OnGenreClicked"/>
+                       
                             </HorizontalStackLayout>
                         </ScrollView>
                     </VerticalStackLayout>

@@ -83,6 +83,9 @@ public partial class ManageNovelsPage : ContentPage
             {
                 EmptyState.IsVisible = true;
             }
+
+           // Actualizar estadísticas
+            UpdateStatistics();
         }
         catch (Exception ex)
         {
@@ -130,6 +133,7 @@ public partial class ManageNovelsPage : ContentPage
             "ongoing" => "En curso",
             "completed" => "Completado",
             "hiatus" => "En pausa",
+            "cancelled" => "Cancelada",
             _ => status
         };
     }
@@ -144,6 +148,7 @@ public partial class ManageNovelsPage : ContentPage
             "ongoing" => Color.FromArgb("#F59E0B"),      // Naranja
             "completed" => Color.FromArgb("#10B981"),    // Verde
             "hiatus" => Color.FromArgb("#6B7280"),       // Gris
+            "cancelled" => Color.FromArgb("#EF4444"),    // Rojo para cancelada
             _ => Color.FromArgb("#6B7280")
         };
     }
@@ -290,6 +295,26 @@ public partial class ManageNovelsPage : ContentPage
             }
         }
 
+    }
+
+    private void UpdateStatistics()
+    {
+        if (_novels == null) return;
+
+        // Total de novelas
+        TotalNovelsLabel.Text = _novels.Count.ToString();
+
+        // Contar por estado
+        int activeCount = _novels.Count(n => n.Status.ToLower() == "ongoing");
+        int completedCount = _novels.Count(n => n.Status.ToLower() == "completed");
+        int pausedCount = _novels.Count(n => n.Status.ToLower() == "hiatus");
+        int cancelledCount = _novels.Count(n => n.Status.ToLower() == "cancelled");
+
+        // Actualizar labels
+        ActiveNovelsLabel.Text = activeCount.ToString();
+        CompletedNovelsLabel.Text = completedCount.ToString();
+        PausedNovelsLabel.Text = pausedCount.ToString();
+        CancelledNovelsLabel.Text = cancelledCount.ToString();
     }
 }
 

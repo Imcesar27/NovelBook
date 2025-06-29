@@ -10,6 +10,7 @@ public partial class CreateNovelPage : ContentPage
     private List<string> _selectedGenres = new List<string>();
     private byte[] _coverImageData;
     private string _coverImageType;
+    private List<string> _allGenres = new List<string>();
 
     public CreateNovelPage()
     {
@@ -21,6 +22,9 @@ public partial class CreateNovelPage : ContentPage
         StatusPicker.SelectedIndex = 0;
 
         SynopsisEditor.TextChanged += OnSynopsisTextChanged;
+
+        // Cargar géneros al iniciar
+        _ = LoadGenresAsync();
     }
 
     private void OnSynopsisTextChanged(object sender, TextChangedEventArgs e)
@@ -179,7 +183,8 @@ public partial class CreateNovelPage : ContentPage
             {
                 { "En curso", "ongoing" },
                 { "Completado", "completed" },
-                { "En pausa", "hiatus" }
+                { "En pausa", "hiatus" },
+                { "Cancelada", "cancelled" }
             };
 
             var status = statusMap[StatusPicker.SelectedItem.ToString()];
@@ -222,11 +227,15 @@ public partial class CreateNovelPage : ContentPage
     /// <summary>
     /// Se ejecuta cuando aparece la página
     /// </summary>
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
+
         // Deshabilitar navegación de Shell
         Shell.SetNavBarIsVisible(this, false);
+
+        // Recargar géneros por si se agregaron nuevos
+        await LoadGenresAsync();
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)
@@ -235,6 +244,49 @@ public partial class CreateNovelPage : ContentPage
         if (answer)
         {
             await Navigation.PopAsync();
+        }
+    }
+
+    private async Task LoadGenresAsync()
+    {
+        try
+        {
+            // Obtener todos los géneros disponibles
+            _allGenres = await _novelService.GetAllGenresAsync();
+
+            // Actualizar la UI en el hilo principal
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                UpdateGenresUI();
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando géneros: {ex.Message}");
+        }
+    }
+
+    //metodo para actualizar la UI de géneros
+    private void UpdateGenresUI()
+    {
+        // Limpiar géneros existentes (los hardcodeados)
+        GenresLayout.Children.Clear();
+
+        // Crear un botón para cada género
+        foreach (var genre in _allGenres)
+        {
+            var genreButton = new Button
+            {
+                Text = genre,
+                BackgroundColor = Color.FromArgb("#3D3D3D"),
+                TextColor = Color.FromArgb("#B0B0B0"),
+                CornerRadius = 15,
+                Padding = new Thickness(15, 5),
+                Margin = new Thickness(0, 0, 5, 0)
+            };
+
+            genreButton.Clicked += OnGenreClicked;
+            GenresLayout.Children.Add(genreButton);
         }
     }
 }

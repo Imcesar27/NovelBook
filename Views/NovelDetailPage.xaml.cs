@@ -410,6 +410,7 @@ public partial class NovelDetailPage : ContentPage
             "ongoing" => "En curso",
             "completed" => "Completado",
             "hiatus" => "En pausa",
+            "cancelled" => "Cancelada",
             _ => status
         };
     }
@@ -424,6 +425,7 @@ public partial class NovelDetailPage : ContentPage
             "ongoing" => "#F59E0B",      // Naranja para en curso
             "completed" => "#10B981",    // Verde para completado
             "hiatus" => "#6B7280",       // Gris para en pausa
+            "cancelled" => "#EF4444",    // Rojo para cancelada
             _ => "#6B7280"
         };
     }

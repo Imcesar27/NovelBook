@@ -53,28 +53,69 @@
                 </Grid.RowDefinitions>
 
                 <!-- Estadísticas -->
-                <HorizontalStackLayout Grid.Row="0" 
-                                     Spacing="20" 
-                                     HorizontalOptions="Center"
-                                     Margin="0,0,0,10">
-                    <Label TextColor="{StaticResource TextPrimary}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="📚 Total: " TextColor="{StaticResource TextSecondary}"/>
-                                <Span Text="0" FontAttributes="Bold" x:Name="TotalNovelsLabel"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <Label TextColor="{StaticResource TextPrimary}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="✅ Activas: " TextColor="{StaticResource TextSecondary}"/>
-                                <Span Text="0" FontAttributes="Bold" x:Name="ActiveNovelsLabel"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                </HorizontalStackLayout>
+                    <!-- Primera fila de estadísticas -->
+                    <HorizontalStackLayout Grid.Row="0" 
+                         Spacing="20" 
+                         HorizontalOptions="Center"
+                         Margin="0,0,0,5">
+                        <Label TextColor="{StaticResource TextPrimary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="📚 Total: " TextColor="{StaticResource TextSecondary}"/>
+                                    <Span Text="0" FontAttributes="Bold" x:Name="TotalNovelsLabel"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label TextColor="{StaticResource TextPrimary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="✅ Activas: " TextColor="{StaticResource Success}"/>
+                                    <Span Text="0" FontAttributes="Bold" x:Name="ActiveNovelsLabel" TextColor="{StaticResource Success}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <!-- Segunda fila de estadísticas -->
+                    <HorizontalStackLayout Grid.Row="1" 
+                         Spacing="20" 
+                         HorizontalOptions="Center"
+                         Margin="0,0,0,10">
+                        <Label TextColor="{StaticResource TextPrimary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="📗 Completadas: " TextColor="#10B981"/>
+                                    <Span Text="0" FontAttributes="Bold" x:Name="CompletedNovelsLabel" TextColor="#10B981"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label TextColor="{StaticResource TextPrimary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="⏸️ Pausadas: " TextColor="#F59E0B"/>
+                                    <Span Text="0" FontAttributes="Bold" x:Name="PausedNovelsLabel" TextColor="#F59E0B"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label TextColor="{StaticResource TextPrimary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="❌ Canceladas: " TextColor="{StaticResource Error}"/>
+                                    <Span Text="0" FontAttributes="Bold" x:Name="CancelledNovelsLabel" TextColor="{StaticResource Error}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+                </Grid>
 
                 <!-- Buscador -->
                 <SearchBar Grid.Row="1"

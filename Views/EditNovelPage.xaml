@@ -51,6 +51,7 @@
                                 <x:String>En curso</x:String>
                                 <x:String>Completado</x:String>
                                 <x:String>En pausa</x:String>
+                                <x:String>Cancelada</x:String>
                             </Picker.Items>
                         </Picker>
                     </VerticalStackLayout>
