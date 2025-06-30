@@ -370,6 +370,56 @@ public class ChapterService
             System.Diagnostics.Debug.WriteLine($"Error sincronizando progreso: {ex.Message}");
         }
     }
+
+    // Agregar este método en la clase ChapterService
+
+    /// <summary>
+    /// Actualiza el contenido y título de un capítulo existente
+    /// </summary>
+    /// <param name="chapterId">ID del capítulo a actualizar</param>
+    /// <param name="title">Nuevo título del capítulo</param>
+    /// <param name="content">Nuevo contenido del capítulo</param>
+    /// <returns>true si se actualizó correctamente, false en caso contrario</returns>
+    public async Task<bool> UpdateChapterAsync(int chapterId, string title, string content)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            // Actualizar el capítulo
+            var updateQuery = @"UPDATE chapters 
+                           SET title = @title, 
+                               content = @content
+                           WHERE id = @id";
+
+            using var command = new SqlCommand(updateQuery, connection);
+            command.Parameters.AddWithValue("@id", chapterId);
+            command.Parameters.AddWithValue("@title", title);
+            command.Parameters.AddWithValue("@content", content ?? "");
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            // También actualizar la fecha de modificación de la novela
+            if (rowsAffected > 0)
+            {
+                var updateNovelQuery = @"UPDATE novels 
+                                   SET updated_at = GETDATE() 
+                                   WHERE id = (SELECT novel_id FROM chapters WHERE id = @chapterId)";
+
+                using var novelCommand = new SqlCommand(updateNovelQuery, connection);
+                novelCommand.Parameters.AddWithValue("@chapterId", chapterId);
+                await novelCommand.ExecuteNonQueryAsync();
+            }
+
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando capítulo: {ex.Message}");
+            return false;
+        }
+    }
 }
 
 /// <summary>

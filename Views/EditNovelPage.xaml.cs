@@ -352,54 +352,13 @@ public partial class EditNovelPage : ContentPage
     /// <summary>
     /// Edita un capítulo existente
     /// </summary>
+
     private async void OnEditChapterClicked(object sender, EventArgs e)
     {
         if (sender is Button button && button.CommandParameter is int chapterId)
         {
-            // Buscar el capítulo en la lista
-            var chapter = _chapters.FirstOrDefault(c => c.Id == chapterId);
-            if (chapter == null) return;
-
-            // Pedir nuevo título
-            string newTitle = await DisplayPromptAsync(
-                "Editar Capítulo",
-                "Ingrese el nuevo título del capítulo:",
-                initialValue: chapter.Title,
-                placeholder: "Título del capítulo");
-
-            if (string.IsNullOrWhiteSpace(newTitle))
-                return;
-
-            // Pedir nuevo contenido
-            string newContent = await DisplayPromptAsync(
-                "Contenido",
-                "Ingrese el nuevo contenido del capítulo:",
-                initialValue: chapter.Content,
-                placeholder: "Contenido...");
-
-            if (string.IsNullOrWhiteSpace(newContent))
-                return;
-
-            try
-            {
-                // Actualizar en la base de datos
-                bool success = await UpdateChapterAsync(chapterId, newTitle, newContent);
-
-                if (success)
-                {
-                    // Recargar capítulos
-                    await LoadChapters();
-                    await DisplayAlert("Éxito", "Capítulo actualizado correctamente", "OK");
-                }
-                else
-                {
-                    await DisplayAlert("Error", "No se pudo actualizar el capítulo", "OK");
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Error", $"Error al actualizar: {ex.Message}", "OK");
-            }
+            // Navegar a la nueva página de edición de capítulos mejorada
+            await Navigation.PushAsync(new EditChapterPage(chapterId));
         }
     }
 

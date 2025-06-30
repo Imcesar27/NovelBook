@@ -152,7 +152,7 @@
                     FontAttributes="Bold"
                     CornerRadius="20"
                     HeightRequest="45"
-                    WidthRequest="100"
+                    WidthRequest="120"
                     Margin="5,0,0,0"
                     Clicked="OnManageGenresClicked"/>
         </Grid>
