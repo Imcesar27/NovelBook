@@ -6,10 +6,15 @@ public partial class AppShell : Shell
     {
         InitializeComponent();
 
+        // Rutas de navegacion
         Routing.RegisterRoute(nameof(Views.CreateNovelPage), typeof(Views.CreateNovelPage));
         Routing.RegisterRoute(nameof(Views.EditNovelPage), typeof(Views.EditNovelPage));
         Routing.RegisterRoute(nameof(Views.ManageNovelsPage), typeof(Views.ManageNovelsPage));
         Routing.RegisterRoute(nameof(Views.ManageGenresPage), typeof(Views.ManageGenresPage));
+
+        // Rutas del sistema de reseñas
+        Routing.RegisterRoute(nameof(Views.ReviewsPage), typeof(Views.ReviewsPage));
+        Routing.RegisterRoute(nameof(Views.WriteReviewPage), typeof(Views.WriteReviewPage));
 
         // Navegación segura
         this.Navigated += OnShellNavigated;

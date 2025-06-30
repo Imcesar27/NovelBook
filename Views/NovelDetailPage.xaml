@@ -42,7 +42,7 @@
                                Aspect="AspectFill"/>
                     </Frame>
 
-                    <!-- Información básica -->
+                    <!-- Informacion basica -->
                     <VerticalStackLayout Grid.Column="1" 
                                        Padding="15,0,0,0"
                                        Spacing="8"
@@ -91,7 +91,7 @@
                 </Grid>
             </Grid>
 
-            <!-- Botones de acción -->
+            <!-- Botones de accion -->
             <Grid Padding="20,15" ColumnSpacing="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -116,8 +116,19 @@
                         CornerRadius="20"
                         HeightRequest="45"
                         Clicked="OnAddToLibraryClicked"/>
-                
-              <!--  <Button Grid.Column="1"
+
+                <!-- Boton de reseñas -->
+                <Button Grid.Column="2"
+                        x:Name="ReviewsButton"
+                        Text="⭐ Reseñas"
+                        BackgroundColor="#FFD700"
+                        TextColor="#121212"
+                        FontAttributes="Bold"
+                        CornerRadius="20"
+                        HeightRequest="45"
+                        Clicked="OnReviewsClicked"/>
+
+                <!--  <Button Grid.Column="1"
                         x:Name="AddToLibraryButton"
                         Text="+ Agregar"
                         BackgroundColor="{StaticResource BackgroundMedium}"
@@ -128,7 +139,7 @@
                         Clicked="OnAddToLibraryClicked"/>   -->
             </Grid>
 
-            <!-- Tabs de información -->
+            <!-- Tabs de informacion -->
             <Grid BackgroundColor="{StaticResource BackgroundMedium}" 
                   HeightRequest="50">
                 <Grid.ColumnDefinitions>
@@ -178,7 +189,7 @@
                                LineHeight="1.5"
                                LineBreakMode="WordWrap"/>
 
-                        <!-- Tags/Géneros -->
+                        <!-- Tags/Generos -->
                         <Label Text="Géneros"
                                FontSize="16"
                                FontAttributes="Bold"
@@ -190,15 +201,15 @@
                                   Direction="Row"
                                   JustifyContent="Start"
                                   AlignItems="Start">
-                            <!-- Los géneros se agregarán dinámicamente -->
+                            <!-- Los generos se agregaran dinamicamente -->
                         </FlexLayout>
                     </VerticalStackLayout>
 
-                    <!-- Capítulos (oculto inicialmente) -->
+                    <!-- Capitulos (oculto inicialmente) -->
                     <VerticalStackLayout x:Name="ChaptersContent" 
                                        IsVisible="False"
                                        Spacing="10">
-                        <!-- Barra de búsqueda y filtros -->
+                        <!-- Barra de busqueda y filtros -->
                         <SearchBar Placeholder="Buscar capítulo..."
                                    PlaceholderColor="{StaticResource TextMuted}"
                                    TextColor="{StaticResource TextPrimary}"

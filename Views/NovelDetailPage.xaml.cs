@@ -865,6 +865,17 @@ public partial class NovelDetailPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Maneja el clic en el botón de reseñas
+    /// </summary>
+    private async void OnReviewsClicked(object sender, EventArgs e)
+    {
+        if (_novel != null)
+        {
+            // Navegar a la página de reseñas
+            await Navigation.PushAsync(new ReviewsPage(_novelId, _novel.Title));
+        }
+    }
 
     // Constructor temporal para compatibilidad
     public NovelDetailPage() : this(1)

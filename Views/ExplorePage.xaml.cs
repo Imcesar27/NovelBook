@@ -100,6 +100,7 @@ public partial class ExplorePage : ContentPage
             "ongoing" => "#F59E0B",
             "completed" => "#10B981",
             "hiatus" => "#6B7280",
+            "cancelled" => "#EF4444",    // Rojo para cancelada
             _ => "#6B7280"
         };
     }
