@@ -31,11 +31,11 @@
                         <!-- Estrellas para calificar -->
                         <Grid HorizontalOptions="Center" ColumnSpacing="5">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="60"/>
                             </Grid.ColumnDefinitions>
 
                             <Button Grid.Column="0" 

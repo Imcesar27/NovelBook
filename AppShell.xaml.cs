@@ -17,7 +17,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(Views.WriteReviewPage), typeof(Views.WriteReviewPage));
 
         //Ruta del editor de capítulos
+        Routing.RegisterRoute(nameof(Views.EditChapterPage), typeof(Views.EditChapterPage));
 
+        // Rutas de navegación de capítulos
+        Routing.RegisterRoute(nameof(Views.AddChapterPage), typeof(Views.AddChapterPage));
         Routing.RegisterRoute(nameof(Views.EditChapterPage), typeof(Views.EditChapterPage));
 
         // Navegación segura

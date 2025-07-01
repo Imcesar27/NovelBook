@@ -79,7 +79,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Contenido del capítulo -->
+            <!-- Editor de contenido mejorado -->
             <Frame BackgroundColor="{StaticResource BackgroundMedium}"
                    CornerRadius="10"
                    Padding="20">
@@ -89,9 +89,10 @@
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}"/>
 
-                    <!-- Barra de herramientas -->
+                    <!-- Barra de herramientas de formato expandida -->
                     <ScrollView Orientation="Horizontal" HeightRequest="50">
-                        <HorizontalStackLayout Spacing="10">
+                        <HorizontalStackLayout Spacing="5">
+                            <!-- Formato básico -->
                             <Button Text="B"
                                     FontAttributes="Bold"
                                     BackgroundColor="{StaticResource BackgroundLight}"
@@ -99,7 +100,9 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="5"
+                                    ToolTipProperties.Text="Negrita"
                                     Clicked="OnBoldClicked"/>
+
                             <Button Text="I"
                                     FontAttributes="Italic"
                                     BackgroundColor="{StaticResource BackgroundLight}"
@@ -107,32 +110,63 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="5"
+                                    ToolTipProperties.Text="Cursiva"
                                     Clicked="OnItalicClicked"/>
+
                             <Button Text="U̲"
                                     BackgroundColor="{StaticResource BackgroundLight}"
                                     TextColor="{StaticResource TextPrimary}"
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="5"
+                                    ToolTipProperties.Text="Subrayado"
                                     Clicked="OnUnderlineClicked"/>
 
-                            <BoxView WidthRequest="1" 
-                                     BackgroundColor="{StaticResource TextMuted}" 
-                                     Margin="5,5"/>
+                            <!-- Separador visual -->
+                            <BoxView WidthRequest="1"
+                                     HeightRequest="30"
+                                     BackgroundColor="{StaticResource TextSecondary}"
+                                     VerticalOptions="Center"/>
 
-                            <Button Text="¶"
+                            <!-- Alineación -->
+                            <Button Text="⬅"
                                     BackgroundColor="{StaticResource BackgroundLight}"
                                     TextColor="{StaticResource TextPrimary}"
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="5"
-                                    ToolTipProperties.Text="Nuevo párrafo"
-                                    Clicked="OnParagraphClicked"/>
+                                    ToolTipProperties.Text="Alinear izquierda"
+                                    Clicked="OnAlignLeftClicked"/>
 
-                            <Button Text="---"
+                            <Button Text="⬌"
                                     BackgroundColor="{StaticResource BackgroundLight}"
                                     TextColor="{StaticResource TextPrimary}"
-                                    WidthRequest="50"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Centrar"
+                                    Clicked="OnAlignCenterClicked"/>
+
+                            <Button Text="➡"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Alinear derecha"
+                                    Clicked="OnAlignRightClicked"/>
+
+                            <!-- Separador visual -->
+                            <BoxView WidthRequest="1"
+                                     HeightRequest="30"
+                                     BackgroundColor="{StaticResource TextSecondary}"
+                                     VerticalOptions="Center"/>
+
+                            <!-- Elementos especiales -->
+                            <Button Text="—"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
                                     HeightRequest="40"
                                     CornerRadius="5"
                                     ToolTipProperties.Text="Línea divisora"
@@ -146,19 +180,67 @@
                                     CornerRadius="5"
                                     ToolTipProperties.Text="Diálogo"
                                     Clicked="OnDialogClicked"/>
+
+                            <Button Text="..."
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Puntos suspensivos"
+                                    Clicked="OnEllipsisClicked"/>
+
+                            <!-- Separador visual -->
+                            <BoxView WidthRequest="1"
+                                     HeightRequest="30"
+                                     BackgroundColor="{StaticResource TextSecondary}"
+                                     VerticalOptions="Center"/>
+
+                            <!-- Herramientas adicionales -->
+                            <Button Text="¶"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Nuevo párrafo"
+                                    Clicked="OnParagraphClicked"/>
+
+                            <Button Text="💭"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Pensamiento"
+                                    Clicked="OnThoughtClicked"/>
+
+                            <Button Text="⚡"
+                                    BackgroundColor="{StaticResource BackgroundLight}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="5"
+                                    ToolTipProperties.Text="Acción"
+                                    Clicked="OnActionClicked"/>
                         </HorizontalStackLayout>
                     </ScrollView>
 
+                    <!-- Editor de texto grande -->
                     <Editor x:Name="ContentEditor"
-                            Placeholder="Escribe el contenido del capítulo..."
+                            Placeholder="Escribe el contenido del capítulo aquí..."
                             PlaceholderColor="{StaticResource TextMuted}"
                             TextColor="{StaticResource TextPrimary}"
                             BackgroundColor="{StaticResource BackgroundLight}"
-                            HeightRequest="400"
-                            AutoSize="TextChanges"/>
+                            HeightRequest="500"
+                            AutoSize="TextChanges"
+                            TextChanged="OnContentTextChanged"
+                            FontSize="16"/>
 
+                    <!-- Contador de palabras y caracteres -->
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -174,12 +256,19 @@
                                Text="0 caracteres"
                                TextColor="{StaticResource TextMuted}"
                                FontSize="12"
+                               HorizontalOptions="Center"/>
+
+                        <Label x:Name="AutoSaveLabel"
+                               Grid.Column="2"
+                               Text="Borrador automático"
+                               TextColor="{StaticResource TextMuted}"
+                               FontSize="12"
                                HorizontalOptions="End"/>
                     </Grid>
                 </VerticalStackLayout>
             </Frame>
 
-            <!-- Vista previa -->
+            <!-- Vista previa con formato -->
             <Frame BackgroundColor="{StaticResource BackgroundMedium}"
                    CornerRadius="10"
                    Padding="20">
@@ -199,10 +288,14 @@
                            BackgroundColor="{StaticResource BackgroundLight}"
                            CornerRadius="5"
                            Padding="15"
-                           IsVisible="False">
-                        <Label x:Name="PreviewLabel"
-                               TextColor="{StaticResource TextPrimary}"
-                               LineHeight="1.5"/>
+                           IsVisible="False"
+                           HeightRequest="300">
+                        <ScrollView>
+                            <Label x:Name="PreviewLabel"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   LineHeight="1.8"
+                                   FontSize="16"/>
+                        </ScrollView>
                     </Frame>
                 </VerticalStackLayout>
             </Frame>
@@ -210,6 +303,7 @@
             <!-- Botones de acción -->
             <Grid ColumnSpacing="10" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -223,6 +317,16 @@
                         Clicked="OnCancelClicked"/>
 
                 <Button Grid.Column="1"
+                        x:Name="SaveDraftButton"
+                        Text="Guardar Borrador"
+                        BackgroundColor="{StaticResource Secondary}"
+                        TextColor="White"
+                        CornerRadius="10"
+                        HeightRequest="50"
+                        Clicked="OnSaveDraftClicked"/>
+
+                <Button Grid.Column="2"
+                        x:Name="PublishButton"
                         Text="Publicar Capítulo"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
@@ -231,6 +335,12 @@
                         FontAttributes="Bold"
                         Clicked="OnPublishClicked"/>
             </Grid>
+
+            <!-- Indicador de carga -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                              Color="{StaticResource Primary}"
+                              IsVisible="False"
+                              Margin="0,20,0,0"/>
 
         </VerticalStackLayout>
     </ScrollView>

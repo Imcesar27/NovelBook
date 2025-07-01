@@ -315,38 +315,8 @@ public partial class EditNovelPage : ContentPage
     /// </summary>
     private async void OnAddChapterClicked(object sender, EventArgs e)
     {
-        string chapterTitle = await DisplayPromptAsync(
-            "Nuevo Capítulo",
-            "Ingrese el título del capítulo:",
-            placeholder: "Título del capítulo");
-
-        if (!string.IsNullOrWhiteSpace(chapterTitle))
-        {
-            string chapterContent = await DisplayPromptAsync(
-                "Contenido",
-                "Ingrese el contenido del capítulo:",
-                placeholder: "Contenido...");
-
-            if (!string.IsNullOrWhiteSpace(chapterContent))
-            {
-                int nextChapterNumber = _chapters.Count > 0 ?
-                    _chapters.Max(c => c.ChapterNumber) + 1 : 1;
-
-                bool success = await _novelService.AddChapterAsync(
-                    _novelId, nextChapterNumber, chapterTitle, chapterContent);
-
-                if (success)
-                {
-                    await LoadChapters();
-                    UpdateChapterCount();
-                    await DisplayAlert("Éxito", "Capítulo agregado correctamente", "OK");
-                }
-                else
-                {
-                    await DisplayAlert("Error", "No se pudo agregar el capítulo", "OK");
-                }
-            }
-        }
+        // Navegar a la página mejorada de agregar capítulo
+        await Navigation.PushAsync(new AddChapterPage(_novelId));
     }
 
     /// <summary>
@@ -621,13 +591,45 @@ public partial class EditNovelPage : ContentPage
     }
 
     /// <summary>
-    /// Se ejecuta cuando la página aparece
+    /// Se ejecuta cada vez que la página aparece
+    /// Recarga la lista de capítulos para mostrar los nuevos
     /// </summary>
     protected override async void OnAppearing()
     {
         base.OnAppearing();
 
-        // Recargar datos cada vez que aparece la página
-        await LoadNovelDataAsync();
+        // Recargar la lista de capítulos si ya tenemos el ID de la novela
+        if (_novelId > 0)
+        {
+            await LoadChaptersAsync();
+        }
+    }
+
+    /// <summary>
+    /// Carga o recarga la lista de capítulos
+    /// </summary>
+    private async Task LoadChaptersAsync()
+    {
+        try
+        {
+            var chapters = await _novelService.GetChaptersAsync(_novelId);
+
+            var chaptersList = chapters.Select(ch => new
+            {
+                Id = ch.Id,
+                Title = $"Capítulo {ch.ChapterNumber}: {ch.Title}",
+                Info = $"Creado el {ch.CreatedAt:dd/MM/yyyy}"
+            }).ToList();
+
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                ChaptersList.ItemsSource = chaptersList;
+                ChapterCountLabel.Text = $"({chapters.Count} capítulos)";
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando capítulos: {ex.Message}");
+        }
     }
 }
