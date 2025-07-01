@@ -27,7 +27,8 @@
 
                 <!-- Capítulos leídos -->
                 <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
-                    <Label Text="156"
+                    <Label x:Name="ChaptersReadLabel"
+                           Text="0"
                            FontSize="24"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
@@ -40,7 +41,8 @@
 
                 <!-- Tiempo de lectura -->
                 <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
-                    <Label Text="48h"
+                    <Label x:Name="TotalTimeLabel"
+                           Text="0h"
                            FontSize="24"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
@@ -51,9 +53,10 @@
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
-                <!-- Racha de lectura -->
+                <!-- Racha actual -->
                 <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
-                    <Label Text="7"
+                    <Label x:Name="StreakLabel"
+                           Text="0"
                            FontSize="24"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
@@ -66,149 +69,62 @@
             </Grid>
         </Frame>
 
-        <!-- Filtros de tiempo -->
-        <ScrollView Grid.Row="1" 
-                    Orientation="Horizontal"
-                    Padding="10,0"
-                    HeightRequest="50">
-            <HorizontalStackLayout Spacing="10">
-                <Button Text="Hoy"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        CornerRadius="15"
-                        Padding="20,5"
-                        Clicked="OnFilterClicked"
-                        CommandParameter="Today"/>
-                <Button Text="Ayer"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="20,5"
-                        Clicked="OnFilterClicked"
-                        CommandParameter="Yesterday"/>
-                <Button Text="Esta semana"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="20,5"
-                        Clicked="OnFilterClicked"
-                        CommandParameter="ThisWeek"/>
-                <Button Text="Este mes"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="20,5"
-                        Clicked="OnFilterClicked"
-                        CommandParameter="ThisMonth"/>
-                <Button Text="Todo"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="20,5"
-                        Clicked="OnFilterClicked"
-                        CommandParameter="All"/>
-            </HorizontalStackLayout>
-        </ScrollView>
+        <!-- Filtros y opciones -->
+        <Grid Grid.Row="1" Padding="10,0" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Filtro de vista -->
+            <Picker x:Name="ViewPicker"
+                    Grid.Column="0"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextPrimary}"
+                    SelectedIndexChanged="OnViewPickerChanged">
+                <Picker.Items>
+                    <x:String>📅 Historial completo</x:String>
+                    <x:String>📚 Por novela</x:String>
+                    <x:String>📆 Hoy</x:String>
+                    <x:String>📅 Esta semana</x:String>
+                    <x:String>📅 Este mes</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <!-- Botón de limpiar -->
+            <Button Grid.Column="1"
+                    x:Name="ClearButton"
+                    Text="🗑️"
+                    BackgroundColor="{StaticResource BackgroundMedium}"
+                    TextColor="{StaticResource TextSecondary}"
+                    WidthRequest="50"
+                    HeightRequest="40"
+                    CornerRadius="20"
+                    Clicked="OnClearHistoryClicked"/>
+        </Grid>
 
         <!-- Lista de historial -->
         <ScrollView Grid.Row="2" Padding="10">
-            <CollectionView x:Name="HistoryList">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
-                               CornerRadius="10"
-                               Padding="15"
-                               Margin="0,5">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnHistoryItemTapped"/>
-                            </Frame.GestureRecognizers>
+            <StackLayout x:Name="HistoryContainer" Spacing="10">
+                <!-- Los elementos se agregarán dinámicamente aquí -->
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                <!-- Mensaje cuando no hay historial -->
+                <Label x:Name="NoHistoryLabel"
+                       Text="Aún no has leído ningún capítulo"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand"
+                       FontSize="16"
+                       IsVisible="False"/>
 
-                                <!-- Imagen de la novela -->
-                                <Frame Grid.Column="0"
-                                       CornerRadius="5"
-                                       Padding="0"
-                                       BackgroundColor="{StaticResource BackgroundLight}"
-                                       HeightRequest="60"
-                                       WidthRequest="60">
-                                    <Image Source="{Binding CoverImage}"
-                                           Aspect="AspectFill"/>
-                                </Frame>
-
-                                <!-- Información -->
-                                <VerticalStackLayout Grid.Column="1" 
-                                                   Padding="10,0,0,0"
-                                                   VerticalOptions="Center">
-                                    <Label Text="{Binding NovelTitle}"
-                                           TextColor="{StaticResource TextPrimary}"
-                                           FontSize="14"
-                                           FontAttributes="Bold"
-                                           LineBreakMode="TailTruncation"/>
-                                    <Label Text="{Binding ChapterTitle}"
-                                           TextColor="{StaticResource TextSecondary}"
-                                           FontSize="12"
-                                           LineBreakMode="TailTruncation"/>
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Label TextColor="{StaticResource TextMuted}"
-                                               FontSize="11">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="📖 " FontSize="10"/>
-                                                    <Span Text="{Binding ReadingProgress}"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label TextColor="{StaticResource TextMuted}"
-                                               FontSize="11">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="⏱️ " FontSize="10"/>
-                                                    <Span Text="{Binding ReadingTime}"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-
-                                <!-- Hora -->
-                                <Label Grid.Column="2"
-                                       Text="{Binding TimeAgo}"
-                                       TextColor="{StaticResource TextMuted}"
-                                       FontSize="11"
-                                       VerticalOptions="Start"/>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="CenterAndExpand"/>
+            </StackLayout>
         </ScrollView>
-
-        <!-- Estado vacío -->
-        <VerticalStackLayout x:Name="EmptyState"
-                           Grid.Row="2"
-                           VerticalOptions="Center"
-                           HorizontalOptions="Center"
-                           Spacing="20"
-                           IsVisible="False">
-            <Label Text="📚"
-                   FontSize="60"
-                   HorizontalOptions="Center"/>
-            <Label Text="No hay historial de lectura"
-                   TextColor="{StaticResource TextSecondary}"
-                   FontSize="16"
-                   HorizontalOptions="Center"/>
-            <Button Text="Explorar novelas"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
-                    CornerRadius="20"
-                    Padding="20,10"
-                    Clicked="OnExploreClicked"/>
-        </VerticalStackLayout>
     </Grid>
 </ContentPage>
