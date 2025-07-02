@@ -67,6 +67,7 @@ public partial class NovelDetailPage : ContentPage
             if (_novel != null)
             {
                 var coverImage = await _imageService.GetCoverImageAsync(_novel.CoverImage);
+                var reviewCount = await GetReviewCountAsync(_novelId);
 
                 // Actualizar UI en el hilo principal
                 Device.BeginInvokeOnMainThread(() =>
@@ -83,7 +84,8 @@ public partial class NovelDetailPage : ContentPage
                         StatusColor = GetStatusColor(_novel.Status),
                         Synopsis = _novel.Synopsis,
                         LastUpdated = _novel.UpdatedAt.ToString("dd/MM/yyyy"),
-                        Views = "0" // TODO: Implementar sistema de vistas
+                        Views = "0", // TODO: Implementar sistema de vistas
+                        ReviewCount = reviewCount
                     };
 
                     LoadGenres();
@@ -105,6 +107,26 @@ public partial class NovelDetailPage : ContentPage
             {
                 await DisplayAlert("Error", "Error al cargar detalles: " + ex.Message, "OK");
             });
+        }
+    }
+
+    // Método auxiliar
+    private async Task<int> GetReviewCountAsync(int novelId)
+    {
+        try
+        {
+            using var connection = _databaseService.GetConnection();
+            await connection.OpenAsync();
+
+            var query = "SELECT COUNT(*) FROM reviews WHERE novel_id = @novelId";
+            using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@novelId", novelId);
+
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }
+        catch
+        {
+            return 0;
         }
     }
 
@@ -519,47 +541,101 @@ public partial class NovelDetailPage : ContentPage
     /// </summary>
     private async void OnReadClicked(object sender, EventArgs e)
     {
-        if (_novel != null && _novel.ChapterCount > 0)
+        try
         {
-            int chapterToRead = 0; // 0 significa continuar donde quedó
+            if (_novel == null || _novel.ChapterCount == 0)
+            {
+                await DisplayAlert("Info", "Esta novela no tiene capítulos aún", "OK");
+                return;
+            }
 
-            // Si el usuario está logueado, verificar su progreso
+            // Obtener todos los capítulos
+            var chapters = await _novelService.GetChaptersAsync(_novelId);
+            if (chapters == null || chapters.Count == 0)
+            {
+                await DisplayAlert("Sin capítulos", "No se encontraron capítulos disponibles.", "OK");
+                return;
+            }
+
+            // Ordenar por número de capítulo
+            chapters = chapters.OrderBy(c => c.ChapterNumber).ToList();
+
+            int chapterToRead = chapters.First().Id; // Por defecto el primero
+
+            // Si hay usuario logueado, buscar su progreso
             if (AuthService.CurrentUser != null)
             {
-                var userLibrary = await _libraryService.GetUserLibraryAsync();
-                var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+                // Primero verificar si hay un capítulo con progreso parcial
+                var currentProgress = await GetCurrentReadingProgress();
 
-                if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
+                if (currentProgress != null && !currentProgress.Value.IsCompleted)
                 {
-                    // Si ya leyó capítulos, continuar con el siguiente
-                    if (novelInLibrary.LastReadChapter < _novel.ChapterCount)
+                    // Hay un capítulo a medio leer, continuar ese
+                    var chapterInProgress = chapters.FirstOrDefault(c => c.ChapterNumber == currentProgress.Value.ChapterNumber);
+                    if (chapterInProgress != null)
                     {
-                        // Obtener el ID del siguiente capítulo
-                        var chapters = await _novelService.GetChaptersAsync(_novelId);
-                        var nextChapter = chapters.FirstOrDefault(c => c.ChapterNumber == novelInLibrary.LastReadChapter + 1);
-                        if (nextChapter != null)
-                        {
-                            chapterToRead = nextChapter.Id;
-                        }
+                        chapterToRead = chapterInProgress.Id;
                     }
-                    else
+                }
+                else
+                {
+                    // No hay capítulo a medio leer, buscar el último completado
+                    var userLibrary = await _libraryService.GetUserLibraryAsync();
+                    var novelInLibrary = userLibrary.FirstOrDefault(x => x.NovelId == _novelId);
+
+                    if (novelInLibrary != null && novelInLibrary.LastReadChapter > 0)
                     {
-                        // Si completó todos, empezar desde el primero (releer)
-                        var chapters = await _novelService.GetChaptersAsync(_novelId);
-                        var firstChapter = chapters.FirstOrDefault();
-                        if (firstChapter != null)
+                        if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
                         {
-                            chapterToRead = firstChapter.Id;
+                            // Ha completado todos, releer desde el primero
+                            chapterToRead = chapters.First().Id;
+                        }
+                        else
+                        {
+                            // Continuar con el siguiente
+                            var nextChapter = chapters.FirstOrDefault(c => c.ChapterNumber == novelInLibrary.LastReadChapter + 1);
+                            if (nextChapter != null)
+                            {
+                                chapterToRead = nextChapter.Id;
+                            }
                         }
                     }
                 }
             }
 
+            // Navegar al lector con el capítulo correcto
             await Navigation.PushAsync(new ReaderPage(_novelId, chapterToRead, _novel.Title));
         }
-        else
+        catch (Exception ex)
         {
-            await DisplayAlert("Info", "Esta novela no tiene capítulos aún", "OK");
+            await DisplayAlert("Error", "No se pudo cargar el capítulo: " + ex.Message, "OK");
+        }
+    }
+
+    // Método auxiliar para obtener el último capítulo leído
+    private async Task<int> GetLastReadChapterAsync()
+    {
+        try
+        {
+            if (AuthService.CurrentUser == null) return 0;
+
+            using var connection = _databaseService.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"SELECT last_read_chapter 
+                     FROM user_library 
+                     WHERE user_id = @userId AND novel_id = @novelId";
+
+            using var command = new Microsoft.Data.SqlClient.SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", AuthService.CurrentUser.Id);
+            command.Parameters.AddWithValue("@novelId", _novelId);
+
+            var result = await command.ExecuteScalarAsync();
+            return result != DBNull.Value && result != null ? Convert.ToInt32(result) : 0;
+        }
+        catch
+        {
+            return 0;
         }
     }
 

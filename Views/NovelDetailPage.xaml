@@ -57,8 +57,18 @@
                                FontSize="14"
                                TextColor="{StaticResource TextSecondary}"/>
 
-                        <HorizontalStackLayout Spacing="15">
-                            <Label TextColor="{StaticResource Primary}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Rating -->
+                            <Label Grid.Column="0" 
+                                   TextColor="{StaticResource Primary}"
+                                   Margin="0,0,15,0">
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span Text="⭐ " />
@@ -67,7 +77,10 @@
                                 </Label.FormattedText>
                             </Label>
 
-                            <Label TextColor="{StaticResource TextSecondary}">
+                            <!-- Capítulos -->
+                            <Label Grid.Column="1"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   Margin="0,0,15,0">
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span Text="📖 " />
@@ -76,7 +89,23 @@
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
-                        </HorizontalStackLayout>
+
+                            <!-- Botón de reseñas -->
+                            <Button Grid.Column="3"
+                                    x:Name="ReviewsButton"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource Primary}"
+                                    FontSize="12"
+                                    Padding="10,5"
+                                    Clicked="OnReviewsClicked">
+                                <Button.Text>
+                                    <MultiBinding StringFormat="Ver reseñas ({0})">
+                                        <Binding Path="ReviewCount" FallbackValue="0"/>
+                                    </MultiBinding>
+                                </Button.Text>
+                            </Button>
+
+                        </Grid>
 
                         <Frame BackgroundColor="{Binding StatusColor}"
                                CornerRadius="10"
@@ -91,8 +120,8 @@
                 </Grid>
             </Grid>
 
-            <!-- Botones de accion -->
-            <Grid Padding="20,15" ColumnSpacing="10">
+            <!-- Botones de accion principales -->
+            <Grid Padding="20,15" ColumnSpacing="15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -105,38 +134,32 @@
                         TextColor="White"
                         FontAttributes="Bold"
                         CornerRadius="20"
-                        HeightRequest="45"
-                        Clicked="OnReadClicked"/>
+                        HeightRequest="50"
+                        Clicked="OnReadClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" 
+                                Offset="0,2" 
+                                Radius="4" 
+                                Opacity="0.2"/>
+                    </Button.Shadow>
+                </Button>
 
                 <Button Grid.Column="1"
-                        Text="+ Agregar"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextPrimary}"
-                        FontAttributes="Bold"
-                        CornerRadius="20"
-                        HeightRequest="45"
-                        Clicked="OnAddToLibraryClicked"/>
-
-                <!-- Boton de reseñas -->
-                <Button Grid.Column="2"
-                        x:Name="ReviewsButton"
-                        Text="⭐ Reseñas"
-                        BackgroundColor="#FFD700"
-                        TextColor="#121212"
-                        FontAttributes="Bold"
-                        CornerRadius="20"
-                        HeightRequest="45"
-                        Clicked="OnReviewsClicked"/>
-
-                <!--  <Button Grid.Column="1"
                         x:Name="AddToLibraryButton"
                         Text="+ Agregar"
                         BackgroundColor="{StaticResource BackgroundMedium}"
                         TextColor="{StaticResource TextPrimary}"
                         FontAttributes="Bold"
                         CornerRadius="20"
-                        HeightRequest="45"
-                        Clicked="OnAddToLibraryClicked"/>   -->
+                        HeightRequest="50"
+                        Clicked="OnAddToLibraryClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" 
+                                Offset="0,2" 
+                                Radius="4" 
+                                Opacity="0.1"/>
+                    </Button.Shadow>
+                </Button>
             </Grid>
 
             <!-- Tabs de informacion -->
