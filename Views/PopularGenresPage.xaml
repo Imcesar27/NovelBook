@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.PopularGenresPage"
+             Title="Categorías Populares"
+             BackgroundColor="#121212">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Frame Grid.Row="0"
+               BackgroundColor="#1E1E1E"
+               CornerRadius="0"
+               Padding="15"
+               Margin="0,0,0,10"
+               HasShadow="False">
+            <StackLayout>
+                <Label Text="🔥 Categorías Más Populares"
+                       TextColor="White"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+                <Label Text="Descubre los géneros que están en tendencia"
+                       TextColor="#808080"
+                       FontSize="14"
+                       HorizontalOptions="Center"/>
+            </StackLayout>
+        </Frame>
+
+        <!-- Lista de géneros -->
+        <ScrollView Grid.Row="1">
+            <StackLayout x:Name="GenresContainer" Padding="10" Spacing="10">
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="True"
+                                   IsVisible="True"
+                                   Color="#E91E63"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="CenterAndExpand"
+                                   Scale="1.5"/>
+
+                <!-- Los géneros se agregarán dinámicamente aquí -->
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Botón flotante para ver todos los géneros -->
+        <Button x:Name="ViewAllGenresButton"
+                Text="📚 Ver todos"
+                BackgroundColor="#E91E63"
+                TextColor="White"
+                CornerRadius="25"
+                WidthRequest="120"
+                HeightRequest="50"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="20"
+                Grid.Row="1"
+                Clicked="OnViewAllGenresClicked"
+                Shadow="{Shadow Brush=Black, Offset='5,5', Radius=10, Opacity=0.3}"/>
+    </Grid>
+</ContentPage>

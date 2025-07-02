@@ -23,6 +23,12 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(Views.AddChapterPage), typeof(Views.AddChapterPage));
         Routing.RegisterRoute(nameof(Views.EditChapterPage), typeof(Views.EditChapterPage));
 
+        // Rutas para categorías populares
+        Routing.RegisterRoute(nameof(Views.PopularGenresPage), typeof(Views.PopularGenresPage));
+        Routing.RegisterRoute(nameof(Views.GenreDetailPage), typeof(Views.GenreDetailPage));
+        Routing.RegisterRoute(nameof(Views.AllGenresPage), typeof(Views.AllGenresPage));
+
+
         // Navegación segura
         this.Navigated += OnShellNavigated;
     }

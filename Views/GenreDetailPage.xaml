@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.GenreDetailPage"
+             Title="Género"
+             BackgroundColor="#121212">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header con estadísticas del género -->
+        <Frame Grid.Row="0"
+               x:Name="HeaderFrame"
+               BackgroundColor="#1E1E1E"
+               CornerRadius="0"
+               Padding="20"
+               HasShadow="False">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Título del género -->
+                <Label Grid.Row="0"
+                       x:Name="GenreTitleLabel"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+
+                <!-- Descripción -->
+                <Label Grid.Row="1"
+                       x:Name="GenreDescriptionLabel"
+                       FontSize="14"
+                       TextColor="#CCCCCC"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,5,0,15"/>
+
+                <!-- Estadísticas -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total novelas -->
+                    <StackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Label x:Name="TotalNovelsLabel"
+                               Text="0"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#E91E63"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Novelas"
+                               FontSize="11"
+                               TextColor="#808080"
+                               HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+
+                    <!-- Rating promedio -->
+                    <StackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Label x:Name="AvgRatingLabel"
+                               Text="0.0"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#FFD700"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Rating"
+                               FontSize="11"
+                               TextColor="#808080"
+                               HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+
+                    <!-- Lectores -->
+                    <StackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Label x:Name="ReadersLabel"
+                               Text="0"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#4CAF50"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Lectores"
+                               FontSize="11"
+                               TextColor="#808080"
+                               HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+
+                    <!-- Reseñas -->
+                    <StackLayout Grid.Column="3" HorizontalOptions="Center">
+                        <Label x:Name="ReviewsLabel"
+                               Text="0"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#2196F3"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Reseñas"
+                               FontSize="11"
+                               TextColor="#808080"
+                               HorizontalTextAlignment="Center"/>
+                    </StackLayout>
+                </Grid>
+            </Grid>
+        </Frame>
+
+        <!-- Filtros -->
+        <Grid Grid.Row="1" Padding="10" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Picker x:Name="SortPicker"
+                    Grid.Column="0"
+                    BackgroundColor="#1E1E1E"
+                    TextColor="White"
+                    SelectedIndexChanged="OnSortChanged">
+                <Picker.Items>
+                    <x:String>⭐ Mejor calificación</x:String>
+                    <x:String>📚 Más populares</x:String>
+                    <x:String>🆕 Más recientes</x:String>
+                    <x:String>📖 Más capítulos</x:String>
+                    <x:String>✅ Completadas</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <Button Grid.Column="1"
+                    x:Name="RefreshButton"
+                    Text="🔄"
+                    BackgroundColor="#1E1E1E"
+                    TextColor="White"
+                    WidthRequest="50"
+                    HeightRequest="40"
+                    CornerRadius="20"
+                    Clicked="OnRefreshClicked"/>
+        </Grid>
+
+        <!-- Lista de novelas -->
+        <ScrollView Grid.Row="2">
+            <StackLayout x:Name="NovelsContainer" Padding="10" Spacing="10">
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="True"
+                                   IsVisible="True"
+                                   Color="#E91E63"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="CenterAndExpand"/>
+
+                <!-- Las novelas se agregarán dinámicamente aquí -->
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

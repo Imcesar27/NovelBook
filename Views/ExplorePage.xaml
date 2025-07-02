@@ -34,19 +34,22 @@
                        Grid.Column="0"/>
 
                 <Entry x:Name="searchEntry"
-                       Placeholder="Search"
+                       Placeholder="Buscar novelas..."
                        PlaceholderColor="{StaticResource TextMuted}"
                        TextColor="{StaticResource TextPrimary}"
                        BackgroundColor="Transparent"
                        VerticalOptions="Center"
-                       Grid.Column="1"/>
+                       Grid.Column="1"
+                       TextChanged="OnSearchTextChanged"/>
 
-                <ImageButton Source="filter_icon.png"
-                            BackgroundColor="Transparent"
-                            WidthRequest="30"
-                            HeightRequest="30"
-                            Grid.Column="2"
-                            Clicked="OnFilterClicked"/>
+                <Button Text="⚙️"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource TextPrimary}"
+                        WidthRequest="55"
+                        HeightRequest="40"
+                        FontSize="20"
+                        Grid.Column="2"
+                        Clicked="OnFilterClicked"/>
             </Grid>
         </Frame>
 
@@ -59,178 +62,131 @@
                Margin="5,0,0,5"/>
 
         <ScrollView Grid.Row="2" 
+                    x:Name="CategoryScrollView"
                     Orientation="Horizontal"
                     HeightRequest="50"
                     Margin="0,0,0,15">
-            <HorizontalStackLayout Spacing="10">
-                <Button Text="🔥 Populares" 
+            <HorizontalStackLayout x:Name="CategoryButtons" Spacing="10">
+                <!-- Los botones se agregan dinámicamente desde el código -->
+                <Button Text="🔥 Todas" 
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="15"
-                        Padding="15,5"/>
-                <Button Text="⚔️ Acción" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"/>
-                <Button Text="💕 Romance" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"/>
-                <Button Text="🐉 Fantasía" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"/>
-                <Button Text="🎮 Sistema" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"/>
-                <Button Text="🏰 Cultivo" 
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextSecondary}"
-                        CornerRadius="15"
-                        Padding="15,5"/>
+                        Padding="15,5"
+                        Clicked="OnCategoryClicked"/>
             </HorizontalStackLayout>
         </ScrollView>
 
-        <!-- Grid de novelas -->
-        <ScrollView Grid.Row="3">
-            <CollectionView x:Name="novelsCollection">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" 
-                                     Span="2" 
-                                     VerticalItemSpacing="10" 
-                                     HorizontalItemSpacing="10"/>
-                </CollectionView.ItemsLayout>
+        <!-- Grid de novelas con indicador de carga -->
+        <Grid Grid.Row="3">
+            <!-- Indicador de carga -->
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="False"
+                               IsVisible="False"
+                               Color="{StaticResource Primary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="CenterAndExpand"
+                               Scale="1.5"/>
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
-                               CornerRadius="10"
-                               Padding="0"
-                               HasShadow="True"
-                               HeightRequest="280">
-                            <!-- Altura fija para consistencia -->
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNovelTapped"/>
-                            </Frame.GestureRecognizers>
+            <!-- Lista de novelas -->
+            <ScrollView>
+                <CollectionView x:Name="novelsCollection">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" 
+                                         Span="2" 
+                                         VerticalItemSpacing="10" 
+                                         HorizontalItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
 
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="180"/>
-                                    <!-- Altura fija para imagen -->
-                                    <RowDefinition Height="*"/>
-                                    <!-- Resto para información -->
-                                </Grid.RowDefinitions>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                                   CornerRadius="10"
+                                   Padding="0"
+                                   HasShadow="False">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnNovelTapped"/>
+                                </Frame.GestureRecognizers>
 
-                                <!-- Imagen de portada con gradiente -->
-                                <Grid Grid.Row="0">
-                                    <Image Source="{Binding CoverImageSource}"
-                                           Aspect="AspectFill"/>
-
-                                    <!-- Gradiente inferior -->
-                                    <BoxView>
-                                        <BoxView.Background>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                <GradientStop Color="Transparent" Offset="0.5"/>
-                                                <GradientStop Color="#AA000000" Offset="1"/>
-                                            </LinearGradientBrush>
-                                        </BoxView.Background>
-                                    </BoxView>
-
-                                    <!-- Estado de la novela -->
-                                    <Frame BackgroundColor="{Binding StatusColor}"
-                                           CornerRadius="10"
-                                           Padding="8,4"
-                                           HorizontalOptions="Start"
-                                           VerticalOptions="Start"
-                                           Margin="5"
-                                           HasShadow="False">
-                                        <Label Text="{Binding Status}"
-                                               TextColor="White"
-                                               FontSize="10"
-                                               FontAttributes="Bold"/>
-                                    </Frame>
-                                </Grid>
-
-                                <!-- Información de la novela -->
-                                <Grid Grid.Row="1" 
-                                      Padding="10,8"
-                                      RowSpacing="2">
+                                <Grid RowSpacing="0">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="200"/>
                                         <RowDefinition Height="Auto"/>
-                                        <!-- Título -->
-                                        <RowDefinition Height="*"/>
-                                        <!-- Espaciador -->
-                                        <RowDefinition Height="Auto"/>
-                                        <!-- Info -->
                                     </Grid.RowDefinitions>
 
-                                    <!-- Título con límite estricto -->
-                                    <Label Grid.Row="0"
-                                           Text="{Binding Title}"
-                                           TextColor="{StaticResource TextPrimary}"
-                                           FontSize="13"
-                                           FontAttributes="Bold"
-                                           MaxLines="2"
-                                           LineBreakMode="TailTruncation"
-                                           VerticalOptions="Start"/>
+                                    <!-- Portada con badge de estado -->
+                                    <Grid Grid.Row="0">
+                                        <Image Source="{Binding CoverImageSource}"
+                                               Aspect="AspectFill"/>
 
-                                    <!-- Espaciador para empujar info hacia abajo -->
-                                    <BoxView Grid.Row="1" Color="Transparent"/>
-
-                                    <!-- Info siempre visible al fondo -->
-                                    <Grid Grid.Row="2" ColumnSpacing="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <Label Grid.Column="0" 
-                                               FontSize="11" 
-                                               TextColor="{StaticResource TextSecondary}"
-                                               VerticalOptions="End"
-                                               HorizontalOptions="Start">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="📖 " FontSize="10"/>
-                                                    <Span Text="{Binding ChapterCount}"/>
-                                                    <Span Text=" caps"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-
-                                        <Label Grid.Column="1"
-                                               FontSize="11" 
-                                               TextColor="#FFD700"
-                                               VerticalOptions="End"
-                                               HorizontalOptions="End">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="⭐ " FontSize="10"/>
-                                                    <Span Text="{Binding Rating}"/>
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
+                                        <!-- Badge de estado -->
+                                        <Frame BackgroundColor="{Binding StatusColor}"
+                                               CornerRadius="10"
+                                               Padding="8,4"
+                                               Margin="5"
+                                               HorizontalOptions="Start"
+                                               VerticalOptions="Start"
+                                               HasShadow="False">
+                                            <Label Text="{Binding Status}"
+                                                   TextColor="White"
+                                                   FontSize="10"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
                                     </Grid>
-                                </Grid>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
 
-        <!-- Indicador de carga -->
-        <ActivityIndicator x:Name="loadingIndicator"
-                          IsRunning="False"
-                          IsVisible="False"
-                          Color="{StaticResource Primary}"
-                          Grid.Row="3"
-                          HorizontalOptions="Center"
-                          VerticalOptions="Center"/>
+                                    <!-- Información -->
+                                    <StackLayout Grid.Row="1" 
+                                                 Padding="10" 
+                                                 Spacing="5"
+                                                 BackgroundColor="{StaticResource BackgroundMedium}">
+                                        <Label Text="{Binding Title}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               FontAttributes="Bold"
+                                               FontSize="14"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="2"/>
+
+                                        <Label Text="{Binding Author}"
+                                               TextColor="{StaticResource TextSecondary}"
+                                               FontSize="12"
+                                               LineBreakMode="TailTruncation"/>
+
+                                        <Grid ColumnSpacing="10">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Grid.Column="0"
+                                                   TextColor="{StaticResource Primary}"
+                                                   FontSize="12">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="⭐ "/>
+                                                        <Span Text="{Binding Rating}"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                            <Label Grid.Column="1"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   FontSize="12">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="📖 "/>
+                                                        <Span Text="{Binding Chapters}"/>
+                                                        <Span Text=" cap"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                        </Grid>
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>

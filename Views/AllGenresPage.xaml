@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.AllGenresPage"
+             Title="Todos los Géneros"
+             BackgroundColor="#121212">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barra de búsqueda -->
+        <SearchBar Grid.Row="0"
+                   x:Name="GenreSearchBar"
+                   Placeholder="Buscar género..."
+                   PlaceholderColor="#808080"
+                   TextColor="White"
+                   BackgroundColor="#1E1E1E"
+                   Margin="10"
+                   TextChanged="OnSearchTextChanged"/>
+
+        <!-- Lista de géneros -->
+        <ScrollView Grid.Row="1">
+            <FlexLayout x:Name="GenresContainer"
+                        Direction="Row"
+                        Wrap="Wrap"
+                        JustifyContent="Start"
+                        AlignItems="Start"
+                        Padding="10">
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="True"
+                                   IsVisible="True"
+                                   Color="#E91E63"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="CenterAndExpand"
+                                   WidthRequest="200"
+                                   HeightRequest="200"/>
+            </FlexLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
