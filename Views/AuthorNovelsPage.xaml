@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.AuthorNovelsPage"
+             Title="Novelas del Autor"
+             BackgroundColor="#121212">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header con información del autor -->
+        <Frame Grid.Row="0"
+               BackgroundColor="#1E1E1E"
+               CornerRadius="0"
+               Padding="20"
+               Margin="0,0,0,10"
+               HasShadow="False">
+            <VerticalStackLayout Spacing="10">
+                <Label x:Name="AuthorNameLabel"
+                       TextColor="White"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"/>
+                <Label x:Name="NovelCountLabel"
+                       TextColor="#808080"
+                       FontSize="16"
+                       HorizontalOptions="Center"/>
+
+                <!-- Estadísticas del autor -->
+                <Grid HorizontalOptions="Center" 
+                      ColumnSpacing="30"
+                      Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total de capítulos -->
+                    <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Label x:Name="TotalChaptersLabel"
+                               Text="0"
+                               TextColor="#E91E63"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Capítulos"
+                               TextColor="#808080"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Rating promedio -->
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Label x:Name="AverageRatingLabel"
+                               Text="0.0"
+                               TextColor="#FFD700"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Rating"
+                               TextColor="#808080"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Novelas completadas -->
+                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Label x:Name="CompletedNovelsLabel"
+                               Text="0"
+                               TextColor="#4CAF50"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Completadas"
+                               TextColor="#808080"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Opciones de ordenamiento -->
+        <Grid Grid.Row="1" 
+              Padding="10,5"
+              ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Picker x:Name="SortPicker"
+                    Grid.Column="0"
+                    Title="Ordenar por"
+                    TextColor="White"
+                    BackgroundColor="#1E1E1E"
+                    TitleColor="#808080">
+                <Picker.Items>
+                    <x:String>📚 Más recientes</x:String>
+                    <x:String>⭐ Mejor calificación</x:String>
+                    <x:String>📖 Más capítulos</x:String>
+                    <x:String>✅ Completadas primero</x:String>
+                    <x:String>🔤 Alfabético</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <Label Grid.Column="1"
+                   x:Name="ViewModeLabel"
+                   Text="Vista: Lista"
+                   TextColor="#E91E63"
+                   VerticalOptions="Center"
+                   Padding="10,5">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnViewModeToggled"/>
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+
+        <!-- Lista de novelas -->
+        <ScrollView Grid.Row="2">
+            <StackLayout x:Name="NovelsContainer" 
+                         Padding="10" 
+                         Spacing="10">
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="True"
+                                   IsVisible="True"
+                                   Color="#E91E63"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="CenterAndExpand"
+                                   Scale="1.5"/>
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Mensaje cuando no hay novelas -->
+        <VerticalStackLayout x:Name="EmptyStateLayout"
+                             Grid.Row="2"
+                             IsVisible="False"
+                             VerticalOptions="Center"
+                             HorizontalOptions="Center"
+                             Spacing="20">
+            <Label Text="📚"
+                   FontSize="60"
+                   HorizontalOptions="Center"/>
+            <Label Text="No se encontraron novelas de este autor"
+                   TextColor="#808080"
+                   FontSize="18"
+                   HorizontalOptions="Center"/>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

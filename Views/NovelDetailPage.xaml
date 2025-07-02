@@ -324,9 +324,15 @@
                                Text="Autor:"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
+                        <!--Boton autor-->
                         <Label Grid.Row="0" Grid.Column="1"
                                Text="{Binding Author}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{StaticResource Primary}"
+                               TextDecorations="Underline">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAuthorTapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
 
                         <Label Grid.Row="1" Grid.Column="0"
                                Text="Estado:"

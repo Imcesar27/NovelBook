@@ -614,4 +614,67 @@ public class NovelService
 
         return genres;
     }
+
+    /// <summary>
+    /// Obtiene todas las novelas de un autor específico
+    /// </summary>
+    public async Task<List<Novel>> GetNovelsByAuthorAsync(string authorName)
+    {
+        var novels = new List<Novel>();
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"SELECT n.*, 
+                     STRING_AGG(g.name, ', ') WITHIN GROUP (ORDER BY g.name) as genres
+                     FROM novels n
+                     LEFT JOIN novel_genres ng ON n.id = ng.novel_id
+                     LEFT JOIN genres g ON ng.genre_id = g.id
+                     WHERE n.author = @author
+                     GROUP BY n.id, n.title, n.author, n.cover_image, n.synopsis, 
+                              n.status, n.rating, n.chapter_count, n.created_at, n.updated_at
+                     ORDER BY n.updated_at DESC";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@author", authorName);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var novel = new Novel
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("id")),
+                    Title = reader.GetString(reader.GetOrdinal("title")),
+                    Author = reader.IsDBNull(reader.GetOrdinal("author")) ?
+                             "Autor desconocido" : reader.GetString(reader.GetOrdinal("author")),
+                    CoverImage = reader.IsDBNull(reader.GetOrdinal("cover_image")) ?
+                                 "" : reader.GetString(reader.GetOrdinal("cover_image")),
+                    Synopsis = reader.IsDBNull(reader.GetOrdinal("synopsis")) ?
+                               "" : reader.GetString(reader.GetOrdinal("synopsis")),
+                    Status = reader.GetString(reader.GetOrdinal("status")),
+                    Rating = reader.GetDecimal(reader.GetOrdinal("rating")),
+                    ChapterCount = reader.GetInt32(reader.GetOrdinal("chapter_count")),
+                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
+                    UpdatedAt = reader.GetDateTime(reader.GetOrdinal("updated_at"))
+                };
+
+                // Agregar géneros
+                if (!reader.IsDBNull(reader.GetOrdinal("genres")))
+                {
+                    var genresString = reader.GetString(reader.GetOrdinal("genres"));
+                    novel.Genres = genresString.Split(',').Select(g => new Genre { Name = g.Trim() }).ToList();
+                }
+
+                novels.Add(novel);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo novelas por autor: {ex.Message}");
+        }
+
+        return novels;
+    }
 }

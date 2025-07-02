@@ -662,7 +662,20 @@ public partial class LibraryPage : ContentPage
         }
     }
 
-
+    /// <summary>
+    /// Maneja el tap en el nombre del autor para navegar a sus novelas
+    /// </summary>
+    private async void OnAuthorTapped(object sender, EventArgs e)
+    {
+        if (sender is Label label && label.GestureRecognizers[0] is TapGestureRecognizer tap)
+        {
+            string authorName = tap.CommandParameter as string;
+            if (!string.IsNullOrEmpty(authorName))
+            {
+                await Navigation.PushAsync(new AuthorNovelsPage(authorName));
+            }
+        }
+    }
 
     private void DebugShellStructure()
     {

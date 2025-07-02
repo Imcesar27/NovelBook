@@ -145,12 +145,16 @@
                                                FontSize="14"
                                                LineBreakMode="TailTruncation"
                                                MaxLines="2"/>
-
+                                        <!-- Boton de autor -->
                                         <Label Text="{Binding Author}"
                                                TextColor="{StaticResource TextSecondary}"
-                                               FontSize="12"
-                                               LineBreakMode="TailTruncation"/>
-
+                                               FontSize="14"
+                                               LineBreakMode="TailTruncation">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnAuthorTapped" 
+                                                                      CommandParameter="{Binding Author}"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
                                         <Grid ColumnSpacing="10">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>

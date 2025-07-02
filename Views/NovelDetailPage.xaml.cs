@@ -953,6 +953,17 @@ public partial class NovelDetailPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Maneja el tap en el nombre del autor para navegar a sus novelas
+    /// </summary>
+    private async void OnAuthorTapped(object sender, EventArgs e)
+    {
+        if (_novel != null && !string.IsNullOrEmpty(_novel.Author))
+        {
+            await Navigation.PushAsync(new AuthorNovelsPage(_novel.Author));
+        }
+    }
+
     // Constructor temporal para compatibilidad
     public NovelDetailPage() : this(1)
     {

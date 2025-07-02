@@ -414,4 +414,20 @@ public partial class ExplorePage : ContentPage
             await Navigation.PushAsync(new NovelDetailPage(novelData.Id));
         }
     }
+
+    /// <summary>
+    /// Maneja el tap en el nombre del autor
+    /// </summary>
+    private async void OnAuthorTapped(object sender, EventArgs e)
+    {
+        if (sender is Label label && label.GestureRecognizers[0] is TapGestureRecognizer tap)
+        {
+            string authorName = tap.CommandParameter as string;
+            if (!string.IsNullOrEmpty(authorName))
+            {
+                await Navigation.PushAsync(new AuthorNovelsPage(authorName));
+            }
+        }
+    }
+
 }

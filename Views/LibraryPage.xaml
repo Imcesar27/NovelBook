@@ -162,19 +162,24 @@
 
                                     <!-- Título y información -->
                                     <VerticalStackLayout Grid.Row="1" 
-                                                       Padding="10,8"
-                                                       Spacing="4">
+                                                       Padding="10"
+                                                       Spacing="5">
                                         <Label Text="{Binding Title}"
                                                TextColor="{StaticResource TextPrimary}"
                                                FontSize="14"
                                                FontAttributes="Bold"
                                                MaxLines="2"
                                                LineBreakMode="TailTruncation"/>
-
+                                        <!--Boton autor-->
                                         <Label Text="{Binding Author}"
                                                TextColor="{StaticResource TextSecondary}"
                                                FontSize="12"
-                                               LineBreakMode="TailTruncation"/>
+                                               LineBreakMode="TailTruncation">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnAuthorTapped" 
+                                                                      CommandParameter="{Binding Author}"/>
+                                            </Label.GestureRecognizers>
+                                        </Label>
 
                                         <HorizontalStackLayout Spacing="10">
                                             <Label TextColor="{StaticResource TextMuted}"
