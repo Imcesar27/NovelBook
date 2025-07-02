@@ -315,11 +315,11 @@ public partial class GenreDetailPage : ContentPage
     {
         return status?.ToLower() switch
         {
-            "ongoing" => Color.FromArgb("#4CAF50"),
-            "completed" => Color.FromArgb("#2196F3"),
-            "hiatus" => Color.FromArgb("#FF9800"),
-            "cancelled" => Color.FromArgb("#F44336"),
-            _ => Color.FromArgb("#808080")
+            "ongoing" => Color.FromArgb("#F59E0B"),      // Naranja
+            "completed" => Color.FromArgb("#10B981"),    // Verde
+            "hiatus" => Color.FromArgb("#6B7280"),       // Gris
+            "cancelled" => Color.FromArgb("#EF4444"),    // Rojo para cancelada
+            _ => Color.FromArgb("#6B7280")
         };
     }
 

@@ -17,6 +17,10 @@ public partial class ExplorePage : ContentPage
     private List<PopularGenre> _popularGenres;
     private string _currentGenreFilter = "🔥 Todas";
 
+    // Nuevas propiedades para mantener el estado del filtro
+    private int? _currentGenreId = null;
+    private Button _currentSelectedButton = null;
+
     // Clase para datos de novela en UI
     public class NovelDisplayData
     {
@@ -61,8 +65,14 @@ public partial class ExplorePage : ContentPage
             await LoadPopularGenres();
         }
 
-        // Cargar novelas
-        await LoadNovels();
+        // Cargar novelas manteniendo el filtro actual
+        await LoadNovels(_currentGenreId);
+
+        // Restaurar el estado visual del botón seleccionado
+        if (_currentSelectedButton != null)
+        {
+            UpdateCategoryButtonsVisual(_currentSelectedButton);
+        }
     }
 
     /// <summary>
@@ -97,6 +107,12 @@ public partial class ExplorePage : ContentPage
                 // Mantener el botón "Todas"
                 var allButton = CategoryButtons.Children.FirstOrDefault() as Button;
 
+                // Si no hay botón seleccionado, seleccionar "Todas" por defecto
+                if (_currentSelectedButton == null && allButton != null)
+                {
+                    _currentSelectedButton = allButton;
+                }
+
                 // Limpiar otros botones
                 while (CategoryButtons.Children.Count > 1)
                 {
@@ -126,6 +142,12 @@ public partial class ExplorePage : ContentPage
                 };
                 moreButton.Clicked += OnViewAllGenresClicked;
                 CategoryButtons.Children.Add(moreButton);
+
+                // Restaurar la selección visual si existe
+                if (_currentSelectedButton != null)
+                {
+                    UpdateCategoryButtonsVisual(_currentSelectedButton);
+                }
             }
         });
     }
@@ -219,6 +241,9 @@ public partial class ExplorePage : ContentPage
     {
         if (sender is Button button)
         {
+            // Guardar el botón seleccionado
+            _currentSelectedButton = button;
+
             // Actualizar visual de los botones
             UpdateCategoryButtonsVisual(button);
 
@@ -227,11 +252,13 @@ public partial class ExplorePage : ContentPage
             if (button.Text.Contains("Todas"))
             {
                 // Cargar todas las novelas
+                _currentGenreId = null;
                 await LoadNovels();
             }
             else if (button.CommandParameter is int genreId)
             {
                 // Cargar novelas del género seleccionado
+                _currentGenreId = genreId;
                 await LoadNovels(genreId);
             }
         }
@@ -249,11 +276,62 @@ public partial class ExplorePage : ContentPage
                 if (child is Button btn && btn.Text != "Ver más →")
                 {
                     bool isSelected = btn == selectedButton;
-                    btn.BackgroundColor = isSelected ? Color.FromArgb("#E91E63") : Color.FromArgb("#1E1E1E");
+                    btn.BackgroundColor = isSelected ?
+                        Color.FromArgb("#E91E63") : Color.FromArgb("#1E1E1E");
                     btn.TextColor = isSelected ? Colors.White : Color.FromArgb("#808080");
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Muestra u oculta el indicador de carga
+    /// </summary>
+    private void ShowLoading(bool show)
+    {
+        Device.BeginInvokeOnMainThread(() =>
+        {
+            if (LoadingIndicator != null)
+            {
+                LoadingIndicator.IsRunning = show;
+                LoadingIndicator.IsVisible = show;
+            }
+
+            if (novelsCollection != null)
+            {
+                novelsCollection.IsVisible = !show;
+            }
+        });
+    }
+
+    /// <summary>
+    /// Obtiene el texto de estado según el valor
+    /// </summary>
+    private string GetStatusDisplay(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "ongoing" => "En curso",
+            "completed" => "Completada",
+            "hiatus" => "Pausada",
+            "cancelled" => "Cancelada",
+            _ => status ?? ""
+        };
+    }
+
+    /// <summary>
+    /// Obtiene el color del estado
+    /// </summary>
+    private Color GetStatusColor(string status)
+    {
+        return status?.ToLower() switch
+        {
+            "ongoing" => Color.FromArgb("#F59E0B"),      // Naranja
+            "completed" => Color.FromArgb("#10B981"),    // Verde
+            "hiatus" => Color.FromArgb("#6B7280"),       // Gris
+            "cancelled" => Color.FromArgb("#EF4444"),    // Rojo para cancelada
+            _ => Color.FromArgb("#6B7280")
+        };
     }
 
     /// <summary>
@@ -331,59 +409,9 @@ public partial class ExplorePage : ContentPage
     /// </summary>
     private async void OnNovelTapped(object sender, EventArgs e)
     {
-        if (sender is Frame frame && frame.BindingContext is NovelDisplayData novel)
+        if (sender is Frame frame && frame.BindingContext is NovelDisplayData novelData)
         {
-            await Navigation.PushAsync(new NovelDetailPage(novel.Id));
+            await Navigation.PushAsync(new NovelDetailPage(novelData.Id));
         }
-    }
-
-    /// <summary>
-    /// Muestra/oculta el indicador de carga
-    /// </summary>
-    private void ShowLoading(bool show)
-    {
-        Device.BeginInvokeOnMainThread(() =>
-        {
-            if (LoadingIndicator != null)
-            {
-                LoadingIndicator.IsVisible = show;
-                LoadingIndicator.IsRunning = show;
-            }
-
-            if (novelsCollection != null)
-            {
-                novelsCollection.IsVisible = !show;
-            }
-        });
-    }
-
-    /// <summary>
-    /// Obtiene el texto del estado
-    /// </summary>
-    private string GetStatusDisplay(string status)
-    {
-        return status?.ToLower() switch
-        {
-            "ongoing" => "En curso",
-            "completed" => "Completada",
-            "hiatus" => "Pausada",
-            "cancelled" => "Cancelada",
-            _ => status ?? ""
-        };
-    }
-
-    /// <summary>
-    /// Obtiene el color del estado
-    /// </summary>
-    private Color GetStatusColor(string status)
-    {
-        return status?.ToLower() switch
-        {
-            "ongoing" => Color.FromArgb("#F59E0B"),      // Naranja
-            "completed" => Color.FromArgb("#10B981"),    // Verde
-            "hiatus" => Color.FromArgb("#6B7280"),       // Gris
-            "cancelled" => Color.FromArgb("#EF4444"),    // Rojo para cancelada
-            _ => Color.FromArgb("#6B7280")
-        };
     }
 }

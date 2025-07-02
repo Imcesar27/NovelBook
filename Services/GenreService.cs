@@ -3,7 +3,6 @@ using NovelBook.Models;
 
 namespace NovelBook.Services;
 
-
 /// <summary>
 /// Servicio para manejar géneros y categorías populares
 /// Gestiona estadísticas de popularidad basadas en lecturas y biblioteca
@@ -39,8 +38,7 @@ public class GenreService
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
                     Name = reader.GetString(reader.GetOrdinal("name")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("description")) ?
-                                  "" : reader.GetString(reader.GetOrdinal("description"))
+                    Description = "" // La tabla genres no tiene columna description
                 });
             }
         }
@@ -69,7 +67,6 @@ public class GenreService
                             SELECT 
                                 g.id,
                                 g.name,
-                                g.description,
                                 -- Número de novelas en el género
                                 COUNT(DISTINCT ng.novel_id) as novel_count,
                                 -- Promedio de rating de las novelas del género
@@ -94,25 +91,24 @@ public class GenreService
                                 FROM reviews
                                 GROUP BY novel_id
                             ) rv ON n.id = rv.novel_id
-                            GROUP BY g.id, g.name, g.description
+                            GROUP BY g.id, g.name
                         )
                         SELECT TOP (@limit)
                             id,
                             name,
-                            description,
                             novel_count,
                             avg_rating,
                             total_chapters_read,
                             users_count,
                             total_reviews,
                             -- Calcular un puntaje de popularidad ponderado
-                            (
+                            CAST((
                                 (novel_count * 10) +                    -- Peso por cantidad de novelas
                                 (ISNULL(avg_rating, 0) * 20) +         -- Peso por rating promedio
                                 (total_chapters_read * 0.1) +          -- Peso por capítulos leídos
                                 (users_count * 5) +                     -- Peso por usuarios únicos
                                 (total_reviews * 2)                     -- Peso por reseñas
-                            ) as popularity_score
+                            ) AS FLOAT) as popularity_score
                         FROM GenreStats
                         WHERE novel_count > 0
                         ORDER BY popularity_score DESC";
@@ -128,8 +124,7 @@ public class GenreService
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
                     Name = reader.GetString(reader.GetOrdinal("name")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("description")) ?
-                                  "" : reader.GetString(reader.GetOrdinal("description")),
+                    Description = "", // La tabla genres no tiene columna description
                     Rank = rank++,
                     NovelCount = reader.GetInt32(reader.GetOrdinal("novel_count")),
                     AverageRating = reader.IsDBNull(reader.GetOrdinal("avg_rating")) ?
@@ -162,31 +157,16 @@ public class GenreService
             await connection.OpenAsync();
 
             var query = @"SELECT TOP (@limit) n.*, 
-                            STRING_AGG(g2.name, ', ') WITHIN GROUP (ORDER BY g2.name) as genres,
-                            ISNULL(ul.library_count, 0) as library_count,
-                            ISNULL(rh.read_count, 0) as read_count
+                         STRING_AGG(g.name, ', ') WITHIN GROUP (ORDER BY g.name) as genres
                          FROM novels n
                          INNER JOIN novel_genres ng ON n.id = ng.novel_id
-                         LEFT JOIN novel_genres ng2 ON n.id = ng2.novel_id
-                         LEFT JOIN genres g2 ON ng2.genre_id = g2.id
-                         LEFT JOIN (
-                            SELECT novel_id, COUNT(*) as library_count
-                            FROM user_library
-                            GROUP BY novel_id
-                         ) ul ON n.id = ul.novel_id
-                         LEFT JOIN (
-                            SELECT novel_id, COUNT(DISTINCT user_id) as read_count
-                            FROM reading_history
-                            GROUP BY novel_id
-                         ) rh ON n.id = rh.novel_id
-                         WHERE ng.genre_id = @genreId
+                         LEFT JOIN genres g ON ng.genre_id = g.id
+                         WHERE n.id IN (
+                             SELECT novel_id FROM novel_genres WHERE genre_id = @genreId
+                         )
                          GROUP BY n.id, n.title, n.author, n.cover_image, n.synopsis, 
-                                  n.status, n.rating, n.chapter_count, n.created_at, 
-                                  n.updated_at, ul.library_count, rh.read_count
-                         ORDER BY 
-                            (n.rating * 10) + 
-                            (ISNULL(ul.library_count, 0) * 2) + 
-                            (ISNULL(rh.read_count, 0) * 3) DESC";
+                                  n.status, n.rating, n.chapter_count, n.created_at, n.updated_at
+                         ORDER BY n.rating DESC, n.chapter_count DESC";
 
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@genreId", genreId);
@@ -200,7 +180,7 @@ public class GenreService
                     Id = reader.GetInt32(reader.GetOrdinal("id")),
                     Title = reader.GetString(reader.GetOrdinal("title")),
                     Author = reader.IsDBNull(reader.GetOrdinal("author")) ?
-                             "" : reader.GetString(reader.GetOrdinal("author")),
+                             "Autor desconocido" : reader.GetString(reader.GetOrdinal("author")),
                     CoverImage = reader.IsDBNull(reader.GetOrdinal("cover_image")) ?
                                  "" : reader.GetString(reader.GetOrdinal("cover_image")),
                     Synopsis = reader.IsDBNull(reader.GetOrdinal("synopsis")) ?
@@ -245,7 +225,6 @@ public class GenreService
             var query = @"SELECT 
                             g.id,
                             g.name,
-                            g.description,
                             COUNT(DISTINCT ng.novel_id) as total_novels,
                             COUNT(DISTINCT CASE WHEN n.status = 'completed' THEN n.id END) as completed_novels,
                             COUNT(DISTINCT CASE WHEN n.status = 'ongoing' THEN n.id END) as ongoing_novels,
@@ -261,7 +240,7 @@ public class GenreService
                          LEFT JOIN user_library ul ON n.id = ul.novel_id
                          LEFT JOIN reviews r ON n.id = r.novel_id
                          WHERE g.id = @genreId
-                         GROUP BY g.id, g.name, g.description";
+                         GROUP BY g.id, g.name";
 
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@genreId", genreId);
@@ -273,8 +252,7 @@ public class GenreService
                 {
                     GenreId = reader.GetInt32(reader.GetOrdinal("id")),
                     GenreName = reader.GetString(reader.GetOrdinal("name")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("description")) ?
-                                  "" : reader.GetString(reader.GetOrdinal("description")),
+                    Description = "", // La tabla genres no tiene columna description
                     TotalNovels = reader.GetInt32(reader.GetOrdinal("total_novels")),
                     CompletedNovels = reader.GetInt32(reader.GetOrdinal("completed_novels")),
                     OngoingNovels = reader.GetInt32(reader.GetOrdinal("ongoing_novels")),
@@ -299,9 +277,9 @@ public class GenreService
     }
 
     /// <summary>
-    /// Crea un nuevo género
+    /// Crea un nuevo género (sin descripción ya que la tabla no tiene esa columna)
     /// </summary>
-    public async Task<bool> CreateGenreAsync(string name, string description = null)
+    public async Task<bool> CreateGenreAsync(string name)
     {
         try
         {
@@ -316,12 +294,10 @@ public class GenreService
             var exists = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (exists) return false;
 
-            // Crear el género
-            var query = "INSERT INTO genres (name, description) VALUES (@name, @description)";
+            // Crear el género (solo con name ya que no hay columna description)
+            var query = "INSERT INTO genres (name) VALUES (@name)";
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ?
-                                           DBNull.Value : description);
 
             await command.ExecuteNonQueryAsync();
             return true;
@@ -334,21 +310,19 @@ public class GenreService
     }
 
     /// <summary>
-    /// Actualiza un género existente
+    /// Actualiza un género existente (solo el nombre)
     /// </summary>
-    public async Task<bool> UpdateGenreAsync(int genreId, string name, string description = null)
+    public async Task<bool> UpdateGenreAsync(int genreId, string name)
     {
         try
         {
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
 
-            var query = "UPDATE genres SET name = @name, description = @description WHERE id = @id";
+            var query = "UPDATE genres SET name = @name WHERE id = @id";
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@id", genreId);
             command.Parameters.AddWithValue("@name", name);
-            command.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ?
-                                           DBNull.Value : description);
 
             var rowsAffected = await command.ExecuteNonQueryAsync();
             return rowsAffected > 0;
