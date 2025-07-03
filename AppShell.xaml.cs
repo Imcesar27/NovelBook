@@ -37,6 +37,8 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(Views.CategoryNovelsPage), typeof(Views.CategoryNovelsPage));
         Routing.RegisterRoute(nameof(Views.AddNovelsToCategoryPage), typeof(Views.AddNovelsToCategoryPage));
 
+        // Ruta para la página de logros
+        Routing.RegisterRoute(nameof(Views.AchievementsPage), typeof(Views.AchievementsPage));
 
         // Navegación segura
         this.Navigated += OnShellNavigated;

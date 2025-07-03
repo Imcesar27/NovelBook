@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.AchievementsPage"
+             Title="Logros"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+
+    <ScrollView>
+        <StackLayout Padding="15" Spacing="15">
+            <!-- Header con progreso general -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="20"
+                   HasShadow="False">
+                <StackLayout Spacing="10">
+                    <Label Text="Tu Progreso"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+
+                    <ProgressBar x:Name="OverallProgressBar"
+                                 Progress="0"
+                                 ProgressColor="{StaticResource PrimaryColor}" />
+
+                    <Label x:Name="ProgressLabel"
+                           Text="0/10 logros desbloqueados"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           HorizontalTextAlignment="Center" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Tabs para filtrar logros -->
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Button x:Name="AllButton"
+                        Text="Todos"
+                        BackgroundColor="{StaticResource PrimaryColor}"
+                        TextColor="White"
+                        CornerRadius="15"
+                        Padding="15,5"
+                        Clicked="OnFilterClicked"
+                        CommandParameter="All" />
+
+                <Button x:Name="UnlockedButton"
+                        Text="Desbloqueados"
+                        BackgroundColor="#3D3D3D"
+                        TextColor="#B0B0B0"
+                        CornerRadius="15"
+                        Padding="15,5"
+                        Clicked="OnFilterClicked"
+                        CommandParameter="Unlocked" />
+
+                <Button x:Name="LockedButton"
+                        Text="Bloqueados"
+                        BackgroundColor="#3D3D3D"
+                        TextColor="#B0B0B0"
+                        CornerRadius="15"
+                        Padding="15,5"
+                        Clicked="OnFilterClicked"
+                        CommandParameter="Locked" />
+            </HorizontalStackLayout>
+
+            <!-- Contenedor de logros -->
+            <StackLayout x:Name="AchievementsContainer" Spacing="10">
+                <!-- Los logros se agregarán dinámicamente aquí -->
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

@@ -73,6 +73,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\AchievementsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\AddChapterPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

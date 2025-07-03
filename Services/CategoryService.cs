@@ -323,7 +323,7 @@ public class CategoryService
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
 
-            var query = @"SELECT n.*, STRING_AGG(g.name, ', ') as genres
+            var query = @"SELECT n.*, STRING_AGG(g.name, ', ') as genres, cn.added_at
                          FROM novels n
                          INNER JOIN category_novels cn ON n.id = cn.novel_id
                          INNER JOIN user_categories c ON cn.category_id = c.id
@@ -331,7 +331,8 @@ public class CategoryService
                          LEFT JOIN genres g ON ng.genre_id = g.id
                          WHERE c.id = @categoryId AND c.user_id = @userId
                          GROUP BY n.id, n.title, n.author, n.cover_image, n.synopsis, 
-                                  n.status, n.rating, n.chapter_count, n.created_at, n.updated_at
+                                  n.status, n.rating, n.chapter_count, n.created_at, n.updated_at,
+                                  cn.added_at
                          ORDER BY cn.added_at DESC";
 
             using var command = new SqlCommand(query, connection);
