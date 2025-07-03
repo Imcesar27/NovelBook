@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.CategoriesPage"
+             Title="Mis Categorías"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header con estadísticas -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource CardBackgroundColor}"
+               CornerRadius="0"
+               HasShadow="False"
+               Padding="20">
+            <StackLayout>
+                <Label Text="Organiza tu biblioteca"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+
+                <Label x:Name="StatsLabel"
+                       Text="0 categorías • 0 novelas organizadas"
+                       FontSize="14"
+                       TextColor="#B0B0B0"
+                       Margin="0,5,0,0" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Lista de categorías o mensaje vacío -->
+        <ScrollView Grid.Row="1" Padding="15">
+            <StackLayout>
+                <!-- Mensaje cuando no hay categorías -->
+                <Frame x:Name="EmptyStateFrame"
+                       IsVisible="True"
+                       BackgroundColor="{StaticResource CardBackgroundColor}"
+                       CornerRadius="15"
+                       Padding="30"
+                       Margin="0,20">
+                    <StackLayout Spacing="15" VerticalOptions="Center">
+                        <Label Text="📁"
+                               FontSize="60"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="No tienes categorías aún"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="Las categorías te ayudan a organizar tu biblioteca personal en grupos personalizados"
+                               FontSize="14"
+                               TextColor="#B0B0B0"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center" />
+
+                        <Button Text="Crear primera categoría"
+                                BackgroundColor="{StaticResource PrimaryColor}"
+                                TextColor="White"
+                                CornerRadius="20"
+                                Padding="20,10"
+                                HorizontalOptions="Center"
+                                Clicked="OnAddCategoryClicked" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Contenedor para las categorías -->
+                <StackLayout x:Name="CategoriesContainer"
+                             IsVisible="False"
+                             Spacing="15">
+                    <!-- Las categorías se agregarán dinámicamente aquí -->
+                </StackLayout>
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   Color="{StaticResource PrimaryColor}"
+                                   VerticalOptions="CenterAndExpand"
+                                   HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Botón flotante para agregar categoría -->
+        <Button x:Name="AddCategoryButton"
+                Text="+"
+                FontSize="28"
+                FontAttributes="Bold"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,20,20"
+                Clicked="OnAddCategoryClicked"
+                IsVisible="False"
+                Shadow="{Shadow Brush=Black, Offset='0,5', Radius=10, Opacity=0.3}" />
+    </Grid>
+</ContentPage>

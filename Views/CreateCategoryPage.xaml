@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.CreateCategoryPage"
+             Title="Nueva Categoría"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Cancelar"
+                     Clicked="OnCancelClicked"
+                     Order="Primary" />
+        <ToolbarItem Text="Guardar"
+                     Clicked="OnSaveClicked"
+                     Order="Primary" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView Padding="20">
+        <StackLayout Spacing="20">
+            <!-- Título de la página -->
+            <Label x:Name="TitleLabel"
+                   Text="Crear nueva categoría"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   HorizontalOptions="Center" />
+
+            <!-- Nombre de la categoría -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="0"
+                   HasShadow="False">
+                <StackLayout Padding="15">
+                    <Label Text="Nombre *"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,0,0,5" />
+                    <Entry x:Name="NameEntry"
+                           Placeholder="Ej: Para leer en vacaciones"
+                           PlaceholderColor="#606060"
+                           TextColor="White"
+                           BackgroundColor="Transparent"
+                           MaxLength="100" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Descripción -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="0"
+                   HasShadow="False">
+                <StackLayout Padding="15">
+                    <Label Text="Descripción (opcional)"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,0,0,5" />
+                    <Editor x:Name="DescriptionEditor"
+                            Placeholder="Describe esta categoría..."
+                            PlaceholderColor="#606060"
+                            TextColor="White"
+                            BackgroundColor="Transparent"
+                            HeightRequest="100"
+                            MaxLength="500" />
+                </StackLayout>
+            </Frame>
+
+            <!-- Selección de ícono -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="15"
+                   HasShadow="False">
+                <StackLayout>
+                    <Label Text="Ícono"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,0,0,10" />
+
+                    <FlexLayout x:Name="IconsLayout"
+                               Wrap="Wrap"
+                               JustifyContent="Start"
+                               AlignItems="Start"
+                               Direction="Row">
+                        <!-- Los íconos se agregarán programáticamente -->
+                    </FlexLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Selección de color -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="15"
+                   HasShadow="False">
+                <StackLayout>
+                    <Label Text="Color"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,0,0,10" />
+
+                    <FlexLayout x:Name="ColorsLayout"
+                               Wrap="Wrap"
+                               JustifyContent="Start"
+                               AlignItems="Start"
+                               Direction="Row">
+                        <!-- Los colores se agregarán programáticamente -->
+                    </FlexLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Vista previa -->
+            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                   CornerRadius="15"
+                   Padding="20"
+                   HasShadow="False">
+                <StackLayout>
+                    <Label Text="Vista previa"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,0,0,15" />
+
+                    <Frame x:Name="PreviewFrame"
+                           BackgroundColor="#2D2D2D"
+                           CornerRadius="15"
+                           Padding="15"
+                           HasShadow="False">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Frame x:Name="PreviewIconFrame"
+                                   Grid.Column="0"
+                                   BackgroundColor="#2196F3"
+                                   CornerRadius="25"
+                                   WidthRequest="50"
+                                   HeightRequest="50"
+                                   Padding="0"
+                                   HasShadow="False">
+                                <Label x:Name="PreviewIconLabel"
+                                       Text="📁"
+                                       FontSize="24"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Frame>
+
+                            <StackLayout Grid.Column="1"
+                                         Margin="15,0,0,0"
+                                         VerticalOptions="Center">
+                                <Label x:Name="PreviewNameLabel"
+                                       Text="Nueva categoría"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                                <Label x:Name="PreviewDescriptionLabel"
+                                       Text="Sin descripción"
+                                       FontSize="14"
+                                       TextColor="#B0B0B0" />
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </StackLayout>
+            </Frame>
+
+            <!-- Botones de acción -->
+            <Grid Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Botón Cancelar -->
+                <Button Grid.Column="0"
+                        Text="Cancelar"
+                        BackgroundColor="#404040"
+                        TextColor="White"
+                        CornerRadius="20"
+                        HeightRequest="45"
+                        Margin="0,0,5,0"
+                        Clicked="OnCancelClicked" />
+
+                <!-- Botón Guardar/Crear -->
+                <Button Grid.Column="1"
+                        x:Name="SaveButton"
+                        Text="Crear categoría"
+                        BackgroundColor="{StaticResource PrimaryColor}"
+                        TextColor="White"
+                        CornerRadius="20"
+                        HeightRequest="45"
+                        Margin="5,0,0,0"
+                        Clicked="OnSaveClicked" />
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

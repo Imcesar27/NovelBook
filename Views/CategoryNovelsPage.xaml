@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.CategoryNovelsPage"
+             Title="Categoría"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+
+    <ContentPage.ToolbarItems>
+        <!-- Botón de opciones -->
+        <ToolbarItem Text="⋮"
+                     Clicked="OnOptionsClicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header con información de la categoría -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource CardBackgroundColor}"
+               CornerRadius="0"
+               HasShadow="False"
+               Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Ícono de la categoría -->
+                <Frame Grid.Column="0"
+                       x:Name="CategoryIconFrame"
+                       BackgroundColor="#2196F3"
+                       CornerRadius="30"
+                       WidthRequest="60"
+                       HeightRequest="60"
+                       Padding="0"
+                       HasShadow="False"
+                       Margin="0,0,15,0">
+                    <Label x:Name="CategoryIconLabel"
+                           Text="📁"
+                           FontSize="28"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Frame>
+
+                <!-- Información de la categoría -->
+                <StackLayout Grid.Column="1"
+                             VerticalOptions="Center">
+                    <Label x:Name="CategoryNameLabel"
+                           Text="Nombre de categoría"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+
+                    <Label x:Name="CategoryDescriptionLabel"
+                           Text="Descripción"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           IsVisible="False" />
+
+                    <Label x:Name="NovelCountLabel"
+                           Text="0 novelas"
+                           FontSize="14"
+                           TextColor="#B0B0B0"
+                           Margin="0,5,0,0" />
+                </StackLayout>
+            </Grid>
+        </Frame>
+
+        <!-- Contenido principal -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="15">
+                <!-- Mensaje cuando no hay novelas -->
+                <Frame x:Name="EmptyStateFrame"
+                       IsVisible="True"
+                       BackgroundColor="{StaticResource CardBackgroundColor}"
+                       CornerRadius="15"
+                       Padding="30"
+                       Margin="0,20">
+                    <StackLayout Spacing="15" VerticalOptions="Center">
+                        <Label Text="📚"
+                               FontSize="60"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="No hay novelas en esta categoría"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="Agrega novelas desde tu biblioteca para organizarlas mejor"
+                               FontSize="14"
+                               TextColor="#B0B0B0"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center" />
+
+                        <Button Text="Agregar novelas"
+                                BackgroundColor="{StaticResource PrimaryColor}"
+                                TextColor="White"
+                                CornerRadius="20"
+                                Padding="20,10"
+                                HorizontalOptions="Center"
+                                Clicked="OnAddNovelsClicked" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Grid de novelas -->
+                <CollectionView x:Name="NovelsCollection"
+                               IsVisible="False"
+                               SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                        Span="3"
+                                        VerticalItemSpacing="15"
+                                        HorizontalItemSpacing="15" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                                   CornerRadius="10"
+                                   Padding="0"
+                                   HasShadow="False">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnNovelTapped" />
+                                </Frame.GestureRecognizers>
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="150" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Imagen de portada -->
+                                    <Image Grid.Row="0"
+                                           Source="{Binding CoverImageSource}"
+                                           Aspect="AspectFill" />
+
+                                    <!-- Botón de eliminar -->
+                                    <Button Grid.Row="0"
+                                            Text="×"
+                                            BackgroundColor="#FF000080"
+                                            TextColor="White"
+                                            FontSize="20"
+                                            WidthRequest="30"
+                                            HeightRequest="30"
+                                            CornerRadius="15"
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Start"
+                                            Margin="5"
+                                            Clicked="OnRemoveNovelClicked"
+                                            CommandParameter="{Binding NovelId}" />
+
+                                    <!-- Información -->
+                                    <StackLayout Grid.Row="1"
+                                                Padding="10,5">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="White"
+                                               MaxLines="2"
+                                               LineBreakMode="TailTruncation" />
+
+                                        <Label Text="{Binding Author}"
+                                               FontSize="12"
+                                               TextColor="#B0B0B0"
+                                               MaxLines="1"
+                                               LineBreakMode="TailTruncation" />
+                                    </StackLayout>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   Color="{StaticResource PrimaryColor}"
+                                   VerticalOptions="CenterAndExpand"
+                                   HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Botón flotante para agregar novelas -->
+        <Button x:Name="AddNovelsFloatingButton"
+                Text="+"
+                FontSize="28"
+                FontAttributes="Bold"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                HorizontalOptions="End"
+                VerticalOptions="End"
+                Margin="0,0,20,20"
+                Clicked="OnAddNovelsClicked"
+                IsVisible="False"
+                Shadow="{Shadow Brush=Black, Offset='0,5', Radius=10, Opacity=0.3}" />
+    </Grid>
+</ContentPage>

@@ -31,6 +31,12 @@ public partial class AppShell : Shell
         // Ruta para la página de novelas por autor
         Routing.RegisterRoute(nameof(Views.AuthorNovelsPage), typeof(Views.AuthorNovelsPage));
 
+        // Rutas para el sistema de categorías personalizadas
+        Routing.RegisterRoute(nameof(Views.CategoriesPage), typeof(Views.CategoriesPage));
+        Routing.RegisterRoute(nameof(Views.CreateCategoryPage), typeof(Views.CreateCategoryPage));
+        Routing.RegisterRoute(nameof(Views.CategoryNovelsPage), typeof(Views.CategoryNovelsPage));
+        Routing.RegisterRoute(nameof(Views.AddNovelsToCategoryPage), typeof(Views.AddNovelsToCategoryPage));
+
 
         // Navegación segura
         this.Navigated += OnShellNavigated;

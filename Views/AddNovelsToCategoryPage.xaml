@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.AddNovelsToCategoryPage"
+             Title="Agregar Novelas"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Listo"
+                     Clicked="OnDoneClicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header informativo -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource CardBackgroundColor}"
+               CornerRadius="0"
+               HasShadow="False"
+               Padding="20">
+            <StackLayout>
+                <Label Text="Selecciona novelas para agregar"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+
+                <Label x:Name="SelectedCountLabel"
+                       Text="0 novelas seleccionadas"
+                       FontSize="14"
+                       TextColor="#B0B0B0"
+                       Margin="0,5,0,0" />
+            </StackLayout>
+        </Frame>
+
+        <!-- Barra de búsqueda -->
+        <Frame Grid.Row="1"
+               BackgroundColor="{StaticResource CardBackgroundColor}"
+               CornerRadius="20"
+               Padding="10,5"
+               Margin="15,10"
+               HasShadow="False">
+            <Grid ColumnDefinitions="Auto,*">
+                <Label Grid.Column="0"
+                       Text="🔍"
+                       FontSize="20"
+                       VerticalOptions="Center"
+                       Margin="5,0,10,0" />
+
+                <Entry Grid.Column="1"
+                       x:Name="SearchEntry"
+                       Placeholder="Buscar en tu biblioteca..."
+                       PlaceholderColor="#606060"
+                       TextColor="White"
+                       BackgroundColor="Transparent"
+                       TextChanged="OnSearchTextChanged" />
+            </Grid>
+        </Frame>
+
+        <!-- Lista de novelas -->
+        <ScrollView Grid.Row="2">
+            <StackLayout>
+                <!-- Mensaje cuando no hay novelas -->
+                <Frame x:Name="EmptyStateFrame"
+                       IsVisible="False"
+                       BackgroundColor="{StaticResource CardBackgroundColor}"
+                       CornerRadius="15"
+                       Padding="30"
+                       Margin="15,20">
+                    <StackLayout Spacing="15" VerticalOptions="Center">
+                        <Label Text="📚"
+                               FontSize="60"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="No tienes novelas en tu biblioteca"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+
+                        <Label Text="Agrega novelas a tu biblioteca primero"
+                               FontSize="14"
+                               TextColor="#B0B0B0"
+                               HorizontalOptions="Center" />
+                    </StackLayout>
+                </Frame>
+
+                <!-- Lista de novelas con checkboxes -->
+                <StackLayout x:Name="NovelsContainer"
+                             Padding="15"
+                             Spacing="10">
+                    <!-- Las novelas se agregarán dinámicamente aquí -->
+                </StackLayout>
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsRunning="False"
+                                   IsVisible="False"
+                                   Color="{StaticResource PrimaryColor}"
+                                   VerticalOptions="CenterAndExpand"
+                                   HorizontalOptions="CenterAndExpand" />
+            </StackLayout>
+        </ScrollView>
+
+        <!-- Botón flotante para agregar seleccionadas -->
+        <Button x:Name="AddSelectedButton"
+                Grid.Row="2"
+                Text="Agregar seleccionadas"
+                BackgroundColor="{StaticResource PrimaryColor}"
+                TextColor="White"
+                CornerRadius="25"
+                HeightRequest="50"
+                Margin="20"
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                IsVisible="False"
+                Clicked="OnAddSelectedClicked" />
+    </Grid>
+</ContentPage>

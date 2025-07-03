@@ -39,7 +39,7 @@ public partial class MorePage : ContentPage
                     break;
 
                 case "Categories":
-                    await DisplayAlert("Categorías", "Ver todas las categorías", "OK");
+                    await Navigation.PushAsync(new CategoriesPage());
                     break;
 
                 case "Statistics":
