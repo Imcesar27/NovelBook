@@ -1,6 +1,8 @@
 ﻿using NovelBook.Models;
 using NovelBook.Services;
 using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.ApplicationModel;
 
 namespace NovelBook.Views;
 
@@ -116,7 +118,7 @@ public partial class StatsPage : ContentPage
     }
 
     /// <summary>
-    /// Crea un gráfico de barras horizontales para el estado de la biblioteca
+    /// Crea un gráfico circular real para el estado de la biblioteca
     /// </summary>
     private void CreatePieChart()
     {
@@ -137,99 +139,122 @@ public partial class StatsPage : ContentPage
             return;
         }
 
-        // Crear un StackLayout para las barras
-        var barsStack = new StackLayout
+        // Crear el GraphicsView para dibujar el gráfico circular
+        var pieChart = new GraphicsView
         {
-            Spacing = 10,
-            VerticalOptions = LayoutOptions.Center,
-            HorizontalOptions = LayoutOptions.FillAndExpand
+            Drawable = new PieChartDrawable(_stats),
+            HeightRequest = 150,
+            WidthRequest = 150,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
         };
 
-        // Datos para las barras
-        var segments = new List<(string label, int count, Color color)>
+        PieChartContainer.Children.Add(pieChart);
+    }
+
+    /// <summary>
+    /// Clase interna para dibujar el gráfico circular
+    /// </summary>
+    private class PieChartDrawable : IDrawable
+    {
+        private readonly ExtendedStats _stats;
+        private readonly List<(string label, int count, Color color)> _segments;
+
+        public PieChartDrawable(ExtendedStats stats)
         {
-            ("Leyendo", _stats.NovelsReading, Color.FromArgb("#4CAF50")),
-            ("Completados", _stats.NovelsCompleted, Color.FromArgb("#2196F3")),
-            ("Por leer", _stats.NovelsPlanToRead, Color.FromArgb("#FF9800"))
-        };
-
-        foreach (var (label, count, color) in segments)
-        {
-            var percentage = total > 0 ? (double)count / total : 0;
-
-            // Contenedor para cada barra
-            var barContainer = new Grid
+            _stats = stats;
+            _segments = new List<(string label, int count, Color color)>
             {
-                ColumnDefinitions = new ColumnDefinitionCollection
-                {
-                    new ColumnDefinition { Width = new GridLength(80) },
-                    new ColumnDefinition { Width = GridLength.Star },
-                    new ColumnDefinition { Width = new GridLength(40) }
-                }
+                ("Leyendo", stats.NovelsReading, Color.FromArgb("#4CAF50")),
+                ("Completados", stats.NovelsCompleted, Color.FromArgb("#2196F3")),
+                ("Por leer", stats.NovelsPlanToRead, Color.FromArgb("#FF9800"))
             };
-
-            // Label
-            var barLabel = new Label
-            {
-                Text = label,
-                FontSize = 12,
-                TextColor = Colors.White,
-                VerticalOptions = LayoutOptions.Center
-            };
-            Grid.SetColumn(barLabel, 0);
-            barContainer.Children.Add(barLabel);
-
-            // Barra de progreso
-            var progressBar = new ProgressBar
-            {
-                Progress = percentage,
-                ProgressColor = color,
-                HeightRequest = 8,
-                VerticalOptions = LayoutOptions.Center
-            };
-            Grid.SetColumn(progressBar, 1);
-            barContainer.Children.Add(progressBar);
-
-            // Contador
-            var countLabel = new Label
-            {
-                Text = count.ToString(),
-                FontSize = 12,
-                TextColor = color,
-                HorizontalOptions = LayoutOptions.End,
-                VerticalOptions = LayoutOptions.Center
-            };
-            Grid.SetColumn(countLabel, 2);
-            barContainer.Children.Add(countLabel);
-
-            barsStack.Children.Add(barContainer);
         }
 
-        // Agregar total al final
-        var totalContainer = new StackLayout
+        public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            Orientation = StackOrientation.Horizontal,
-            HorizontalOptions = LayoutOptions.Center,
-            Margin = new Thickness(0, 10, 0, 0)
-        };
+            // Centro y radio del círculo
+            var centerX = dirtyRect.Width / 2;
+            var centerY = dirtyRect.Height / 2;
+            var radius = Math.Min(centerX, centerY) - 10;
 
-        totalContainer.Children.Add(new Label
-        {
-            Text = "Total: ",
-            FontSize = 16,
-            TextColor = Color.FromArgb("#B0B0B0")
-        });
+            // Total de novelas (sin contar favoritos que pueden estar en otros estados)
+            var total = _stats.TotalNovelsInLibrary;
+            if (total == 0) return;
 
-        totalContainer.Children.Add(new Label
-        {
-            Text = total.ToString(),
-            FontSize = 20,
-            FontAttributes = FontAttributes.Bold,
-            TextColor = Colors.White
-        });
+            // Ángulo inicial (comienza en la parte superior)
+            float startAngle = -90;
 
-        barsStack.Children.Add(totalContainer);
-        PieChartContainer.Children.Add(barsStack);
+            // Dibujar cada segmento del gráfico
+            foreach (var (label, count, color) in _segments)
+            {
+                if (count > 0)
+                {
+                    // Calcular el ángulo del segmento
+                    float sweepAngle = (float)(count * 360.0 / total);
+
+                    // Dibujar el segmento
+                    canvas.FillColor = color;
+
+                    // Crear el path del segmento
+                    var path = new PathF();
+                    path.MoveTo(centerX, centerY);
+                    path.AddArc(
+                        centerX - radius,
+                        centerY - radius,
+                        radius * 2,
+                        radius * 2,
+                        startAngle,
+                        sweepAngle,
+                        false
+                    );
+                    path.Close();
+
+                    canvas.FillPath(path);
+
+                    // Dibujar borde del segmento
+                    canvas.StrokeColor = Color.FromArgb("#1A1A1A");
+                    canvas.StrokeSize = 2;
+                    canvas.DrawPath(path);
+
+                    // Actualizar el ángulo inicial para el siguiente segmento
+                    startAngle += sweepAngle;
+                }
+            }
+
+            // Dibujar círculo central (efecto donut)
+            var innerRadius = radius * 0.5f;
+            canvas.FillColor = Color.FromArgb("#1A1A1A");
+            canvas.FillCircle(centerX, centerY, innerRadius);
+
+            // Dibujar el total en el centro
+            canvas.FontColor = Colors.White;
+            canvas.FontSize = 24;
+            canvas.Font = Microsoft.Maui.Graphics.Font.DefaultBold;
+            canvas.DrawString(
+                total.ToString(),
+                centerX - 20,
+                centerY - 12,
+                40,
+                24,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Center
+            );
+
+            // Texto "Total" debajo del número
+            canvas.FontSize = 12;
+            canvas.Font = Microsoft.Maui.Graphics.Font.Default;
+            canvas.FontColor = Color.FromArgb("#B0B0B0");
+            canvas.DrawString(
+                "Total",
+                centerX - 20,
+                centerY + 8,
+                40,
+                16,
+                HorizontalAlignment.Center,
+                VerticalAlignment.Center
+            );
+        }
     }
 
     /// <summary>
@@ -246,7 +271,7 @@ public partial class StatsPage : ContentPage
         for (int i = 6; i >= 0; i--)
         {
             var date = today.AddDays(-i);
-            var dayStats = _stats.Last7DaysStats.FirstOrDefault(d => d.Date.Date == date);
+            var dayStats = _stats.Last7DaysStats?.FirstOrDefault(d => d.Date.Date == date);
             weekData.Add((date, dayStats?.ChaptersRead ?? 0));
         }
 
@@ -320,7 +345,7 @@ public partial class StatsPage : ContentPage
     {
         GenreStatsContainer.Children.Clear();
 
-        if (!_stats.GenreStats.Any())
+        if (_stats.GenreStats == null || !_stats.GenreStats.Any())
         {
             var noDataLabel = new Label
             {
@@ -351,39 +376,17 @@ public partial class StatsPage : ContentPage
                 }
             };
 
-            // Información del género
-            var infoStack = new StackLayout { Spacing = 3 };
-
             var nameLabel = new Label
             {
                 Text = genre.GenreName,
                 FontSize = 16,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White
+                TextColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center
             };
-            infoStack.Children.Add(nameLabel);
+            grid.Children.Add(nameLabel);
+            Grid.SetColumn(nameLabel, 0);
 
-            var statsLabel = new Label
-            {
-                Text = $"{genre.ChaptersRead} capítulos • {genre.NovelsRead} novelas",
-                FontSize = 12,
-                TextColor = Color.FromArgb("#B0B0B0")
-            };
-            infoStack.Children.Add(statsLabel);
-
-            // Barra de progreso
-            var progressBar = new ProgressBar
-            {
-                Progress = genre.Percentage / 100,
-                ProgressColor = Color.FromArgb("#8B5CF6"),
-                HeightRequest = 4
-            };
-            infoStack.Children.Add(progressBar);
-
-            grid.Children.Add(infoStack);
-            Grid.SetColumn(infoStack, 0);
-
-            // Porcentaje
             var percentLabel = new Label
             {
                 Text = $"{genre.Percentage:F1}%",
@@ -407,7 +410,7 @@ public partial class StatsPage : ContentPage
     {
         AuthorStatsContainer.Children.Clear();
 
-        if (!_stats.AuthorStats.Any())
+        if (_stats.AuthorStats == null || !_stats.AuthorStats.Any())
         {
             var noDataLabel = new Label
             {
@@ -483,6 +486,7 @@ public partial class StatsPage : ContentPage
     /// <summary>
     /// Actualiza los logros
     /// </summary>
+
     private void UpdateAchievements()
     {
         AchievementsContainer.Children.Clear();
@@ -617,11 +621,26 @@ public partial class StatsPage : ContentPage
         if (!hasActivity) return Color.FromArgb("#2D2D2D");
 
         // Colores según la hora del día
-        if (hour >= 6 && hour < 12) return Color.FromArgb("#FFC107"); // Mañana
-        if (hour >= 12 && hour < 18) return Color.FromArgb("#4CAF50"); // Tarde
-        if (hour >= 18 && hour < 22) return Color.FromArgb("#2196F3"); // Noche
-        return Color.FromArgb("#9C27B0"); // Madrugada
+        if (hour >= 6 && hour < 12) return Color.FromArgb("#FFC107"); // Mañana Amarillo
+        if (hour >= 12 && hour < 18) return Color.FromArgb("#4CAF50"); // Tarde Verde
+        if (hour >= 18 && hour < 22) return Color.FromArgb("#2196F3"); // Noche Azul
+        return Color.FromArgb("#9C27B0"); // Madrugada Morado
     }
+
+    /// <summary>
+    /// Obtiene el color para una hora basado en su actividad
+    /// </summary>
+   /* private Color GetColorForHour(int hour, int value, int maxValue)
+    {
+        if (value == 0) return Color.FromArgb("#2A2A2A");
+
+        var intensity = (double)value / maxValue;
+
+        if (intensity > 0.8) return Color.FromArgb("#8B5CF6"); // Muy activo
+        if (intensity > 0.5) return Color.FromArgb("#A78BFA"); // Activo
+        if (intensity > 0.2) return Color.FromArgb("#C4B5FD"); // Moderado
+        return Color.FromArgb("#4A4A4A"); // Bajo
+    }*/
 
     /// <summary>
     /// Muestra todos los logros
@@ -629,5 +648,107 @@ public partial class StatsPage : ContentPage
     private async void OnViewAllAchievements(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new AchievementsPage(_stats));
+    }
+
+    /// <summary>
+    /// Maneja el tap en el gráfico de géneros para ver más detalles
+    /// </summary>
+    private async void OnGenreStatsTapped(object sender, EventArgs e)
+    {
+        // TODO: Navegar a una página de detalles de géneros
+        await DisplayAlert("Géneros", "Próximamente: Vista detallada de géneros", "OK");
+    }
+
+    /// <summary>
+    /// Maneja el tap en el gráfico de autores para ver más detalles
+    /// </summary>
+    private async void OnAuthorStatsTapped(object sender, EventArgs e)
+    {
+        // TODO: Navegar a una página de detalles de autores
+        await DisplayAlert("Autores", "Próximamente: Vista detallada de autores", "OK");
+    }
+
+    /// <summary>
+    /// Maneja el tap en logros para ver todos
+    /// </summary>
+    private async void OnAchievementsTapped(object sender, EventArgs e)
+    {
+        // TODO: Navegar a una página de logros completa
+        await DisplayAlert("Logros", "Próximamente: Vista completa de logros", "OK");
+    }
+
+    /// <summary>
+    /// Exporta las estadísticas
+    /// </summary>
+    private async void OnExportStatsTapped(object sender, EventArgs e)
+    {
+        try
+        {
+            var action = await DisplayActionSheet(
+                "Exportar estadísticas",
+                "Cancelar",
+                null,
+                "📄 Exportar como PDF",
+                "📊 Exportar como CSV",
+                "📱 Compartir resumen"
+            );
+
+            switch (action)
+            {
+                case "📄 Exportar como PDF":
+                    await ExportAsPDF();
+                    break;
+                case "📊 Exportar como CSV":
+                    await ExportAsCSV();
+                    break;
+                case "📱 Compartir resumen":
+                    await ShareSummary();
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Error al exportar: {ex.Message}", "OK");
+        }
+    }
+
+    /// <summary>
+    /// Exporta las estadísticas como PDF
+    /// </summary>
+    private async Task ExportAsPDF()
+    {
+        // TODO: Implementar exportación a PDF
+        await DisplayAlert("PDF", "Próximamente: Exportación a PDF", "OK");
+    }
+
+    /// <summary>
+    /// Exporta las estadísticas como CSV
+    /// </summary>
+    private async Task ExportAsCSV()
+    {
+        // TODO: Implementar exportación a CSV
+        await DisplayAlert("CSV", "Próximamente: Exportación a CSV", "OK");
+    }
+
+    /// <summary>
+    /// Comparte un resumen de las estadísticas
+    /// </summary>
+    private async Task ShareSummary()
+    {
+        var summary = $"📚 Mis estadísticas en NovelBook\n\n" +
+                     $"📖 Capítulos leídos: {_stats.TotalChaptersRead}\n" +
+                     $"📚 Novelas leídas: {_stats.TotalNovelsRead}\n" +
+                     $"⏱️ Tiempo total: {_stats.FormattedTotalTime}\n" +
+                     $"🔥 Racha actual: {_stats.CurrentStreak} días\n" +
+                     $"⭐ Género favorito: {_stats.FavoriteGenre ?? "N/A"}\n" +
+                     $"✍️ Autor favorito: {_stats.FavoriteAuthor ?? "N/A"}\n" +
+                     $"🏆 Logros: {_stats.UnlockedAchievements?.Count ?? 0}/10\n\n" +
+                     $"¡Únete a NovelBook y comienza tu aventura de lectura!";
+
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Text = summary,
+            Title = "Mis estadísticas de lectura"
+        });
     }
 }
