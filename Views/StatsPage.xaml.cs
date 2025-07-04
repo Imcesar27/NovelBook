@@ -171,6 +171,8 @@ public partial class StatsPage : ContentPage
             };
         }
 
+        //método manual, calcula cada punto del arco explícitamente
+
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             // Centro y radio del círculo
@@ -178,47 +180,61 @@ public partial class StatsPage : ContentPage
             var centerY = dirtyRect.Height / 2;
             var radius = Math.Min(centerX, centerY) - 10;
 
-            // Total de novelas (sin contar favoritos que pueden estar en otros estados)
+            // Total de novelas
             var total = _stats.TotalNovelsInLibrary;
             if (total == 0) return;
 
-            // Ángulo inicial (comienza en la parte superior)
-            float startAngle = -90;
+            // Convertir grados a radianes para cálculos manuales
+            float DegreesToRadians(float degrees) => degrees * (float)Math.PI / 180f;
 
-            // Dibujar cada segmento del gráfico
+            // Ángulo inicial en radianes (arriba = -90 grados = -π/2 radianes)
+            float currentAngle = DegreesToRadians(-90);
+
+            // Dibujar cada segmento
             foreach (var (label, count, color) in _segments)
             {
                 if (count > 0)
                 {
-                    // Calcular el ángulo del segmento
-                    float sweepAngle = (float)(count * 360.0 / total);
+                    // Calcular el ángulo del segmento en radianes
+                    float sweepAngle = DegreesToRadians((float)(count * 360.0 / total));
+                    float endAngle = currentAngle + sweepAngle;
 
-                    // Dibujar el segmento
-                    canvas.FillColor = color;
-
-                    // Crear el path del segmento
+                    // Crear path manualmente
                     var path = new PathF();
+
+                    // Mover al centro
                     path.MoveTo(centerX, centerY);
-                    path.AddArc(
-                        centerX - radius,
-                        centerY - radius,
-                        radius * 2,
-                        radius * 2,
-                        startAngle,
-                        sweepAngle,
-                        false
-                    );
+
+                    // Línea al inicio del arco
+                    float startX = centerX + radius * (float)Math.Cos(currentAngle);
+                    float startY = centerY + radius * (float)Math.Sin(currentAngle);
+                    path.LineTo(startX, startY);
+
+                    // Dibujar el arco manualmente con pequeños segmentos
+                    int segments = Math.Max(1, (int)(Math.Abs(sweepAngle) * 180 / Math.PI / 5)); // Un segmento cada 5 grados
+                    for (int i = 1; i <= segments; i++)
+                    {
+                        float angle = currentAngle + (sweepAngle * i / segments);
+                        float x = centerX + radius * (float)Math.Cos(angle);
+                        float y = centerY + radius * (float)Math.Sin(angle);
+                        path.LineTo(x, y);
+                    }
+
+                    // Volver al centro
+                    path.LineTo(centerX, centerY);
                     path.Close();
 
+                    // Rellenar el segmento
+                    canvas.FillColor = color;
                     canvas.FillPath(path);
 
-                    // Dibujar borde del segmento
+                    // Dibujar borde
                     canvas.StrokeColor = Color.FromArgb("#1A1A1A");
                     canvas.StrokeSize = 2;
                     canvas.DrawPath(path);
 
-                    // Actualizar el ángulo inicial para el siguiente segmento
-                    startAngle += sweepAngle;
+                    // Actualizar ángulo para el siguiente segmento
+                    currentAngle = endAngle;
                 }
             }
 
