@@ -240,8 +240,8 @@
                                 Clicked="OnViewAllAchievements" />
                     </Grid>
 
-                    <ScrollView Orientation="Horizontal" HeightRequest="100">
-                        <HorizontalStackLayout x:Name="AchievementsContainer" Spacing="15">
+                    <ScrollView Orientation="Horizontal" HeightRequest="120">
+                        <HorizontalStackLayout x:Name="AchievementsContainer" Spacing="10">
                             <!-- Los logros se agregarán dinámicamente -->
                         </HorizontalStackLayout>
                     </ScrollView>
@@ -269,7 +269,7 @@
                            TextColor="#B0B0B0" />
 
                     <Grid x:Name="HourlyChartContainer"
-                          HeightRequest="100">
+                          HeightRequest="150">
                         <!-- El gráfico de horas se agregará dinámicamente -->
                     </Grid>
                 </StackLayout>

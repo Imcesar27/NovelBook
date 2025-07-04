@@ -1,7 +1,6 @@
-﻿using Microsoft.Maui.Controls.Shapes;
-using Microsoft.Maui.Graphics;
-using NovelBook.Models;
+﻿using NovelBook.Models;
 using NovelBook.Services;
+using Microsoft.Maui.Graphics;
 
 namespace NovelBook.Views;
 
@@ -101,67 +100,136 @@ public partial class StatsPage : ContentPage
     /// </summary>
     private void UpdateLibraryStats()
     {
-        // Contadores
+        // Contadores - Nota: Los favoritos pueden estar en cualquier estado
         ReadingCountLabel.Text = $"Leyendo: {_stats.NovelsReading}";
         CompletedCountLabel.Text = $"Completados: {_stats.NovelsCompleted}";
         PlanToReadCountLabel.Text = $"Por leer: {_stats.NovelsPlanToRead}";
-        FavoritesCountLabel.Text = $"Favoritos: {_stats.TotalFavorites}";
+        FavoritesCountLabel.Text = $"⭐ Favoritos: {_stats.TotalFavorites}";
 
         // Tasa de completación
         var completionRate = _stats.CompletionRate / 100;
         CompletionProgressBar.Progress = completionRate;
         CompletionRateLabel.Text = $"{_stats.CompletionRate:F1}% completado";
 
-        // Crear gráfico circular simple
+        // Crear gráfico circular
         CreatePieChart();
     }
 
     /// <summary>
-    /// Crea un gráfico circular simple para el estado de la biblioteca
+    /// Crea un gráfico de barras horizontales para el estado de la biblioteca
     /// </summary>
     private void CreatePieChart()
     {
         PieChartContainer.Children.Clear();
 
-        // Crear un Grid para simular un gráfico circular con BoxViews
         var total = _stats.TotalNovelsInLibrary;
-        if (total == 0) return;
-
-        var centerX = 75;
-        var centerY = 75;
-        var radius = 60;
-
-        // Datos para el gráfico
-        var data = new[]
+        if (total == 0)
         {
-            (_stats.NovelsReading, Color.FromArgb("#4CAF50")),
-            (_stats.NovelsCompleted, Color.FromArgb("#2196F3")),
-            (_stats.NovelsPlanToRead, Color.FromArgb("#FF9800")),
-            (total - _stats.NovelsReading - _stats.NovelsCompleted - _stats.NovelsPlanToRead, Color.FromArgb("#757575"))
+            var emptyLabel = new Label
+            {
+                Text = "Sin novelas en tu biblioteca",
+                FontSize = 14,
+                TextColor = Color.FromArgb("#808080"),
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+            PieChartContainer.Children.Add(emptyLabel);
+            return;
+        }
+
+        // Crear un StackLayout para las barras
+        var barsStack = new StackLayout
+        {
+            Spacing = 10,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.FillAndExpand
         };
 
-        // Círculo de fondo
-        var backgroundCircle = new Ellipse
+        // Datos para las barras
+        var segments = new List<(string label, int count, Color color)>
         {
-            Fill = new SolidColorBrush(Color.FromArgb("#2D2D2D")),
-            WidthRequest = radius * 2,
-            HeightRequest = radius * 2,
+            ("Leyendo", _stats.NovelsReading, Color.FromArgb("#4CAF50")),
+            ("Completados", _stats.NovelsCompleted, Color.FromArgb("#2196F3")),
+            ("Por leer", _stats.NovelsPlanToRead, Color.FromArgb("#FF9800"))
+        };
+
+        foreach (var (label, count, color) in segments)
+        {
+            var percentage = total > 0 ? (double)count / total : 0;
+
+            // Contenedor para cada barra
+            var barContainer = new Grid
+            {
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+                    new ColumnDefinition { Width = new GridLength(80) },
+                    new ColumnDefinition { Width = GridLength.Star },
+                    new ColumnDefinition { Width = new GridLength(40) }
+                }
+            };
+
+            // Label
+            var barLabel = new Label
+            {
+                Text = label,
+                FontSize = 12,
+                TextColor = Colors.White,
+                VerticalOptions = LayoutOptions.Center
+            };
+            Grid.SetColumn(barLabel, 0);
+            barContainer.Children.Add(barLabel);
+
+            // Barra de progreso
+            var progressBar = new ProgressBar
+            {
+                Progress = percentage,
+                ProgressColor = color,
+                HeightRequest = 8,
+                VerticalOptions = LayoutOptions.Center
+            };
+            Grid.SetColumn(progressBar, 1);
+            barContainer.Children.Add(progressBar);
+
+            // Contador
+            var countLabel = new Label
+            {
+                Text = count.ToString(),
+                FontSize = 12,
+                TextColor = color,
+                HorizontalOptions = LayoutOptions.End,
+                VerticalOptions = LayoutOptions.Center
+            };
+            Grid.SetColumn(countLabel, 2);
+            barContainer.Children.Add(countLabel);
+
+            barsStack.Children.Add(barContainer);
+        }
+
+        // Agregar total al final
+        var totalContainer = new StackLayout
+        {
+            Orientation = StackOrientation.Horizontal,
             HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center
+            Margin = new Thickness(0, 10, 0, 0)
         };
-        PieChartContainer.Children.Add(backgroundCircle);
 
-        // Texto central
-        var centerLabel = new Label
+        totalContainer.Children.Add(new Label
+        {
+            Text = "Total: ",
+            FontSize = 16,
+            TextColor = Color.FromArgb("#B0B0B0")
+        });
+
+        totalContainer.Children.Add(new Label
         {
             Text = total.ToString(),
-            FontSize = 24,
+            FontSize = 20,
             FontAttributes = FontAttributes.Bold,
-            TextColor = Colors.White,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center
-        };
-        PieChartContainer.Children.Add(centerLabel);
+            TextColor = Colors.White
+        });
+
+        barsStack.Children.Add(totalContainer);
+        PieChartContainer.Children.Add(barsStack);
     }
 
     /// <summary>
@@ -426,15 +494,15 @@ public partial class StatsPage : ContentPage
             {
                 BackgroundColor = Color.FromArgb("#3D3D3D"),
                 CornerRadius = 10,
-                Padding = 15,
-                WidthRequest = 80,
-                HeightRequest = 80,
+                Padding = 10,
+                WidthRequest = 100,
+                HeightRequest = 100,
                 HasShadow = false
             };
 
             var stack = new StackLayout
             {
-                Spacing = 5,
+                Spacing = 3,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center
             };
@@ -442,7 +510,7 @@ public partial class StatsPage : ContentPage
             var iconLabel = new Label
             {
                 Text = achievement.Icon,
-                FontSize = 28,
+                FontSize = 26,
                 HorizontalTextAlignment = TextAlignment.Center
             };
             stack.Children.Add(iconLabel);
@@ -450,11 +518,12 @@ public partial class StatsPage : ContentPage
             var nameLabel = new Label
             {
                 Text = achievement.Name,
-                FontSize = 10,
+                FontSize = 11,
                 TextColor = Colors.White,
                 HorizontalTextAlignment = TextAlignment.Center,
                 MaxLines = 2,
-                LineBreakMode = LineBreakMode.TailTruncation
+                LineBreakMode = LineBreakMode.WordWrap,
+                WidthRequest = 80
             };
             stack.Children.Add(nameLabel);
 
@@ -513,7 +582,7 @@ public partial class StatsPage : ContentPage
             {
                 Color = GetHourColor(hour, value > 0),
                 VerticalOptions = LayoutOptions.End,
-                HeightRequest = Math.Max(2, height * 60),
+                HeightRequest = Math.Max(3, height * 100),
                 Margin = new Thickness(1, 0)
             };
 

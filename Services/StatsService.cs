@@ -95,6 +95,8 @@ public class StatsService
                         SUM(CASE WHEN reading_status = 'completed' THEN 1 ELSE 0 END) as completed,
                         SUM(CASE WHEN reading_status = 'reading' THEN 1 ELSE 0 END) as reading,
                         SUM(CASE WHEN reading_status = 'plan_to_read' THEN 1 ELSE 0 END) as plan_to_read,
+                        SUM(CASE WHEN reading_status = 'paused' THEN 1 ELSE 0 END) as paused,
+                        SUM(CASE WHEN reading_status = 'dropped' THEN 1 ELSE 0 END) as dropped,
                         SUM(CASE WHEN is_favorite = 1 THEN 1 ELSE 0 END) as favorites
                      FROM user_library
                      WHERE user_id = @userId";
@@ -109,6 +111,16 @@ public class StatsService
             stats.NovelsCompleted = reader.GetInt32(reader.GetOrdinal("completed"));
             stats.NovelsReading = reader.GetInt32(reader.GetOrdinal("reading"));
             stats.NovelsPlanToRead = reader.GetInt32(reader.GetOrdinal("plan_to_read"));
+
+            // Si quieres agregar paused y dropped al modelo, puedes hacerlo
+            // Por ahora, los incluiremos en "plan_to_read" o crear nuevas propiedades
+            var paused = reader.GetInt32(reader.GetOrdinal("paused"));
+            var dropped = reader.GetInt32(reader.GetOrdinal("dropped"));
+
+            // Ajustar el total si hay otros estados
+            // stats.NovelsPaused = paused;
+            // stats.NovelsDropped = dropped;
+
             stats.TotalFavorites = reader.GetInt32(reader.GetOrdinal("favorites"));
         }
     }
@@ -175,7 +187,7 @@ public class StatsService
                         COUNT(DISTINCT rh.chapter_id) as chapters_read,
                         COUNT(DISTINCT rh.novel_id) as novels_read,
                         ISNULL(SUM(rh.reading_time), 0) as reading_time,
-                        ISNULL(AVG(r.rating), 0) as avg_rating
+                        ISNULL(AVG(CAST(r.rating as FLOAT)), 0) as avg_rating
                      FROM novels n
                      INNER JOIN reading_history rh ON n.id = rh.novel_id
                      LEFT JOIN reviews r ON n.id = r.novel_id AND r.user_id = @userId
@@ -195,7 +207,7 @@ public class StatsService
                 ChaptersRead = reader.GetInt32(reader.GetOrdinal("chapters_read")),
                 NovelsRead = reader.GetInt32(reader.GetOrdinal("novels_read")),
                 ReadingTime = reader.GetInt32(reader.GetOrdinal("reading_time")),
-                AverageRating = reader.GetDecimal(reader.GetOrdinal("avg_rating"))
+                AverageRating = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("avg_rating")))
             };
 
             stats.AuthorStats.Add(authorStat);
@@ -306,7 +318,7 @@ public class StatsService
 
         var query = @"SELECT 
                         COUNT(*) as total_reviews,
-                        ISNULL(AVG(CAST(rating as DECIMAL(3,1))), 0) as avg_rating
+                        ISNULL(AVG(CAST(rating as FLOAT)), 0) as avg_rating
                      FROM reviews
                      WHERE user_id = @userId";
 
@@ -317,7 +329,7 @@ public class StatsService
         if (await reader.ReadAsync())
         {
             stats.TotalReviewsWritten = reader.GetInt32(reader.GetOrdinal("total_reviews"));
-            stats.AverageRating = reader.GetDecimal(reader.GetOrdinal("avg_rating"));
+            stats.AverageRating = Convert.ToDecimal(reader.GetDouble(reader.GetOrdinal("avg_rating")));
         }
     }
 
@@ -326,21 +338,36 @@ public class StatsService
     /// </summary>
     private async Task<int> CalculateCurrentStreak(int userId, SqlConnection connection)
     {
-        var query = @"WITH DateSequence AS (
-                        SELECT DISTINCT CAST(read_at as DATE) as read_date
-                        FROM reading_history
-                        WHERE user_id = @userId
-                        ORDER BY read_date DESC
-                     )
-                     SELECT COUNT(*) as streak
-                     FROM DateSequence
-                     WHERE read_date >= DATEADD(day, -ROW_NUMBER() OVER (ORDER BY read_date DESC), GETDATE())";
+        try
+        {
+            // Consulta simplificada para calcular la racha
+            var query = @"WITH DatesRead AS (
+                            SELECT DISTINCT CAST(read_at as DATE) as read_date
+                            FROM reading_history
+                            WHERE user_id = @userId
+                        ),
+                        DatesWithGaps AS (
+                            SELECT 
+                                read_date,
+                                DATEDIFF(day, read_date, GETDATE()) as days_ago,
+                                ROW_NUMBER() OVER (ORDER BY read_date DESC) - 1 as expected_days_ago
+                            FROM DatesRead
+                        )
+                        SELECT COUNT(*) as streak
+                        FROM DatesWithGaps
+                        WHERE days_ago = expected_days_ago";
 
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.AddWithValue("@userId", userId);
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", userId);
 
-        var result = await command.ExecuteScalarAsync();
-        return result != null ? Convert.ToInt32(result) : 0;
+            var result = await command.ExecuteScalarAsync();
+            return result != null ? Convert.ToInt32(result) : 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error calculando racha actual: {ex.Message}");
+            return 0;
+        }
     }
 
     /// <summary>
@@ -348,20 +375,38 @@ public class StatsService
     /// </summary>
     private async Task<int> CalculateLongestStreak(int userId, SqlConnection connection)
     {
-        // Implementación simplificada - podrías mejorarla con un algoritmo más complejo
-        var query = @"SELECT MAX(streak_length) FROM (
-                        SELECT COUNT(*) as streak_length
-                        FROM reading_history
-                        WHERE user_id = @userId
-                        GROUP BY DATEDIFF(day, '2020-01-01', read_at) - 
-                                 ROW_NUMBER() OVER (ORDER BY read_at)
-                     ) as streaks";
+        try
+        {
+            // Consulta simplificada para la racha más larga
+            var query = @"WITH DatesRead AS (
+                            SELECT DISTINCT CAST(read_at as DATE) as read_date
+                            FROM reading_history
+                            WHERE user_id = @userId
+                        ),
+                        Streaks AS (
+                            SELECT 
+                                read_date,
+                                DATEADD(day, -ROW_NUMBER() OVER (ORDER BY read_date), read_date) as streak_group
+                            FROM DatesRead
+                        )
+                        SELECT ISNULL(MAX(streak_length), 0) as max_streak
+                        FROM (
+                            SELECT COUNT(*) as streak_length
+                            FROM Streaks
+                            GROUP BY streak_group
+                        ) as StreakCounts";
 
-        using var command = new SqlCommand(query, connection);
-        command.Parameters.AddWithValue("@userId", userId);
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@userId", userId);
 
-        var result = await command.ExecuteScalarAsync();
-        return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+            var result = await command.ExecuteScalarAsync();
+            return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error calculando racha más larga: {ex.Message}");
+            return 0;
+        }
     }
 
     /// <summary>
