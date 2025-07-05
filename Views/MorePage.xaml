@@ -19,7 +19,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Avatar -->
+                    <!-- Avatar actualizado para soportar imagen -->
                     <Frame Grid.Column="0"
                            CornerRadius="40"
                            Padding="0"
@@ -27,13 +27,39 @@
                            HeightRequest="80"
                            WidthRequest="80"
                            HorizontalOptions="Start">
-                        <Label x:Name="AvatarLabel"
-                               Text="U"
-                               TextColor="White"
-                               FontSize="32"
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAvatarTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Grid>
+                            <!-- Imagen de perfil -->
+                            <Image x:Name="ProfileImage"
+                                   Aspect="AspectFill"
+                                   IsVisible="False"/>
+                            <!-- Letra inicial cuando no hay imagen -->
+                            <Label x:Name="AvatarLabel"
+                                   Text="U"
+                                   TextColor="White"
+                                   FontSize="32"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   IsVisible="True"/>
+                            <!-- Ícono de cámara overlay -->
+                            <Frame CornerRadius="12"
+                                   BackgroundColor="{StaticResource BackgroundDark}"
+                                   Padding="0"
+                                   WidthRequest="24"
+                                   HeightRequest="24"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="End"
+                                   Margin="0,0,5,5"
+                                   HasShadow="False">
+                                <Label Text="📷"
+                                       FontSize="14"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Frame>
+                        </Grid>
                     </Frame>
 
                     <!-- Información del usuario -->

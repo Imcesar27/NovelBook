@@ -1,4 +1,6 @@
-using NovelBook.Services;
+锘縰sing NovelBook.Services;
+using Plugin.Fingerprint;
+using Plugin.Fingerprint.Abstractions;
 
 namespace NovelBook;
 
@@ -6,65 +8,193 @@ public partial class LoginPage : ContentPage
 {
     private readonly AuthService _authService;
     private readonly DatabaseService _databaseService;
+    private readonly IFingerprint _fingerprint;
 
     public LoginPage()
     {
         InitializeComponent();
-        
+
         // Crear instancias de los servicios
         _databaseService = new DatabaseService();
         _authService = new AuthService(_databaseService);
+        _fingerprint = CrossFingerprint.Current;
+
+        // Verificar si hay credenciales guardadas para biometr铆a
+        CheckBiometricLogin();
     }
 
-  /*  private async void OnLoginClicked(object sender, EventArgs e)
+    /// <summary>
+    /// Verifica si el dispositivo tiene biometr铆a disponible y si hay credenciales guardadas
+    /// </summary>
+    private async void CheckBiometricLogin()
     {
-        if (string.IsNullOrWhiteSpace(EmailEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
-        {
-            await DisplayAlert("Error", "Por favor completa todos los campos", "OK");
-            return;
-        }
-
-        // Mostrar indicador de carga
-        var loginButton = sender as Button;
-        loginButton.IsEnabled = false;
-        loginButton.Text = "Iniciando sesi髇...";
-
         try
         {
-            var (success, message, user) = await _authService.LoginAsync(
-                EmailEntry.Text.Trim(), 
-                PasswordEntry.Text
-            );
+            // Verificar si el dispositivo soporta biometr铆a
+            var isAvailable = await _fingerprint.IsAvailableAsync();
 
-            if (success)
+            // Verificar si hay credenciales guardadas
+            var savedEmail = await SecureStorage.GetAsync("biometric_email");
+            var savedPassword = await SecureStorage.GetAsync("biometric_password");
+
+            if (isAvailable && !string.IsNullOrEmpty(savedEmail) && !string.IsNullOrEmpty(savedPassword))
             {
-                await DisplayAlert("蓌ito", $"Bienvenido {user.Name}", "OK");
-                App.SetMainPageToShell();
-            }
-            else
-            {
-                await DisplayAlert("Error", message, "OK");
+                // Mostrar bot贸n de biometr铆a
+                await Device.InvokeOnMainThreadAsync(() =>
+                {
+                    // Agregar un bot贸n de biometr铆a din谩micamente
+                    var biometricButton = new Button
+                    {
+                        Text = "馃攼 Iniciar con Face ID/Touch ID",
+                        BackgroundColor = Color.FromArgb("#2E7D32"),
+                        TextColor = Colors.White,
+                        CornerRadius = 10,
+                        HeightRequest = 50,
+                        FontAttributes = FontAttributes.Bold,
+                        Margin = new Thickness(0, 10, 0, 0)
+                    };
+
+                    biometricButton.Clicked += OnBiometricLoginClicked;
+
+                    // Encontrar el VerticalStackLayout donde est谩 el bot贸n de login
+                    var loginButton = this.FindByName<Button>("LoginButton");
+                    if (loginButton?.Parent is VerticalStackLayout layout)
+                    {
+                        var index = layout.Children.IndexOf(loginButton);
+                        layout.Children.Insert(index + 1, biometricButton);
+                    }
+                });
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error de conexi髇. Verifica tu conexi髇 a internet.", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error verificando biometr铆a: {ex.Message}");
         }
-        finally
+    }
+
+    /// <summary>
+    /// Maneja el evento de click en el bot贸n de biometr铆a
+    /// </summary>
+    private async void OnBiometricLoginClicked(object sender, EventArgs e)
+    {
+        try
         {
-            loginButton.IsEnabled = true;
-            loginButton.Text = "Entrar";
+            var email = await SecureStorage.GetAsync("biometric_email");
+            var password = await SecureStorage.GetAsync("biometric_password");
+
+            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
+            {
+                await TryBiometricLogin(email, password);
+            }
         }
-    }*/
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", "No se pudieron recuperar las credenciales guardadas", "OK");
+        }
+    }
+
+    /// <summary>
+    /// Intenta hacer login usando biometr铆a
+    /// </summary>
+    private async Task TryBiometricLogin(string email, string password)
+    {
+        try
+        {
+            var request = new AuthenticationRequestConfiguration(
+                "Iniciar Sesi贸n",
+                "Usa tu huella digital o Face ID para acceder a NovelBook");
+
+            var result = await _fingerprint.AuthenticateAsync(request);
+
+            if (result.Authenticated)
+            {
+                // Autenticaci贸n biom茅trica exitosa, proceder con login
+                var (success, message, user) = await _authService.LoginAsync(email, password);
+
+                if (success)
+                {
+                    await DisplayAlert("脡xito", $"Bienvenido {user.Name}", "OK");
+                    App.SetMainPageToShell();
+                }
+                else
+                {
+                    await DisplayAlert("Error", "Las credenciales guardadas ya no son v谩lidas", "OK");
+                    // Limpiar credenciales guardadas
+                    SecureStorage.Remove("biometric_email");
+                    SecureStorage.Remove("biometric_password");
+                }
+            }
+            else if (result.Status == FingerprintAuthenticationResultStatus.Canceled)
+            {
+                // Usuario cancel贸 - no hacer nada
+            }
+            else if (result.Status == FingerprintAuthenticationResultStatus.TooManyAttempts)
+            {
+                await DisplayAlert("Error", "Demasiados intentos fallidos. Usa tu contrase帽a.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Error en autenticaci贸n biom茅trica: {ex.Message}", "OK");
+        }
+    }
+
+    /// <summary>
+    /// Pregunta al usuario si desea guardar las credenciales para biometr铆a
+    /// </summary>
+    private async Task AskToSaveBiometricCredentials(string email, string password)
+    {
+        try
+        {
+            var isAvailable = await _fingerprint.IsAvailableAsync();
+            if (!isAvailable) return;
+
+            // Verificar si ya tiene credenciales guardadas
+            var savedEmail = await SecureStorage.GetAsync("biometric_email");
+            if (!string.IsNullOrEmpty(savedEmail)) return;
+
+            // Preguntar al usuario
+            var answer = await DisplayAlert(
+                "Biometr铆a",
+                "驴Deseas habilitar el inicio de sesi贸n con Face ID/Touch ID para futuros accesos?",
+                "S铆",
+                "No");
+
+            if (answer)
+            {
+                // Primero autenticar con biometr铆a
+                var request = new AuthenticationRequestConfiguration(
+                    "Autenticaci贸n Biom茅trica",
+                    "Usa tu huella digital o Face ID para habilitar el acceso r谩pido");
+
+                var result = await _fingerprint.AuthenticateAsync(request);
+
+                if (result.Authenticated)
+                {
+                    // Guardar credenciales de forma segura
+                    await SecureStorage.SetAsync("biometric_email", email);
+                    await SecureStorage.SetAsync("biometric_password", password);
+
+                    await DisplayAlert("脡xito", "Face ID/Touch ID habilitado correctamente", "OK");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error guardando credenciales biom茅tricas: {ex.Message}");
+        }
+    }
+
+    // TU C脫DIGO EXISTENTE COMIENZA AQU脥 (con modificaci贸n en PerformLogin)
 
     private async void OnFacebookLoginTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Facebook", "Login con Facebook - Pr髕imamente", "OK");
+        await DisplayAlert("Facebook", "Login con Facebook - Pr贸ximamente", "OK");
     }
 
     private async void OnGoogleLoginTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Google", "Login con Google - Pr髕imamente", "OK");
+        await DisplayAlert("Google", "Login con Google - Pr贸ximamente", "OK");
     }
 
     private async void OnRegisterTapped(object sender, EventArgs e)
@@ -74,15 +204,15 @@ public partial class LoginPage : ContentPage
 
     private async void OnGuestTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Invitado", "ienvenido Invitado!", "OK");
+        await DisplayAlert("Invitado", "隆Bienvenido Invitado!", "OK");
         // Por ahora, ir directo a la app sin login
         App.SetMainPageToShell();
     }
 
-    //Enter para iniciar sesi髇
+    //Enter para iniciar sesi贸n
     private async void OnPasswordEntryCompleted(object sender, EventArgs e)
     {
-        // En lugar de buscar el bot髇, ejecutar directamente la l骻ica de login
+        // En lugar de buscar el bot贸n, ejecutar directamente la l贸gica de login
         await PerformLogin();
     }
 
@@ -103,12 +233,12 @@ public partial class LoginPage : ContentPage
         EmailEntry.IsEnabled = false;
         PasswordEntry.IsEnabled = false;
 
-        // Buscar el bot髇 de login si existe
+        // Buscar el bot贸n de login si existe
         var loginButton = this.FindByName<Button>("LoginButton");
         if (loginButton != null)
         {
             loginButton.IsEnabled = false;
-            loginButton.Text = "Iniciando sesi髇...";
+            loginButton.Text = "Iniciando sesi贸n...";
         }
 
         try
@@ -120,7 +250,10 @@ public partial class LoginPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("蓌ito", $"Bienvenido {user.Name}", "OK");
+                // NUEVA L脥NEA: Preguntar si quiere guardar para biometr铆a
+                await AskToSaveBiometricCredentials(EmailEntry.Text.Trim(), PasswordEntry.Text);
+
+                await DisplayAlert("脡xito", $"Bienvenido {user.Name}", "OK");
                 App.SetMainPageToShell();
             }
             else
@@ -130,7 +263,7 @@ public partial class LoginPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error de conexi髇. Verifica tu conexi髇 a internet.", "OK");
+            await DisplayAlert("Error", "Error de conexi贸n. Verifica tu conexi贸n a internet.", "OK");
         }
         finally
         {

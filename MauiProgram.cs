@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NovelBook.Services;
+using Plugin.Fingerprint;
+using Plugin.Fingerprint.Abstractions;
 
 namespace NovelBook;
 
@@ -21,6 +23,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<AuthService>();
         builder.Services.AddSingleton<NovelService>();
         builder.Services.AddSingleton<LibraryService>();
+
+        // Registrar el servicio de biometría
+        builder.Services.AddSingleton(typeof(IFingerprint), CrossFingerprint.Current);
 
 #if DEBUG
         builder.Logging.AddDebug();
