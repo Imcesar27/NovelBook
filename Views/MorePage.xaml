@@ -121,6 +121,44 @@
                             Toggled="OnIncognitoToggled"/>
                 </Grid>
 
+                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+
+                <!-- Gestionar Face ID/Touch ID -->
+                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                      Padding="20,15">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="BiometricSettings"/>
+                    </Grid.GestureRecognizers>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0"
+                           Text="🔐"
+                           FontSize="24"
+                           VerticalOptions="Center"
+                           Margin="0,0,15,0"/>
+
+                    <VerticalStackLayout Grid.Column="1" 
+                                       VerticalOptions="Center">
+                        <Label Text="Face ID / Touch ID"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="16"/>
+                        <Label x:Name="BiometricStatusMoreLabel"
+                               Text="No configurado"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="12"/>
+                    </VerticalStackLayout>
+
+                    <Label Grid.Column="2"
+                           Text="→"
+                           TextColor="{StaticResource TextSecondary}"
+                           FontSize="20"
+                           VerticalOptions="Center"/>
+                </Grid>
+
                 <!-- Sección Admin (solo visible para administradores) -->
                 <BoxView x:Name="AdminSeparator" 
                          HeightRequest="10" 

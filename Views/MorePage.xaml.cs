@@ -33,6 +33,23 @@ public partial class MorePage : ContentPage
 
         // Cargar foto de perfil si existe
         LoadProfileImage();
+
+        // Actualizar estado de biometría
+        UpdateBiometricStatus();
+    }
+
+    private async void UpdateBiometricStatus()
+    {
+        try
+        {
+            var biometricStatusLabel = this.FindByName<Label>("BiometricStatusMoreLabel");
+            if (biometricStatusLabel != null)
+            {
+                var savedEmail = await SecureStorage.GetAsync("biometric_email");
+                biometricStatusLabel.Text = !string.IsNullOrEmpty(savedEmail) ? "Activado" : "No configurado";
+            }
+        }
+        catch { }
     }
 
     private void UpdateUserInfo()
@@ -404,6 +421,10 @@ public partial class MorePage : ContentPage
 
                 case "Statistics":
                     await Navigation.PushAsync(new StatsPage());
+                    break;
+
+                case "BiometricSettings":
+                    await Navigation.PushAsync(new SettingsPage());
                     break;
 
                 case "Settings":

@@ -2,11 +2,419 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.SettingsPage"
-             Title="SettingsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Configuración"
+             BackgroundColor="{StaticResource BackgroundDark}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0" Padding="20">
+
+            <!-- Header -->
+            <Label Text="Configuración"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   Margin="0,10,0,20"/>
+
+            <!-- Sección de Seguridad -->
+            <Label Text="Seguridad"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Opción de Face ID/Touch ID -->
+                    <Grid Padding="20,15"
+                          BackgroundColor="{StaticResource BackgroundMedium}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Face ID / Touch ID"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="BiometricStatusLabel"
+                                   Text="No configurado"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Switch Grid.Column="1"
+                                x:Name="BiometricSwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnBiometricToggled"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Cambiar contraseña -->
+                    <Grid Padding="20,15"
+                          BackgroundColor="{StaticResource BackgroundMedium}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnChangePasswordTapped"/>
+                        </Grid.GestureRecognizers>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Cambiar contraseña"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="16"
+                               VerticalOptions="Center"/>
+
+                        <Label Grid.Column="1"
+                               Text="→"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="20"
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Sección de Lectura -->
+            <Label Text="Lectura"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Tamaño de fuente -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Tamaño de letra"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="16"
+                               VerticalOptions="Center"/>
+
+                        <Slider Grid.Column="1"
+                                x:Name="FontSizeSlider"
+                                Minimum="12"
+                                Maximum="24"
+                                Value="16"
+                                ThumbColor="{StaticResource Primary}"
+                                MinimumTrackColor="{StaticResource Primary}"
+                                MaximumTrackColor="{StaticResource TextMuted}"
+                                ValueChanged="OnFontSizeChanged"/>
+
+                        <Label Grid.Column="2"
+                               x:Name="FontSizeLabel"
+                               Text="16"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="16"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Modo de lectura nocturno -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Modo nocturno automático"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="16"
+                               VerticalOptions="Center"/>
+
+                        <Switch Grid.Column="1"
+                                x:Name="NightModeSwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnNightModeToggled"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Mantener pantalla encendida -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0"
+                               Text="Mantener pantalla encendida"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="16"
+                               VerticalOptions="Center"/>
+
+                        <Switch Grid.Column="1"
+                                x:Name="KeepScreenOnSwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnKeepScreenOnToggled"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Sección de Notificaciones -->
+            <Label Text="Notificaciones"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Notificaciones de actualizaciones -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Nuevos capítulos"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label Text="Notificar cuando haya nuevos capítulos"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Switch Grid.Column="1"
+                                x:Name="UpdateNotificationsSwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnUpdateNotificationsToggled"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Notificaciones de recomendaciones -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Recomendaciones"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label Text="Sugerencias basadas en tu lectura"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Switch Grid.Column="1"
+                                x:Name="RecommendationNotificationsSwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnRecommendationNotificationsToggled"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Sección de Descargas -->
+            <Label Text="Descargas"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Solo WiFi -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Solo WiFi"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label Text="Descargar solo con conexión WiFi"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Switch Grid.Column="1"
+                                x:Name="WifiOnlySwitch"
+                                OnColor="{StaticResource Primary}"
+                                ThumbColor="White"
+                                VerticalOptions="Center"
+                                Toggled="OnWifiOnlyToggled"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Límite de descargas -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Límite de descargas"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="DownloadLimitLabel"
+                                   Text="Máximo 10 capítulos"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Stepper Grid.Column="1"
+                                 x:Name="DownloadLimitStepper"
+                                 Minimum="5"
+                                 Maximum="50"
+                                 Value="10"
+                                 Increment="5"
+                                 ValueChanged="OnDownloadLimitChanged"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Limpiar caché -->
+                    <Grid Padding="20,15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnClearCacheTapped"/>
+                        </Grid.GestureRecognizers>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Limpiar caché"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="CacheSizeLabel"
+                                   Text="0 MB"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="1"
+                               Text="🗑️"
+                               FontSize="20"
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Sección de Cuenta -->
+            <Label Text="Cuenta"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Información de la cuenta -->
+                    <Grid Padding="20,15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnAccountInfoTapped"/>
+                        </Grid.GestureRecognizers>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Información de la cuenta"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="AccountEmailLabel"
+                                   Text="usuario@email.com"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="12"/>
+                        </VerticalStackLayout>
+
+                        <Label Grid.Column="1"
+                               Text="→"
+                               TextColor="{StaticResource TextSecondary}"
+                               FontSize="20"
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Cerrar sesión -->
+                    <Grid Padding="20,15">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLogoutTapped"/>
+                        </Grid.GestureRecognizers>
+
+                        <Label Text="Cerrar sesión"
+                               TextColor="{StaticResource Error}"
+                               FontSize="16"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Versión de la app -->
+            <Label x:Name="VersionLabel"
+                   Text="NovelBook v1.0.0"
+                   TextColor="{StaticResource TextMuted}"
+                   FontSize="12"
+                   HorizontalOptions="Center"
+                   Margin="0,20,0,40"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
