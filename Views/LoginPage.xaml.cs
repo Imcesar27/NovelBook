@@ -185,8 +185,6 @@ public partial class LoginPage : ContentPage
         }
     }
 
-    // TU CÓDIGO EXISTENTE COMIENZA AQUÍ (con modificación en PerformLogin)
-
     private async void OnFacebookLoginTapped(object sender, EventArgs e)
     {
         await DisplayAlert("Facebook", "Login con Facebook - Próximamente", "OK");
@@ -276,5 +274,24 @@ public partial class LoginPage : ContentPage
                 loginButton.Text = "Entrar";
             }
         }
+    }
+
+    /// <summary>
+    /// Alterna la visibilidad de la contraseña
+    /// </summary>
+    private void OnPasswordToggleClicked(object sender, EventArgs e)
+    {
+        PasswordEntry.IsPassword = !PasswordEntry.IsPassword;
+
+        // Cambiar el emoji del label
+        PasswordToggle.Text = PasswordEntry.IsPassword ? "🙈" : "👁️";
+    }
+
+    /// <summary>
+    /// Maneja el tap en "¿Olvidaste tu contraseña?"
+    /// </summary>
+    private async void OnForgotPasswordTapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new Views.ForgotPasswordPage());
     }
 }

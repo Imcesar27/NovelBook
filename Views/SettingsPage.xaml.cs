@@ -269,20 +269,36 @@ public partial class SettingsPage : ContentPage
     /// <summary>
     /// Maneja el tap en cambiar contraseña
     /// </summary>
-    private async void OnChangePasswordTapped(object sender, EventArgs e)
+private async void OnChangePasswordTapped(object sender, EventArgs e)
+{
+    try
     {
+        // Verificar que haya un usuario autenticado
         if (AuthService.CurrentUser == null)
         {
-            await DisplayAlert("Información", "Debes iniciar sesión para cambiar tu contraseña", "OK");
+            await DisplayAlert("Error", "Debes iniciar sesión para cambiar tu contraseña", "OK");
             return;
         }
 
-        // TODO: navegar a una página de cambio de contraseña
-        // await Navigation.PushAsync(new ChangePasswordPage());
+        // Crear y mostrar el diálogo de cambio de contraseña
+        var changePasswordDialog = new Dialogs.ChangePasswordDialog();
+        await Navigation.PushModalAsync(changePasswordDialog, true);
 
-        // Por ahora solo mostramos un mensaje
-        await DisplayAlert("Cambiar Contraseña", "Función próximamente disponible", "OK");
+        // Esperar el resultado
+        var result = await changePasswordDialog.ShowAsync();
+
+        if (result)
+        {
+            // La contraseña se cambió exitosamente
+            System.Diagnostics.Debug.WriteLine("Contraseña actualizada exitosamente");
+        }
     }
+    catch (Exception ex)
+    {
+        await DisplayAlert("Error", "No se pudo abrir el diálogo de cambio de contraseña", "OK");
+        System.Diagnostics.Debug.WriteLine($"Error en OnChangePasswordTapped: {ex.Message}");
+    }
+}
 
     // Eventos de configuración de lectura
     private void OnFontSizeChanged(object sender, ValueChangedEventArgs e)

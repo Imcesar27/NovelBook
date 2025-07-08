@@ -65,18 +65,89 @@
                            BackgroundColor="Transparent"/>
                 </Frame>
 
-                <!-- Campo de contraseña -->
-                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                <!-- Campo de contraseña con ojito -->
+                <Frame x:Name="PasswordFrame"
+                       BackgroundColor="{StaticResource BackgroundMedium}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
-                       Padding="15,10">
-                    <Entry x:Name="PasswordEntry"
-                           Placeholder="Contraseña" 
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
-                           IsPassword="True"
-                           BackgroundColor="Transparent"/>
+                       Padding="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Entry x:Name="PasswordEntry"
+                               Grid.Column="0"
+                               Placeholder="Contraseña" 
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextPrimary}"
+                               IsPassword="True"
+                               BackgroundColor="Transparent"
+                               Margin="15,10"
+                               TextChanged="OnPasswordChanged"/>
+
+                        <Label Grid.Column="1"
+                               x:Name="PasswordToggle"
+                               Text="🙈"
+                               FontSize="20"
+                               VerticalOptions="Center"
+                               Margin="0,0,15,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPasswordToggleClicked"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
                 </Frame>
+
+                <!-- Campo de confirmar contraseña con ojito -->
+                <Frame x:Name="ConfirmPasswordFrame"
+                       BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BorderColor="Transparent"
+                       CornerRadius="10"
+                       Padding="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Entry x:Name="ConfirmPasswordEntry"
+                               Grid.Column="0"
+                               Placeholder="Confirmar contraseña" 
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextPrimary}"
+                               IsPassword="True"
+                               BackgroundColor="Transparent"
+                               Margin="15,10"
+                               TextChanged="OnPasswordChanged"/>
+
+                        <Label Grid.Column="1"
+                               x:Name="ConfirmPasswordToggle"
+                               Text="🙈"
+                               FontSize="20"
+                               VerticalOptions="Center"
+                               Margin="0,0,15,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnConfirmPasswordToggleClicked"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                </Frame>
+
+                <!-- Mensaje de error para contraseñas que no coinciden -->
+                <Label x:Name="PasswordMatchLabel"
+                       Text="Las contraseñas no coinciden"
+                       TextColor="#EF4444"
+                       FontSize="12"
+                       IsVisible="False"
+                       Margin="5,0,0,0"/>
+
+                <!-- Indicador de requisitos de contraseña -->
+                <Label Text="La contraseña debe tener al menos 6 caracteres"
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="12"
+                       Margin="5,0,0,0"/>
 
                 <!-- Botón de crear cuenta -->
                 <Button Text="Crear"
