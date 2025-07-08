@@ -182,6 +182,84 @@
                 </VerticalStackLayout>
             </Frame>
 
+            <!-- Sección de Apariencia -->
+            <Label Text="Apariencia"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   Margin="0,0,0,10"/>
+
+            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                   CornerRadius="10"
+                   Padding="0"
+                   Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Tema de la aplicación -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Tema de la aplicación"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="ThemeStatusLabel"
+                                   Text="Sistema"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="14"/>
+                        </VerticalStackLayout>
+
+                        <Picker Grid.Column="1"
+                                x:Name="ThemePicker"
+                                WidthRequest="120"
+                                TextColor="{StaticResource Primary}"
+                                SelectedIndexChanged="OnThemeChanged">
+                            <Picker.Items>
+                                <x:String>Sistema</x:String>
+                                <x:String>Claro</x:String>
+                                <x:String>Oscuro</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Grid>
+
+                    <BoxView HeightRequest="1" 
+                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             Margin="20,0"/>
+
+                    <!-- Idioma -->
+                    <Grid Padding="20,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Idioma"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="16"/>
+                            <Label x:Name="LanguageStatusLabel"
+                                   Text="Español"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   FontSize="14"/>
+                        </VerticalStackLayout>
+
+                        <Picker Grid.Column="1"
+                                x:Name="LanguagePicker"
+                                WidthRequest="120"
+                                TextColor="{StaticResource Primary}"
+                                SelectedIndexChanged="OnLanguageChanged">
+                            <Picker.Items>
+                                <x:String>Español</x:String>
+                                <x:String>English</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+            
             <!-- Sección de Notificaciones -->
             <Label Text="Notificaciones"
                    FontSize="20"

@@ -1,4 +1,5 @@
 ﻿using NovelBook.Views;
+using System.Globalization;
 
 namespace NovelBook
 {
@@ -8,11 +9,52 @@ namespace NovelBook
         {
             InitializeComponent();
 
+            // Aplicar tema guardado
+            ApplySavedTheme();
+
+            // Aplicar idioma guardado
+            ApplySavedLanguage();
+
             MainPage = new NavigationPage(new LoginPage())
             {
                 BarBackgroundColor = Color.FromArgb("#1A1A1A"),
                 BarTextColor = Colors.White
             };
+        }
+
+        /// <summary>
+        /// Aplica el tema guardado en las preferencias
+        /// </summary>
+        private void ApplySavedTheme()
+        {
+            var savedTheme = Preferences.Get("AppTheme", "System");
+
+            switch (savedTheme)
+            {
+                case "Light":
+                    UserAppTheme = AppTheme.Light;
+                    break;
+                case "Dark":
+                    UserAppTheme = AppTheme.Dark;
+                    break;
+                default:
+                    UserAppTheme = AppTheme.Unspecified;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Aplica el idioma guardado en las preferencias
+        /// </summary>
+        private void ApplySavedLanguage()
+        {
+            var savedLanguage = Preferences.Get("AppLanguage", "es");
+
+            var culture = new CultureInfo(savedLanguage);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
         }
 
         // Método para cambiar a la app principal después del login

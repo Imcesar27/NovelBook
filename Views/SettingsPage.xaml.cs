@@ -2,6 +2,7 @@
 using NovelBook.Services;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
+using System.Globalization;
 
 namespace NovelBook.Views;
 
@@ -28,6 +29,21 @@ public partial class SettingsPage : ContentPage
 
     private void LoadSettings()
     {
+        // Cargar configuración de tema
+        var currentTheme = Preferences.Get("AppTheme", "System");
+        ThemePicker.SelectedIndex = currentTheme switch
+        {
+            "Light" => 1,
+            "Dark" => 2,
+            _ => 0 // Sistema
+        };
+        UpdateThemeStatusLabel(currentTheme);
+
+        // Cargar configuración de idioma
+        var currentLanguage = Preferences.Get("AppLanguage", "es");
+        LanguagePicker.SelectedIndex = currentLanguage == "en" ? 1 : 0;
+        LanguageStatusLabel.Text = currentLanguage == "en" ? "English" : "Español";
+
         // Cargar configuraciones de lectura
         FontSizeSlider.Value = Preferences.Get("FontSize", 16.0);
         FontSizeLabel.Text = FontSizeSlider.Value.ToString("0");
@@ -55,6 +71,82 @@ public partial class SettingsPage : ContentPage
 
         // Calcular tamaño de caché
         UpdateCacheSize();
+    }
+
+    /// <summary>
+    /// Actualiza la etiqueta de estado del tema
+    /// </summary>
+    private void UpdateThemeStatusLabel(string theme)
+    {
+        ThemeStatusLabel.Text = theme switch
+        {
+            "Light" => "Claro",
+            "Dark" => "Oscuro",
+            _ => "Sistema"
+        };
+    }
+
+    /// <summary>
+    /// Maneja el cambio de tema
+    /// </summary>
+    private void OnThemeChanged(object sender, EventArgs e)
+    {
+        if (_isLoadingSettings) return;
+
+        var selectedIndex = ThemePicker.SelectedIndex;
+        string theme;
+        
+        switch (selectedIndex)
+        {
+            case 1:
+                theme = "Light";
+                Application.Current.UserAppTheme = AppTheme.Light;
+                break;
+            case 2:
+                theme = "Dark";
+                Application.Current.UserAppTheme = AppTheme.Dark;
+                break;
+            default:
+                theme = "System";
+                Application.Current.UserAppTheme = AppTheme.Unspecified;
+                break;
+        }
+
+        Preferences.Set("AppTheme", theme);
+        UpdateThemeStatusLabel(theme);
+    }
+
+    /// <summary>
+    /// Maneja el cambio de idioma
+    /// </summary>
+    private async void OnLanguageChanged(object sender, EventArgs e)
+    {
+        if (_isLoadingSettings) return;
+
+        var selectedIndex = LanguagePicker.SelectedIndex;
+        var language = selectedIndex == 1 ? "en" : "es";
+        var languageName = selectedIndex == 1 ? "English" : "Español";
+
+        // Guardar preferencia
+        Preferences.Set("AppLanguage", language);
+        LanguageStatusLabel.Text = languageName;
+
+        // Cambiar el idioma de la aplicación
+        var culture = new CultureInfo(language);
+        Thread.CurrentThread.CurrentCulture = culture;
+        Thread.CurrentThread.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+        // Mostrar mensaje de confirmación
+        var message = language == "es" 
+            ? "El cambio de idioma se aplicará completamente al reiniciar la aplicación" 
+            : "The language change will be fully applied after restarting the app";
+        
+        await DisplayAlert(
+            language == "es" ? "Idioma cambiado" : "Language changed",
+            message,
+            "OK");
     }
 
     /// <summary>
