@@ -187,12 +187,18 @@ public partial class LoginPage : ContentPage
 
     private async void OnFacebookLoginTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Facebook", "Login con Facebook - Próximamente", "OK");
+        await DisplayAlert(
+            "Facebook",
+            LocalizationService.GetString("ComingSoon") ?? "Login con Facebook - Próximamente",
+            LocalizationService.GetString("OK"));
     }
 
     private async void OnGoogleLoginTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Google", "Login con Google - Próximamente", "OK");
+        await DisplayAlert(
+            "Google",
+            LocalizationService.GetString("ComingSoon") ?? "Login con Google - Próximamente",
+            LocalizationService.GetString("OK"));
     }
 
     private async void OnRegisterTapped(object sender, EventArgs e)
@@ -202,8 +208,11 @@ public partial class LoginPage : ContentPage
 
     private async void OnGuestTapped(object sender, EventArgs e)
     {
-        await DisplayAlert("Invitado", "¡Bienvenido Invitado!", "OK");
-        // Por ahora, ir directo a la app sin login
+        await DisplayAlert(
+            LocalizationService.GetString("Guest"),
+            LocalizationService.GetString("WelcomeGuest") ?? "¡Bienvenido Invitado!",
+            LocalizationService.GetString("OK"));
+
         App.SetMainPageToShell();
     }
 
@@ -248,7 +257,7 @@ public partial class LoginPage : ContentPage
 
             if (success)
             {
-                // NUEVA LÍNEA: Preguntar si quiere guardar para biometría
+                // Preguntar si quiere guardar para biometría
                 await AskToSaveBiometricCredentials(EmailEntry.Text.Trim(), PasswordEntry.Text);
 
                 await DisplayAlert("Éxito", $"Bienvenido {user.Name}", "OK");
