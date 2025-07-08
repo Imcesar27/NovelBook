@@ -412,7 +412,7 @@ public partial class MorePage : ContentPage
                     break;
 
                 case "DownloadQueue":
-                    await DisplayAlert("Cola de Descarga", "Ver cola de descargas", "OK");
+                    await Navigation.PushAsync(new DownloadQueuePage());
                     break;
 
                 case "Categories":

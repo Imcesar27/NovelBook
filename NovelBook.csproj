@@ -105,6 +105,9 @@
 	  <MauiXaml Update="Views\CreateNovelPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\DownloadQueuePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\DownloadsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
