@@ -105,7 +105,7 @@ public partial class LibraryPage : ContentPage
         ReadingButton.Text = $"🧾 {LocalizationService.GetString("Reading")}";
         CompletedButton.Text = $"✔️ {LocalizationService.GetString("Completed")}";
         FavoritesButton.Text = $"⭐ {LocalizationService.GetString("Favorites")}";
-        PausedButton.Text = $"⏸️ {LocalizationService.GetString("Paused")}";
+        DroppedButton.Text = $"⏸️ {LocalizationService.GetString("Dropped")}";
         PlanToReadButton.Text = $"📋 {LocalizationService.GetString("PlanToRead")}";
     }
 
@@ -171,26 +171,28 @@ public partial class LibraryPage : ContentPage
     /// <summary>
     /// Obtiene los items filtrados sin actualizar la UI
     /// </summary>
-    private List<UserLibraryItem> GetFilteredItems(string filterText)
+    private List<UserLibraryItem> GetFilteredItems(string filterKey)
     {
         if (_libraryItems == null) return new List<UserLibraryItem>();
 
-        // Extraer solo el texto sin el emoji para comparar
-        var filterKey = filterText.Split(' ').LastOrDefault()?.Trim() ?? "";
+        // Eliminar emojis y espacios para comparar
+        var cleanFilterKey = filterKey?.Replace("📔", "").Replace("🧾", "").Replace("✔️", "")
+                                      .Replace("⭐", "").Replace("⏸️", "").Replace("📋", "")
+                                      .Trim() ?? "";
 
         // Usar las traducciones para comparar
         var reading = LocalizationService.GetString("Reading");
         var completed = LocalizationService.GetString("Completed");
         var favorites = LocalizationService.GetString("Favorites");
-        var paused = LocalizationService.GetString("Paused");
+        var dropped = LocalizationService.GetString("Dropped");
         var planToRead = LocalizationService.GetString("PlanToRead");
 
-        return filterKey switch
+        return cleanFilterKey switch
         {
             var f when f == reading => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
             var f when f == completed => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
             var f when f == favorites => _libraryItems.Where(x => x.IsFavorite).ToList(),
-            var f when f == paused => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
+            var f when f == dropped => _libraryItems.Where(x => x.ReadingStatus == "dropped").ToList(),
             var f when f == planToRead => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
             _ => _libraryItems
         };
@@ -379,14 +381,16 @@ public partial class LibraryPage : ContentPage
             if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
             {
                 var action = await DisplayActionSheet(
-                    $"Opciones para: {novel.Title}",
-                    "Cancelar",
+                    $"{LocalizationService.GetString("OptionsFor")} {novel.Title}",
+                    LocalizationService.GetString("Cancel"),
                     null,
-                    novel.IsFavorite ? "Quitar de favoritos" : "Marcar como favorito",
-                    "Cambiar estado de lectura",
-                    "Eliminar de biblioteca");
+                    novel.IsFavorite ?
+                        LocalizationService.GetString("RemoveFromFavorites") :
+                        LocalizationService.GetString("AddToFavorites"),
+                    LocalizationService.GetString("ChangeStatus"),
+                    LocalizationService.GetString("RemoveFromLibrary"));
 
-                await HandleNovelAction(action, novel.NovelId);
+                await HandleNovelAction(action, novel);
             }
         }
         catch (Exception ex)
@@ -395,7 +399,7 @@ public partial class LibraryPage : ContentPage
         }
     }
 
-    private async void OnNovelLongPressed(object sender, EventArgs e)
+   /* private async void OnNovelLongPressed(object sender, EventArgs e)
     {
         try
         {
@@ -419,70 +423,91 @@ public partial class LibraryPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine($"Error en long press: {ex.Message}");
         }
-    }
+    }*/
 
     /// <summary>
     /// Maneja las acciones del menú contextual
     /// </summary>
-    private async Task HandleNovelAction(string action, int novelId)
+    private async Task HandleNovelAction(string action, LibraryDisplayItem novel)
     {
         try
         {
-            switch (action)
-            {
-                case "Marcar como favorito":
-                case "Quitar de favoritos":
-                    await _libraryService.ToggleFavoriteAsync(novelId);
-                    await LoadLibraryAsync(); // Recargar para actualizar UI
-                    break;
+            // Para las comparaciones, usar las traducciones
+            var removeFromFavorites = LocalizationService.GetString("RemoveFromFavorites");
+            var addToFavorites = LocalizationService.GetString("AddToFavorites");
+            var changeStatus = LocalizationService.GetString("ChangeStatus");
+            var removeFromLibrary = LocalizationService.GetString("RemoveFromLibrary");
 
-                case "Cambiar estado de lectura":
-                  var newStatus = await DisplayActionSheet(
-                    LocalizationService.GetString("NewStatus") ?? "Nuevo estado",
+            if (action == removeFromFavorites || action == addToFavorites)
+            {
+                await _libraryService.ToggleFavoriteAsync(novel.LibraryItemId);
+                await LoadLibraryAsync();
+
+                // Mostrar confirmación
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    action == addToFavorites ?
+                        LocalizationService.GetString("MarkedAsFavorite") :
+                        LocalizationService.GetString("RemovedFromFavorites"),
+                    LocalizationService.GetString("OK"));
+            }
+            else if (action == changeStatus)
+            {
+                var newStatus = await DisplayActionSheet(
+                    LocalizationService.GetString("ChangeStatusTo"),
                     LocalizationService.GetString("Cancel"),
                     null,
                     LocalizationService.GetString("Reading"),
                     LocalizationService.GetString("Completed"),
-                    LocalizationService.GetString("Paused"),
+                    LocalizationService.GetString("Dropped"),
                     LocalizationService.GetString("PlanToRead"));
 
-                    if (newStatus != LocalizationService.GetString("Cancel") && !string.IsNullOrEmpty(newStatus))
+                if (!string.IsNullOrEmpty(newStatus) && newStatus != LocalizationService.GetString("Cancel"))
+                {
+                    // Mapear el texto traducido al valor de la base de datos
+                    string statusValue = null;
+
+                    if (newStatus == LocalizationService.GetString("Reading"))
+                        statusValue = "reading";
+                    else if (newStatus == LocalizationService.GetString("Completed"))
+                        statusValue = "completed";
+                    else if (newStatus == LocalizationService.GetString("Dropped"))
+                        statusValue = "dropped";
+                    else if (newStatus == LocalizationService.GetString("PlanToRead"))
+                        statusValue = "plan_to_read";
+
+                    if (statusValue != null)
                     {
-                        // Mapear los textos traducidos a los valores de la BD
-                        var statusMap = new Dictionary<string, string>
-                        {
-                        {LocalizationService.GetString("Reading"), "reading"},
-                        {LocalizationService.GetString("Completed"), "completed"},
-                        {LocalizationService.GetString("Paused"), "paused"},
-                        {LocalizationService.GetString("PlanToRead"), "plan_to_read"}
-                        };
-
-                        if (statusMap.ContainsKey(newStatus))
-                        {
-                            await _libraryService.UpdateReadingStatusAsync(novelId, statusMap[newStatus]);
-                            await LoadLibraryAsync();
-                        }
+                        await _libraryService.UpdateReadingStatusAsync(novel.LibraryItemId, statusValue);
+                        await DisplayAlert(
+                            LocalizationService.GetString("Success"),
+                            LocalizationService.GetString("StatusUpdated"),
+                            LocalizationService.GetString("OK"));
+                        await LoadLibraryAsync();
                     }
-                    break;
-
-                case "Eliminar de biblioteca":
-                    var confirm = await DisplayAlert(
-                    LocalizationService.GetString("Confirm"),
-                    LocalizationService.GetString("ConfirmRemoveFromLibrary"),
+                }
+            }
+            else if (action == removeFromLibrary)
+            {
+                var confirm = await DisplayAlert(
+                    LocalizationService.GetString("ConfirmAction"),
+                    $"{LocalizationService.GetString("RemoveFromLibrary")}?",
                     LocalizationService.GetString("Yes"),
                     LocalizationService.GetString("No"));
 
-                    if (confirm)
-                    {
-                        await _libraryService.RemoveFromLibraryAsync(novelId);
-                        await LoadLibraryAsync();
-                    }
-                    break;
+                if (confirm)
+                {
+                    await _libraryService.RemoveFromLibraryAsync(novel.NovelId);
+                    await LoadLibraryAsync();
+                }
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudo realizar la acción", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorPerformingAction"),
+                LocalizationService.GetString("OK"));
             System.Diagnostics.Debug.WriteLine($"Error en acción: {ex.Message}");
         }
     }

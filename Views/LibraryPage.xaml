@@ -54,7 +54,7 @@
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button x:Name="PausedButton"
+                    <Button x:Name="DroppedButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
