@@ -89,7 +89,10 @@ public partial class LoginPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudieron recuperar las credenciales guardadas", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("BiometricCredentialsError") ?? "No se pudieron recuperar las credenciales guardadas",
+                LocalizationService.GetString("OK"));
         }
     }
 
@@ -101,8 +104,8 @@ public partial class LoginPage : ContentPage
         try
         {
             var request = new AuthenticationRequestConfiguration(
-                "Iniciar Sesión",
-                "Usa tu huella digital o Face ID para acceder a NovelBook");
+                           LocalizationService.GetString("Login"),
+                           LocalizationService.GetString("BiometricLoginMessage"));
 
             var result = await _fingerprint.AuthenticateAsync(request);
 
@@ -113,12 +116,18 @@ public partial class LoginPage : ContentPage
 
                 if (success)
                 {
-                    await DisplayAlert("Éxito", $"Bienvenido {user.Name}", "OK");
+                    await DisplayAlert(
+                        LocalizationService.GetString("Success"),
+                        LocalizationService.GetString("WelcomeBack", user.Name),
+                        LocalizationService.GetString("OK"));
                     App.SetMainPageToShell();
                 }
                 else
                 {
-                    await DisplayAlert("Error", "Las credenciales guardadas ya no son válidas", "OK");
+                    await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("InvalidCredentials"),
+                        LocalizationService.GetString("OK"));
                     // Limpiar credenciales guardadas
                     SecureStorage.Remove("biometric_email");
                     SecureStorage.Remove("biometric_password");
@@ -130,12 +139,18 @@ public partial class LoginPage : ContentPage
             }
             else if (result.Status == FingerprintAuthenticationResultStatus.TooManyAttempts)
             {
-                await DisplayAlert("Error", "Demasiados intentos fallidos. Usa tu contraseña.", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("TooManyAttempts") ?? "Demasiados intentos fallidos. Usa tu contraseña.",
+                    LocalizationService.GetString("OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error en autenticación biométrica: {ex.Message}", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                $"{LocalizationService.GetString("BiometricError")}: {ex.Message}",
+                LocalizationService.GetString("OK"));
         }
     }
 
@@ -155,17 +170,17 @@ public partial class LoginPage : ContentPage
 
             // Preguntar al usuario
             var answer = await DisplayAlert(
-                "Biometría",
-                "¿Deseas habilitar el inicio de sesión con Face ID/Touch ID para futuros accesos?",
-                "Sí",
-                "No");
+                LocalizationService.GetString("BiometricAuth"),
+                LocalizationService.GetString("EnableBiometricMessage"),
+                LocalizationService.GetString("Yes"),
+                LocalizationService.GetString("No"));
 
             if (answer)
             {
                 // Primero autenticar con biometría
                 var request = new AuthenticationRequestConfiguration(
-                    "Autenticación Biométrica",
-                    "Usa tu huella digital o Face ID para habilitar el acceso rápido");
+                    LocalizationService.GetString("BiometricAuth"),
+                    LocalizationService.GetString("BiometricSetupMessage"));
 
                 var result = await _fingerprint.AuthenticateAsync(request);
 
@@ -175,7 +190,10 @@ public partial class LoginPage : ContentPage
                     await SecureStorage.SetAsync("biometric_email", email);
                     await SecureStorage.SetAsync("biometric_password", password);
 
-                    await DisplayAlert("Éxito", "Face ID/Touch ID habilitado correctamente", "OK");
+                    await DisplayAlert(
+                        LocalizationService.GetString("Success"),
+                        LocalizationService.GetString("BiometricEnabled"),
+                        LocalizationService.GetString("OK"));
                 }
             }
         }
@@ -232,7 +250,10 @@ public partial class LoginPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(EmailEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor completa todos los campos", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("FillAllFields"),
+            LocalizationService.GetString("OK"));
             return;
         }
 
@@ -260,17 +281,26 @@ public partial class LoginPage : ContentPage
                 // Preguntar si quiere guardar para biometría
                 await AskToSaveBiometricCredentials(EmailEntry.Text.Trim(), PasswordEntry.Text);
 
-                await DisplayAlert("Éxito", $"Bienvenido {user.Name}", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    LocalizationService.GetString("WelcomeBack", user.Name),
+                    LocalizationService.GetString("OK"));
                 App.SetMainPageToShell();
             }
             else
             {
-                await DisplayAlert("Error", message, "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    message,
+                    LocalizationService.GetString("OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error de conexión. Verifica tu conexión a internet.", "OK");
+            await DisplayAlert(
+                 LocalizationService.GetString("Error"),
+                 LocalizationService.GetString("ConnectionError"),
+                 LocalizationService.GetString("OK"));
         }
         finally
         {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.LibraryPage"
-             Title="Mi Librería"
+             Title="{extensions:Translate MyLibrary}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <Grid Padding="10">
@@ -14,7 +15,7 @@
 
         <!-- Barra de búsqueda -->
         <SearchBar x:Name="searchBar"
-                   Placeholder="Buscar en mi librería..."
+                   Placeholder="{extensions:Translate SearchLibrary}"
                    PlaceholderColor="{StaticResource TextMuted}"
                    TextColor="{StaticResource TextPrimary}"
                    BackgroundColor="{StaticResource BackgroundMedium}"
@@ -29,37 +30,37 @@
                         Margin="0,0,0,10"
                         Padding="0,0,0,5">
                 <HorizontalStackLayout x:Name="FilterLayout" Spacing="10">
-                    <Button Text="📔 Todos" 
+                    <Button x:Name="AllButton"
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button Text="🧾 Leyendo" 
+                    <Button x:Name="ReadingButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button Text="✔️ Completados" 
+                    <Button x:Name="CompletedButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button Text="⭐ Favoritos" 
+                    <Button x:Name="FavoritesButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button Text="⏸️ En pausa" 
+                    <Button x:Name="PausedButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
-                    <Button Text="📋 Planeo leer" 
+                    <Button x:Name="PlanToReadButton"
                             BackgroundColor="{StaticResource BackgroundMedium}"
                             TextColor="{StaticResource TextSecondary}"
                             CornerRadius="15"
@@ -231,11 +232,11 @@
                        FontSize="60"
                        HorizontalOptions="Center"/>
                 <Label x:Name="EmptyStateMessage"
-                       Text="Tu biblioteca está vacía"
+                       Text="{extensions:Translate NoNovels}"
                        TextColor="{StaticResource TextSecondary}"
                        FontSize="16"
                        HorizontalOptions="Center"/>
-                <Button Text="Explorar novelas"
+                <Button Text="{extensions:Translate ExploreNovels}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="20"

@@ -102,17 +102,41 @@
 
                 <!-- Botones de redes sociales -->
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
-                    <ImageButton Source="facebook_icon.png"
-                                 WidthRequest="50"
-                                 HeightRequest="50"
-                                 Clicked="OnFacebookLoginTapped"
-                                 BackgroundColor="Transparent"/>
+                    <!-- Botón de Facebook -->
+                    <Frame BackgroundColor="#1877F2" 
+                           CornerRadius="25"
+                           WidthRequest="50"
+                           HeightRequest="50"
+                           Padding="0"
+                           HorizontalOptions="Center">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnFacebookLoginTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="f" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                    </Frame>
 
-                    <ImageButton Source="google_icon.png"
-                                 WidthRequest="50"
-                                 HeightRequest="50"
-                                 Clicked="OnGoogleLoginTapped"
-                                 BackgroundColor="Transparent"/>
+                    <!-- Botón de Google -->
+                    <Frame BackgroundColor="#DB4437" 
+                           CornerRadius="25"
+                           WidthRequest="50"
+                           HeightRequest="50"
+                           Padding="0"
+                           HorizontalOptions="Center">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGoogleLoginTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="G" 
+                               FontSize="24" 
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Frame>
                 </HorizontalStackLayout>
 
                 <!-- Link para registro e invitado -->
@@ -126,7 +150,7 @@
                             <TapGestureRecognizer Tapped="OnRegisterTapped"/>
                         </Label.GestureRecognizers>
                     </Label>
-                    <Label Text="    " />
+                    <Label Text="   ⠀" />
                     <Label Text="{extensions:Translate Guest}" 
                            TextColor="{StaticResource TextSecondary}">
                         <Label.GestureRecognizers>

@@ -71,9 +71,9 @@ public partial class LibraryPage : ContentPage
     private List<UserLibraryItem> _filteredItems;
 
     // Estado actual del filtro
-    private string _currentFilter = "📔 Todos";
+    private string _currentFilter;
 
-    // ARREGLO 3: Variables para long press mejorado
+    // Variables para long press mejorado
     private bool _isProcessingTap = false;
 
     public LibraryPage()
@@ -89,6 +89,24 @@ public partial class LibraryPage : ContentPage
         // Inicializar listas
         _libraryItems = new List<UserLibraryItem>();
         _filteredItems = new List<UserLibraryItem>();
+
+        // Inicializar textos de botones con traducciones
+        InitializeFilterButtonTexts();
+
+        _currentFilter = AllButton.Text; // Usar el texto traducido del botón
+    }
+
+    /// <summary>
+    /// Inicializa los textos de los botones de filtro con las traducciones
+    /// </summary>
+    private void InitializeFilterButtonTexts()
+    {
+        AllButton.Text = $"📔 {LocalizationService.GetString("All")}";
+        ReadingButton.Text = $"🧾 {LocalizationService.GetString("Reading")}";
+        CompletedButton.Text = $"✔️ {LocalizationService.GetString("Completed")}";
+        FavoritesButton.Text = $"⭐ {LocalizationService.GetString("Favorites")}";
+        PausedButton.Text = $"⏸️ {LocalizationService.GetString("Paused")}";
+        PlanToReadButton.Text = $"📋 {LocalizationService.GetString("PlanToRead")}";
     }
 
     /// <summary>
@@ -100,6 +118,7 @@ public partial class LibraryPage : ContentPage
 
         try
         {
+            InitializeFilterButtonTexts(); // Actualizar textos por si cambió el idioma
             System.Diagnostics.Debug.WriteLine($"LibraryPage.OnAppearing - Filtro actual: {_currentFilter}");
 
             // Si estamos en un filtro vacío, volver a "Todos"
@@ -114,7 +133,7 @@ public partial class LibraryPage : ContentPage
                     ResetFilterToAll();
 
                     // Aplicar filtro "Todos"
-                    _currentFilter = "📔 Todos";
+                    _currentFilter = AllButton.Text;
                 }
             }
 
@@ -156,13 +175,23 @@ public partial class LibraryPage : ContentPage
     {
         if (_libraryItems == null) return new List<UserLibraryItem>();
 
-        return filterText switch
+        // Extraer solo el texto sin el emoji para comparar
+        var filterKey = filterText.Split(' ').LastOrDefault()?.Trim() ?? "";
+
+        // Usar las traducciones para comparar
+        var reading = LocalizationService.GetString("Reading");
+        var completed = LocalizationService.GetString("Completed");
+        var favorites = LocalizationService.GetString("Favorites");
+        var paused = LocalizationService.GetString("Paused");
+        var planToRead = LocalizationService.GetString("PlanToRead");
+
+        return filterKey switch
         {
-            "🧾 Leyendo" => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
-            "✔️ Completados" => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
-            "⭐ Favoritos" => _libraryItems.Where(x => x.IsFavorite).ToList(),
-            "⏸️ En pausa" => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
-            "📋 Planeo leer" => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
+            var f when f == reading => _libraryItems.Where(x => x.ReadingStatus == "reading").ToList(),
+            var f when f == completed => _libraryItems.Where(x => x.ReadingStatus == "completed").ToList(),
+            var f when f == favorites => _libraryItems.Where(x => x.IsFavorite).ToList(),
+            var f when f == paused => _libraryItems.Where(x => x.ReadingStatus == "paused").ToList(),
+            var f when f == planToRead => _libraryItems.Where(x => x.ReadingStatus == "plan_to_read").ToList(),
             _ => _libraryItems
         };
     }
@@ -193,7 +222,7 @@ public partial class LibraryPage : ContentPage
             // Verificar si hay usuario logueado
             if (AuthService.CurrentUser == null)
             {
-                ShowEmptyState("Inicia sesión para ver tu biblioteca");
+                ShowEmptyState(LocalizationService.GetString("LoginToSeeLibrary"));
                 return;
             }
 
@@ -220,7 +249,7 @@ public partial class LibraryPage : ContentPage
 
             if (_libraryItems == null || _libraryItems.Count == 0)
             {
-                ShowEmptyState("Tu biblioteca está vacía");
+                ShowEmptyState(LocalizationService.GetString("LibraryEmpty"));
                 return;
             }
 
@@ -230,7 +259,7 @@ public partial class LibraryPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error cargando librería: {ex.Message}");
-            ShowEmptyState("Error al cargar la biblioteca");
+            ShowEmptyState(LocalizationService.GetString("ErrorLoadingLibrary"));
         }
         finally
         {
@@ -408,23 +437,24 @@ public partial class LibraryPage : ContentPage
                     break;
 
                 case "Cambiar estado de lectura":
-                    var newStatus = await DisplayActionSheet(
-                        "Nuevo estado",
-                        "Cancelar",
-                        null,
-                        "Leyendo",
-                        "Completado",
-                        "En pausa",
-                        "Planeo leer");
+                  var newStatus = await DisplayActionSheet(
+                    LocalizationService.GetString("NewStatus") ?? "Nuevo estado",
+                    LocalizationService.GetString("Cancel"),
+                    null,
+                    LocalizationService.GetString("Reading"),
+                    LocalizationService.GetString("Completed"),
+                    LocalizationService.GetString("Paused"),
+                    LocalizationService.GetString("PlanToRead"));
 
-                    if (newStatus != "Cancelar" && !string.IsNullOrEmpty(newStatus))
+                    if (newStatus != LocalizationService.GetString("Cancel") && !string.IsNullOrEmpty(newStatus))
                     {
+                        // Mapear los textos traducidos a los valores de la BD
                         var statusMap = new Dictionary<string, string>
                         {
-                            {"Leyendo", "reading"},
-                            {"Completado", "completed"},
-                            {"En pausa", "paused"},
-                            {"Planeo leer", "plan_to_read"}
+                        {LocalizationService.GetString("Reading"), "reading"},
+                        {LocalizationService.GetString("Completed"), "completed"},
+                        {LocalizationService.GetString("Paused"), "paused"},
+                        {LocalizationService.GetString("PlanToRead"), "plan_to_read"}
                         };
 
                         if (statusMap.ContainsKey(newStatus))
@@ -437,10 +467,10 @@ public partial class LibraryPage : ContentPage
 
                 case "Eliminar de biblioteca":
                     var confirm = await DisplayAlert(
-                        "Confirmar",
-                        "¿Eliminar esta novela de tu biblioteca?",
-                        "Sí",
-                        "No");
+                    LocalizationService.GetString("Confirm"),
+                    LocalizationService.GetString("ConfirmRemoveFromLibrary"),
+                    LocalizationService.GetString("Yes"),
+                    LocalizationService.GetString("No"));
 
                     if (confirm)
                     {
@@ -539,7 +569,7 @@ public partial class LibraryPage : ContentPage
             {
                 var filterName = _currentFilter.Replace("📔 ", "").Replace("🧾 ", "")
                     .Replace("✔️ ", "").Replace("⭐ ", "").Replace("⏸️ ", "").Replace("📋 ", "");
-                ShowEmptyState($"No hay novelas en: {filterName}");
+                ShowEmptyState(LocalizationService.GetString("NoNovelsInFilter", filterName));
             }
             else
             {
@@ -581,17 +611,17 @@ public partial class LibraryPage : ContentPage
     private async void OnSortClicked(object sender, EventArgs e)
     {
         var sortOption = await DisplayActionSheet(
-            "Ordenar por",
-            "Cancelar",
+            LocalizationService.GetString("SortBy"),
+            LocalizationService.GetString("Cancel"),
             null,
-            "Añadido recientemente",
-            "Título (A-Z)",
-            "Título (Z-A)",
-            "Último leído",
-            "Más capítulos",
-            "Menos capítulos");
+            LocalizationService.GetString("RecentlyAdded"),
+            LocalizationService.GetString("TitleAZ"),
+            LocalizationService.GetString("TitleZA"),
+            LocalizationService.GetString("LastRead"),
+            LocalizationService.GetString("MoreChapters"),
+            LocalizationService.GetString("LessChapters"));
 
-        if (sortOption != "Cancelar" && !string.IsNullOrEmpty(sortOption))
+        if (sortOption != LocalizationService.GetString("Cancel") && !string.IsNullOrEmpty(sortOption))
         {
             ApplySort(sortOption);
         }
@@ -604,14 +634,21 @@ public partial class LibraryPage : ContentPage
     {
         if (_libraryItems == null) return;
 
+        var recentlyAdded = LocalizationService.GetString("RecentlyAdded");
+        var titleAZ = LocalizationService.GetString("TitleAZ");
+        var titleZA = LocalizationService.GetString("TitleZA");
+        var lastRead = LocalizationService.GetString("LastRead");
+        var moreChapters = LocalizationService.GetString("MoreChapters");
+        var lessChapters = LocalizationService.GetString("LessChapters");
+
         List<UserLibraryItem> sortedItems = sortOption switch
         {
-            "Añadido recientemente" => _libraryItems.OrderByDescending(x => x.AddedAt).ToList(),
-            "Título (A-Z)" => _libraryItems.OrderBy(x => x.Novel.Title).ToList(),
-            "Título (Z-A)" => _libraryItems.OrderByDescending(x => x.Novel.Title).ToList(),
-            "Último leído" => _libraryItems.OrderByDescending(x => x.LastReadChapter).ToList(),
-            "Más capítulos" => _libraryItems.OrderByDescending(x => x.Novel.ChapterCount).ToList(),
-            "Menos capítulos" => _libraryItems.OrderBy(x => x.Novel.ChapterCount).ToList(),
+            var s when s == recentlyAdded => _libraryItems.OrderByDescending(x => x.AddedAt).ToList(),
+            var s when s == titleAZ => _libraryItems.OrderBy(x => x.Novel.Title).ToList(),
+            var s when s == titleZA => _libraryItems.OrderByDescending(x => x.Novel.Title).ToList(),
+            var s when s == lastRead => _libraryItems.OrderByDescending(x => x.LastReadChapter).ToList(),
+            var s when s == moreChapters => _libraryItems.OrderByDescending(x => x.Novel.ChapterCount).ToList(),
+            var s when s == lessChapters => _libraryItems.OrderBy(x => x.Novel.ChapterCount).ToList(),
             _ => _libraryItems
         };
 
@@ -623,11 +660,7 @@ public partial class LibraryPage : ContentPage
     /// <summary>
     /// Navega a la página de explorar cuando no hay novelas en la biblioteca
     /// </summary>
-    /// <summary>
-    /// Navega a la página de explorar cuando no hay novelas
-    /// </summary>
     /// 
-
     private async void OnExploreNovelsClicked(object sender, EventArgs e)
     {
         try
@@ -657,7 +690,10 @@ public partial class LibraryPage : ContentPage
             }
             catch
             {
-                await DisplayAlert("Error", "No se pudo navegar a Explorar", "OK");
+                await DisplayAlert(
+                  LocalizationService.GetString("Error"),
+                  LocalizationService.GetString("NavigationError") ?? "No se pudo navegar a la página",
+                  LocalizationService.GetString("OK"));
             }
         }
     }
