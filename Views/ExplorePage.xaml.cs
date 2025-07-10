@@ -39,6 +39,14 @@ public partial class ExplorePage : ContentPage
     {
         InitializeComponent();
         InitializeServices();
+        InitializeUI();
+    }
+
+    private void InitializeUI()
+    {
+        // Inicializar el texto del botón "Todas"
+        AllButton.Text = $"🔥 {LocalizationService.GetString("AllGenres")}";
+        _currentGenreFilter = AllButton.Text;
     }
 
     /// <summary>
@@ -58,6 +66,12 @@ public partial class ExplorePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+
+        // Actualizar texto del botón "Todas" por si cambió el idioma
+        if (AllButton != null)
+        {
+            AllButton.Text = $"🔥 {LocalizationService.GetString("AllGenres")}";
+        }
 
         // Cargar géneros populares la primera vez
         if (_popularGenres == null)
@@ -133,7 +147,7 @@ public partial class ExplorePage : ContentPage
                 // Botón para ver más géneros
                 var moreButton = new Button
                 {
-                    Text = "Ver más →",
+                    Text = $"{LocalizationService.GetString("ViewMore")} →",
                     BackgroundColor = Color.FromArgb("#1E1E1E"),
                     TextColor = Color.FromArgb("#E91E63"),
                     CornerRadius = 15,
@@ -196,7 +210,10 @@ public partial class ExplorePage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al cargar novelas: {ex.Message}", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                $"{LocalizationService.GetString("ErrorLoadingNovels")}: {ex.Message}",
+                LocalizationService.GetString("OK"));
         }
         finally
         {
@@ -249,7 +266,7 @@ public partial class ExplorePage : ContentPage
 
             _currentGenreFilter = button.Text;
 
-            if (button.Text.Contains("Todas"))
+            if (button.Text.Contains(LocalizationService.GetString("AllGenres")))
             {
                 // Cargar todas las novelas
                 _currentGenreId = null;
@@ -311,10 +328,10 @@ public partial class ExplorePage : ContentPage
     {
         return status?.ToLower() switch
         {
-            "ongoing" => "En curso",
-            "completed" => "Completada",
-            "hiatus" => "Pausada",
-            "cancelled" => "Cancelada",
+            "ongoing" => LocalizationService.GetString("Ongoing"),
+            "completed" => LocalizationService.GetString("Completed"),
+            "hiatus" => LocalizationService.GetString("Hiatus"),
+            "cancelled" => LocalizationService.GetString("Cancelled"),
             _ => status ?? ""
         };
     }
@@ -362,17 +379,17 @@ public partial class ExplorePage : ContentPage
     private async void OnFilterClicked(object sender, EventArgs e)
     {
         var action = await DisplayActionSheet(
-            "Filtrar por",
-            "Cancelar",
-            null,
-            "Mejor calificación",
-            "Más recientes",
-            "Más capítulos",
-            "Estado: En curso",
-            "Estado: Completadas"
+        LocalizationService.GetString("FilterBy"),
+        LocalizationService.GetString("Cancel"),
+        null,
+        LocalizationService.GetString("BestRating"),
+        LocalizationService.GetString("MostRecent"),
+        LocalizationService.GetString("MostChapters"),
+        LocalizationService.GetString("StatusOngoing"),
+        LocalizationService.GetString("StatusCompleted")
         );
 
-        if (action != "Cancelar" && !string.IsNullOrEmpty(action))
+        if (action != LocalizationService.GetString("Cancel") && !string.IsNullOrEmpty(action))
         {
             ApplyFilter(action);
         }
@@ -383,13 +400,19 @@ public partial class ExplorePage : ContentPage
     /// </summary>
     private async void ApplyFilter(string filter)
     {
+        var bestRating = LocalizationService.GetString("BestRating");
+        var mostRecent = LocalizationService.GetString("MostRecent");
+        var mostChapters = LocalizationService.GetString("MostChapters");
+        var statusOngoing = LocalizationService.GetString("StatusOngoing");
+        var statusCompleted = LocalizationService.GetString("StatusCompleted");
+
         _displayedNovels = filter switch
         {
-            "Mejor calificación" => _allNovels.OrderByDescending(n => n.Rating).ToList(),
-            "Más recientes" => _allNovels.OrderByDescending(n => n.UpdatedAt).ToList(),
-            "Más capítulos" => _allNovels.OrderByDescending(n => n.ChapterCount).ToList(),
-            "Estado: En curso" => _allNovels.Where(n => n.Status == "ongoing").ToList(),
-            "Estado: Completadas" => _allNovels.Where(n => n.Status == "completed").ToList(),
+            var f when f == bestRating => _allNovels.OrderByDescending(n => n.Rating).ToList(),
+            var f when f == mostRecent => _allNovels.OrderByDescending(n => n.UpdatedAt).ToList(),
+            var f when f == mostChapters => _allNovels.OrderByDescending(n => n.ChapterCount).ToList(),
+            var f when f == statusOngoing => _allNovels.Where(n => n.Status == "ongoing").ToList(),
+            var f when f == statusCompleted => _allNovels.Where(n => n.Status == "completed").ToList(),
             _ => _allNovels
         };
 

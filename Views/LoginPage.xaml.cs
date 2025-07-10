@@ -45,7 +45,7 @@ public partial class LoginPage : ContentPage
                     // Agregar un botón de biometría dinámicamente
                     var biometricButton = new Button
                     {
-                        Text = "🔐 Iniciar con Face ID/Touch ID",
+                        Text = LocalizationService.GetString("BiometricLoginButton"),
                         BackgroundColor = Color.FromArgb("#2E7D32"),
                         TextColor = Colors.White,
                         CornerRadius = 10,
@@ -266,7 +266,7 @@ public partial class LoginPage : ContentPage
         if (loginButton != null)
         {
             loginButton.IsEnabled = false;
-            loginButton.Text = "Iniciando sesión...";
+            loginButton.Text = LocalizationService.GetString("LoggingIn");
         }
 
         try
@@ -310,7 +310,7 @@ public partial class LoginPage : ContentPage
             if (loginButton != null)
             {
                 loginButton.IsEnabled = true;
-                loginButton.Text = "Entrar";
+                loginButton.Text = LocalizationService.GetString("Login");
             }
         }
     }

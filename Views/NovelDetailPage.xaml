@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.NovelDetailPage"
-             Title="Detalles"
+             Title="{extensions:Translate NovelDetails}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <ScrollView>
@@ -85,7 +86,8 @@
                                     <FormattedString>
                                         <Span Text="📖 " />
                                         <Span Text="{Binding ChapterCount}" />
-                                        <Span Text=" capítulos" />
+                                        <Span Text=" " />
+                                        <Span Text="{extensions:Translate Chapters}" />
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -129,7 +131,7 @@
 
                 <Button Grid.Column="0"
                         x:Name="ReadButton"
-                        Text="Leer"
+                        Text="{extensions:Translate StartReading}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         FontAttributes="Bold"
@@ -146,7 +148,7 @@
 
                 <Button Grid.Column="1"
                         x:Name="AddToLibraryButton"
-                        Text="+ Agregar"
+                        Text="{extensions:Translate AddToLibrary}"
                         BackgroundColor="{StaticResource BackgroundMedium}"
                         TextColor="{StaticResource TextPrimary}"
                         FontAttributes="Bold"
@@ -173,7 +175,7 @@
 
                 <Button x:Name="SynopsisTab"
                         Grid.Column="0"
-                        Text="Sinopsis"
+                        Text="{extensions:Translate Synopsis}"
                         BackgroundColor="Transparent"
                         TextColor="{StaticResource Primary}"
                         FontAttributes="Bold"
@@ -181,14 +183,14 @@
 
                 <Button x:Name="ChaptersTab"
                         Grid.Column="1"
-                        Text="Capítulos"
+                        Text="{extensions:Translate Chapters}"
                         BackgroundColor="Transparent"
                         TextColor="{StaticResource TextSecondary}"
                         Clicked="OnChaptersTabClicked"/>
 
                 <Button x:Name="DetailsTab"
                         Grid.Column="2"
-                        Text="Detalles"
+                        Text="{extensions:Translate Details}"
                         BackgroundColor="Transparent"
                         TextColor="{StaticResource TextSecondary}"
                         Clicked="OnDetailsTabClicked"/>
@@ -202,7 +204,7 @@
                     <!-- Sinopsis (visible por defecto) -->
                     <VerticalStackLayout x:Name="SynopsisContent" 
                                        Spacing="15">
-                        <Label Text="Sinopsis"
+                        <Label Text="{extensions:Translate Synopsis}"
                                FontSize="18"
                                FontAttributes="Bold"
                                TextColor="{StaticResource TextPrimary}"/>
@@ -213,7 +215,7 @@
                                LineBreakMode="WordWrap"/>
 
                         <!-- Tags/Generos -->
-                        <Label Text="Géneros"
+                        <Label Text="{extensions:Translate Genres}"
                                FontSize="16"
                                FontAttributes="Bold"
                                TextColor="{StaticResource TextPrimary}"
@@ -233,7 +235,7 @@
                                        IsVisible="False"
                                        Spacing="10">
                         <!-- Barra de busqueda y filtros -->
-                        <SearchBar Placeholder="Buscar capítulo..."
+                        <SearchBar Placeholder="{extensions:Translate SearchChapter}"
                                    PlaceholderColor="{StaticResource TextMuted}"
                                    TextColor="{StaticResource TextPrimary}"
                                    BackgroundColor="{StaticResource BackgroundMedium}"
@@ -321,7 +323,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0"
-                               Text="Autor:"
+                               Text="{extensions:Translate Author}"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
                         <!--Boton autor-->
@@ -335,7 +337,7 @@
                         </Label>
 
                         <Label Grid.Row="1" Grid.Column="0"
-                               Text="Estado:"
+                               Text="{extensions:Translate Status}"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="1" Grid.Column="1"
@@ -343,7 +345,7 @@
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <Label Grid.Row="2" Grid.Column="0"
-                               Text="Capítulos:"
+                               Text="{extensions:Translate Chapters}"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="2" Grid.Column="1"
@@ -351,7 +353,7 @@
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <Label Grid.Row="3" Grid.Column="0"
-                               Text="Actualizado:"
+                               Text="{extensions:Translate LastUpdate}"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="3" Grid.Column="1"
@@ -359,7 +361,7 @@
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <Label Grid.Row="4" Grid.Column="0"
-                               Text="Vistas:"
+                               Text="{extensions:Translate Views}"
                                TextColor="{StaticResource TextSecondary}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="4" Grid.Column="1"

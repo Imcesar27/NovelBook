@@ -35,9 +35,12 @@ public partial class NovelDetailPage : ContentPage
         _libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
         _imageService = new ImageService(_databaseService);
 
+ 
+
         // Cargar datos de forma asíncrona
         Task.Run(async () => await LoadNovelDetailsAsync());
     }
+
 
     /// <summary>
     /// Se ejecuta cada vez que aparece la página para actualizar estado
@@ -128,6 +131,7 @@ public partial class NovelDetailPage : ContentPage
         {
             return 0;
         }
+
     }
 
     /// <summary>
@@ -410,13 +414,13 @@ public partial class NovelDetailPage : ContentPage
     {
         if (isInLibrary)
         {
-            button.Text = "✓ En biblioteca";
+            button.Text = $"✓ {LocalizationService.GetString("RemoveFromLibrary")}";
             button.BackgroundColor = Color.FromArgb("#10B981");
             button.TextColor = Colors.White;
         }
         else
         {
-            button.Text = "+ Agregar";
+            button.Text = $"+ {LocalizationService.GetString("AddToLibrary")}";
             button.BackgroundColor = Color.FromArgb("#2D2D2D");
             button.TextColor = Color.FromArgb("#FFFFFF");
         }
@@ -429,10 +433,10 @@ public partial class NovelDetailPage : ContentPage
     {
         return status switch
         {
-            "ongoing" => "En curso",
-            "completed" => "Completado",
-            "hiatus" => "En pausa",
-            "cancelled" => "Cancelada",
+            "ongoing" => LocalizationService.GetString("Ongoing"),
+            "completed" => LocalizationService.GetString("Completed"),
+            "hiatus" => LocalizationService.GetString("Hiatus"),
+            "cancelled" => LocalizationService.GetString("Cancelled"),
             _ => status
         };
     }
@@ -518,7 +522,7 @@ public partial class NovelDetailPage : ContentPage
             _allChapters = chapters.Select(ch => new
             {
                 Id = ch.Id,
-                Title = $"Capítulo {ch.ChapterNumber}: {ch.Title}",
+                Title = $"{LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}",
                 Date = ch.CreatedAt.ToString("dd/MM/yyyy"),
                 TitleColor = readChapters.Contains(ch.Id) ? "#808080" : "#FFFFFF", // Gris si está leído
                 ChapterNumber = ch.ChapterNumber
@@ -545,7 +549,10 @@ public partial class NovelDetailPage : ContentPage
         {
             if (_novel == null || _novel.ChapterCount == 0)
             {
-                await DisplayAlert("Info", "Esta novela no tiene capítulos aún", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Info"),
+                LocalizationService.GetString("NoChaptersYet"),
+                LocalizationService.GetString("OK"));
                 return;
             }
 
@@ -553,7 +560,10 @@ public partial class NovelDetailPage : ContentPage
             var chapters = await _novelService.GetChaptersAsync(_novelId);
             if (chapters == null || chapters.Count == 0)
             {
-                await DisplayAlert("Sin capítulos", "No se encontraron capítulos disponibles.", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("NoChaptersAvailable"),
+                LocalizationService.GetString("NoChaptersAvailable"),
+                LocalizationService.GetString("OK"));
                 return;
             }
 
@@ -608,7 +618,10 @@ public partial class NovelDetailPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "No se pudo cargar el capítulo: " + ex.Message, "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("ChapterNotFound"),
+            LocalizationService.GetString("OK"));
         }
     }
 
@@ -670,35 +683,46 @@ public partial class NovelDetailPage : ContentPage
                     if (success)
                     {
                         UpdateButtonAppearance(button, true);
-                        await DisplayAlert("Éxito", "Novela agregada a tu biblioteca", "OK");
+                        await DisplayAlert(
+                            LocalizationService.GetString("Success"),
+                            LocalizationService.GetString("AddedToLibrary"),
+                            LocalizationService.GetString("OK"));
                     }
                     else
                     {
                         button.Text = originalText;
-                        await DisplayAlert("Error", "No se pudo agregar a la biblioteca", "OK");
+                        await DisplayAlert(
+                            LocalizationService.GetString("Error"),
+                            LocalizationService.GetString("ErrorAddingToLibrary"),
+                            LocalizationService.GetString("OK"));
                     }
                 }
                 else
                 {
                     // Confirmar eliminación
                     bool confirm = await DisplayAlert(
-                        "Confirmar",
-                        "¿Quitar esta novela de tu biblioteca?",
-                        "Sí",
-                        "No");
-
+                        LocalizationService.GetString("Confirm"),
+                        LocalizationService.GetString("ConfirmRemoveFromLibrary"),
+                        LocalizationService.GetString("Yes"),
+                        LocalizationService.GetString("No"));
                     if (confirm)
                     {
                         success = await _libraryService.RemoveFromLibraryAsync(_novelId);
                         if (success)
                         {
                             UpdateButtonAppearance(button, false);
-                            await DisplayAlert("Info", "Novela eliminada de tu biblioteca", "OK");
+                            await DisplayAlert(
+                                LocalizationService.GetString("Info"),
+                                LocalizationService.GetString("RemovedFromLibrary"),
+                                LocalizationService.GetString("OK"));
                         }
                         else
                         {
                             button.Text = originalText;
-                            await DisplayAlert("Error", "No se pudo eliminar de la biblioteca", "OK");
+                            await DisplayAlert(
+                                LocalizationService.GetString("Error"),
+                                LocalizationService.GetString("ErrorRemovingFromLibrary"),
+                                LocalizationService.GetString("OK"));
                         }
                     }
                     else
@@ -711,7 +735,10 @@ public partial class NovelDetailPage : ContentPage
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error en biblioteca: {ex.Message}");
-                await DisplayAlert("Error", "Error al procesar la solicitud", "OK");
+                await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("ErrorProcessingRequest"),
+                        LocalizationService.GetString("OK"));
 
                 // Restaurar estado del botón
                 await CheckAndUpdateLibraryStatus();

@@ -23,34 +23,46 @@ public partial class RegisterPage : ContentPage
             string.IsNullOrWhiteSpace(PasswordEntry.Text) ||
             string.IsNullOrWhiteSpace(ConfirmPasswordEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor completa todos los campos", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("FillAllFieldsError"),
+            LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar email
         if (!EmailEntry.Text.Contains("@"))
         {
-            await DisplayAlert("Error", "Por favor ingresa un email válido", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("InvalidEmailError"),
+            LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar contraseña
         if (PasswordEntry.Text.Length < 6)
         {
-            await DisplayAlert("Error", "La contraseña debe tener al menos 6 caracteres", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("PasswordTooShortError"),
+            LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar que las contraseñas coincidan
         if (PasswordEntry.Text != ConfirmPasswordEntry.Text)
         {
-            await DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("PasswordsDontMatchError"),
+            LocalizationService.GetString("OK"));
             return;
         }
 
         var registerButton = sender as Button;
         registerButton.IsEnabled = false;
-        registerButton.Text = "Creando cuenta...";
+        registerButton.Text = LocalizationService.GetString("CreatingAccount");
 
         try
         {
@@ -62,7 +74,11 @@ public partial class RegisterPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("Éxito", "Cuenta creada exitosamente", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                LocalizationService.GetString("AccountCreatedSuccess"),
+                LocalizationService.GetString("OK"));
+
 
                 // Auto login después del registro
                 var (loginSuccess, _, user) = await _authService.LoginAsync(
@@ -81,17 +97,23 @@ public partial class RegisterPage : ContentPage
             }
             else
             {
-                await DisplayAlert("Error", message, "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                message,
+                LocalizationService.GetString("OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error de conexión. Verifica tu conexión a internet.", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("ConnectionError"),
+            LocalizationService.GetString("OK"));
         }
         finally
         {
             registerButton.IsEnabled = true;
-            registerButton.Text = "Crear";
+            registerButton.Text = LocalizationService.GetString("CreateAccount");
         }
     }
 

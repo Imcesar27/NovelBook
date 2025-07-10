@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.RegisterPage"
-             Title="Registro"
+             Title="{extensions:Translate RegisterTitle}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <ScrollView>
@@ -25,14 +26,14 @@
                        HorizontalOptions="Center"/>
 
                 <!-- Subtítulo -->
-                <Label Text="Tu mundo de novelas ligeras" 
+                <Label Text="{extensions:Translate YourLightNovelWorld}" 
                        FontSize="14"
                        TextColor="{StaticResource TextSecondary}"
                        HorizontalOptions="Center"/>
             </VerticalStackLayout>
 
             <!-- Título de la sección -->
-            <Label Text="Llena todos los campos:" 
+            <Label Text="{extensions:Translate FillAllFieldsLabel}" 
                    FontSize="16"
                    TextColor="{StaticResource TextPrimary}"
                    HorizontalOptions="Start"
@@ -46,7 +47,7 @@
                        CornerRadius="10"
                        Padding="15,10">
                     <Entry x:Name="NameEntry"
-                           Placeholder="Nombre" 
+                           Placeholder="{extensions:Translate Name}" 
                            PlaceholderColor="{StaticResource TextMuted}"
                            TextColor="{StaticResource TextPrimary}"
                            BackgroundColor="Transparent"/>
@@ -58,7 +59,7 @@
                        CornerRadius="10"
                        Padding="15,10">
                     <Entry x:Name="EmailEntry"
-                           Placeholder="Correo Electrónico" 
+                           Placeholder="{extensions:Translate Email}" 
                            PlaceholderColor="{StaticResource TextMuted}"
                            TextColor="{StaticResource TextPrimary}"
                            Keyboard="Email"
@@ -79,7 +80,7 @@
 
                         <Entry x:Name="PasswordEntry"
                                Grid.Column="0"
-                               Placeholder="Contraseña" 
+                               Placeholder="{extensions:Translate Password}" 
                                PlaceholderColor="{StaticResource TextMuted}"
                                TextColor="{StaticResource TextPrimary}"
                                IsPassword="True"
@@ -114,7 +115,7 @@
 
                         <Entry x:Name="ConfirmPasswordEntry"
                                Grid.Column="0"
-                               Placeholder="Confirmar contraseña" 
+                               Placeholder="{extensions:Translate ConfirmPassword}" 
                                PlaceholderColor="{StaticResource TextMuted}"
                                TextColor="{StaticResource TextPrimary}"
                                IsPassword="True"
@@ -137,20 +138,20 @@
 
                 <!-- Mensaje de error para contraseñas que no coinciden -->
                 <Label x:Name="PasswordMatchLabel"
-                       Text="Las contraseñas no coinciden"
+                       Text="{extensions:Translate PasswordsDoNotMatch}"
                        TextColor="#EF4444"
                        FontSize="12"
                        IsVisible="False"
                        Margin="5,0,0,0"/>
 
                 <!-- Indicador de requisitos de contraseña -->
-                <Label Text="La contraseña debe tener al menos 6 caracteres"
+                <Label Text="{extensions:Translate PasswordRequirement}"
                        TextColor="{StaticResource TextSecondary}"
                        FontSize="12"
                        Margin="5,0,0,0"/>
 
                 <!-- Botón de crear cuenta -->
-                <Button Text="Crear"
+                <Button Text="{extensions:Translate CreateAccount}"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="{StaticResource TextPrimary}"
                         CornerRadius="10"
@@ -167,9 +168,9 @@
 
                 <!-- Enlaces para volver al login -->
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
-                    <Label Text="¿Ya tienes cuenta?" 
+                    <Label Text="{extensions:Translate AlreadyHaveAccount}" 
                            TextColor="{StaticResource TextSecondary}"/>
-                    <Label Text="Inicia sesión" 
+                    <Label Text="{extensions:Translate Login}" 
                            TextColor="{StaticResource Primary}"
                            FontAttributes="Bold">
                         <Label.GestureRecognizers>

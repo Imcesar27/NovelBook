@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.ExplorePage"
-             Title="Explorar"
+             Title="{extensions:Translate Explore}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <Grid Padding="10">
@@ -34,7 +35,7 @@
                        Grid.Column="0"/>
 
                 <Entry x:Name="searchEntry"
-                       Placeholder="Buscar novelas..."
+                       Placeholder="{extensions:Translate SearchNovels}"
                        PlaceholderColor="{StaticResource TextMuted}"
                        TextColor="{StaticResource TextPrimary}"
                        BackgroundColor="Transparent"
@@ -54,7 +55,7 @@
         </Frame>
 
         <!-- Categorías populares -->
-        <Label Text="Categorías Populares" 
+        <Label Text="{extensions:Translate PopularGenres}" 
                FontSize="18"
                FontAttributes="Bold"
                TextColor="{StaticResource TextPrimary}"
@@ -68,7 +69,7 @@
                     Margin="0,0,0,15">
             <HorizontalStackLayout x:Name="CategoryButtons" Spacing="10">
                 <!-- Los botones se agregan dinámicamente desde el código -->
-                <Button Text="🔥 Todas" 
+                <Button x:Name="AllButton"
                         BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="15"
@@ -179,7 +180,7 @@
                                                     <FormattedString>
                                                         <Span Text="📖 "/>
                                                         <Span Text="{Binding Chapters}"/>
-                                                        <Span Text=" cap"/>
+                                                        <Span Text="{extensions:Translate Caps}"/>
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>

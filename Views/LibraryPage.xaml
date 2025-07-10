@@ -189,7 +189,7 @@
                                                     <FormattedString>
                                                         <Span Text="📖 "/>
                                                         <Span Text="{Binding ChapterCount}"/>
-                                                        <Span Text=" caps"/>
+                                                        <Span Text="{extensions:Translate Caps}"/>
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>
@@ -200,7 +200,8 @@
                                                     <FormattedString>
                                                         <Span Text="📚 "/>
                                                         <Span Text="{Binding LastReadChapter}"/>
-                                                        <Span Text=" leído"/>
+                                                        <Span Text=" "/>
+                                                        <Span Text="{extensions:Translate Read}"/>
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>
