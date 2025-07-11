@@ -46,7 +46,9 @@ public partial class MorePage : ContentPage
             if (biometricStatusLabel != null)
             {
                 var savedEmail = await SecureStorage.GetAsync("biometric_email");
-                biometricStatusLabel.Text = !string.IsNullOrEmpty(savedEmail) ? "Activado" : "No configurado";
+                biometricStatusLabel.Text = !string.IsNullOrEmpty(savedEmail) ?
+                LocalizationService.GetString("Activated") : // CAMBIO
+                LocalizationService.GetString("NotConfigured"); // CAMBIO
             }
         }
         catch { }
@@ -67,15 +69,18 @@ public partial class MorePage : ContentPage
             avatarLabel.Text = user.Name.Substring(0, 1).ToUpper();
             userNameLabel.Text = user.Name;
             userEmailLabel.Text = user.Email;
-            memberSinceLabel.Text = $"Miembro desde: {user.CreatedAt:MMMM yyyy}";
+            memberSinceLabel.Text = string.Format(
+            LocalizationService.GetString("MemberSince"), // CAMBIO
+            user.CreatedAt.ToString("MMMM yyyy")
+            );
         }
         else
         {
             // Modo invitado
             avatarLabel.Text = "👤";
-            userNameLabel.Text = "Invitado";
-            userEmailLabel.Text = "No has iniciado sesión";
-            memberSinceLabel.Text = "Modo invitado";
+            userNameLabel.Text = LocalizationService.GetString("GuestUser"); // CAMBIO
+            userEmailLabel.Text = LocalizationService.GetString("NoEmailRegistered"); // CAMBIO
+            memberSinceLabel.Text = LocalizationService.GetString("GuestMode"); // CAMBIO
         }
 
         if (AuthService.CurrentUser != null)
@@ -156,23 +161,23 @@ public partial class MorePage : ContentPage
 
         // Mostrar opciones
         var action = await DisplayActionSheet(
-            "Cambiar foto de perfil",
-            "Cancelar",
-            "Eliminar foto",
-            "Tomar foto",
-            "Elegir de galería");
+        LocalizationService.GetString("ChangeProfilePhoto"), // CAMBIO
+        LocalizationService.GetString("Cancel"),
+        LocalizationService.GetString("RemovePhoto"), // CAMBIO
+        LocalizationService.GetString("TakePhoto"), // CAMBIO
+        LocalizationService.GetString("ChooseFromGallery")); // CAMBIO
 
-        switch (action)
+        if (action == LocalizationService.GetString("TakePhoto"))
         {
-            case "Tomar foto":
-                await TakePhotoAsync();
-                break;
-            case "Elegir de galería":
-                await PickPhotoAsync();
-                break;
-            case "Eliminar foto":
-                await RemoveProfilePhoto();
-                break;
+            await TakePhotoAsync();
+        }
+        else if (action == LocalizationService.GetString("ChooseFromGallery"))
+        {
+            await PickPhotoAsync();
+        }
+        else if (action == LocalizationService.GetString("RemovePhoto"))
+        {
+            await RemoveProfilePhoto();
         }
     }
 
@@ -342,10 +347,10 @@ public partial class MorePage : ContentPage
         try
         {
             var confirm = await DisplayAlert(
-                "Eliminar foto",
-                "¿Estás seguro de que deseas eliminar tu foto de perfil?",
-                "Sí",
-                "No");
+                LocalizationService.GetString("RemovePhotoTitle"), // CAMBIO
+                LocalizationService.GetString("ConfirmRemovePhoto"), // CAMBIO
+                LocalizationService.GetString("Yes"),
+                LocalizationService.GetString("No"));
 
             if (!confirm) return;
 
@@ -374,11 +379,17 @@ public partial class MorePage : ContentPage
                 avatarLabel.IsVisible = true;
             }
 
-            await DisplayAlert("Éxito", "Foto de perfil eliminada", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                LocalizationService.GetString("PhotoRemoveSuccess"), // CAMBIO
+                LocalizationService.GetString("OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al eliminar la foto: {ex.Message}", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            string.Format(LocalizationService.GetString("ErrorRemovingPhoto"), ex.Message), // CAMBIO
+            LocalizationService.GetString("OK"));
         }
     }
 
@@ -389,10 +400,14 @@ public partial class MorePage : ContentPage
 
         // Notificar al usuario
         var message = e.Value ?
-            "Modo incógnito activado. No se guardará el historial de lectura." :
-            "Modo incógnito desactivado.";
+            LocalizationService.GetString("IncognitoActivated") : // CAMBIO
+            LocalizationService.GetString("IncognitoDeactivated"); // CAMBIO
 
-        await DisplayAlert("Modo Incógnito", message, "OK");
+
+        await DisplayAlert(
+        LocalizationService.GetString("Info"), 
+        message, 
+        LocalizationService.GetString("OK"));
     }
 
     private async void OnOptionTapped(object sender, EventArgs e)

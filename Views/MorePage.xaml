@@ -168,7 +168,7 @@
                          IsVisible="False"/>
 
                 <VerticalStackLayout x:Name="AdminSection" IsVisible="False">
-                    <Label Text="Administración"
+                    <Label Text="{extensions:Translate Administration}"
                            FontSize="16"
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"

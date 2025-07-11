@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:NovelBook"
     xmlns:views="clr-namespace:NovelBook.Views"
+    xmlns:extensions="clr-namespace:NovelBook.Extensions"
     Shell.FlyoutBackgroundColor="{StaticResource BackgroundDark}"
     Shell.FlyoutHeaderBehavior="CollapseOnScroll">
 
@@ -57,7 +58,7 @@
                    HorizontalOptions="Center"
                    Grid.Row="1"/>
 
-            <Label Text="Tu biblioteca personal"
+            <Label Text="{extensions:Translate YourPersonalLibrary}"
                    FontSize="14"
                    TextColor="{StaticResource TextSecondary}"
                    HorizontalOptions="Center"
@@ -68,33 +69,33 @@
 
     <!-- Items principales con TabBar -->
     <TabBar>
-        <Tab Title="📚 Librería" Icon="library_icon.png" Route="LibraryTab">
+        <Tab Title="{extensions:Translate Library}" Icon="library_icon.png" Route="LibraryTab">
             <ShellContent Title="Mi Librería" Route="LibraryPage" ContentTemplate="{DataTemplate views:LibraryPage}"/>
         </Tab>
 
-        <Tab Title="🌐 Explorar" Icon="explore_icon.png" Route="ExploreTab">
+        <Tab Title="{extensions:Translate Explore}" Icon="explore_icon.png" Route="ExploreTab">
             <ShellContent Title="Explorar Novelas" Route="ExplorePage" ContentTemplate="{DataTemplate views:ExplorePage}"/>
         </Tab>
 
-        <Tab Title="📝 Historial" Icon="history_icon.png" Route="HistoryTab">
+        <Tab Title="{extensions:Translate History}" Icon="history_icon.png" Route="HistoryTab">
             <ShellContent Title="Historial de Lectura" Route="HistoryPage" ContentTemplate="{DataTemplate views:HistoryPage}"/>
         </Tab>
 
-        <Tab Title="➕ Más" Icon="more_icon.png" Route="MoreTab">
+        <Tab Title="{extensions:Translate More}" Icon="more_icon.png" Route="MoreTab">
             <ShellContent Title="Más Opciones" Route="MorePage" ContentTemplate="{DataTemplate views:MorePage}"/>
         </Tab>
     </TabBar>
 
     <!-- Items del menú lateral (Flyout) -->
-    <FlyoutItem Title="⚙️ Configuración" Icon="settings_icon.png" Route="SettingsTab">
+    <FlyoutItem Title="{extensions:Translate Settings}" Icon="settings_icon.png" Route="SettingsTab">
         <ShellContent Title="Configuración" Route="SettingsPage" ContentTemplate="{DataTemplate views:SettingsPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="📥 Descargas" Icon="download_icon.png" Route="DownloadsTab">
+    <FlyoutItem Title="{extensions:Translate Downloads}" Icon="download_icon.png" Route="DownloadsTab">
         <ShellContent Title="Descargas" Route="DownloadsPage" ContentTemplate="{DataTemplate views:DownloadsPage}"/>
     </FlyoutItem>
 
-    <FlyoutItem Title="📊 Estadísticas" Icon="stats_icon.png" Route="StatsTab">
+    <FlyoutItem Title="{extensions:Translate Statistics}" Icon="stats_icon.png" Route="StatsTab">
         <ShellContent Title="Estadísticas" Route="StatsPage" ContentTemplate="{DataTemplate views:StatsPage}"/>
     </FlyoutItem>
 
@@ -104,7 +105,7 @@
     <!-- Footer menú -->
     <Shell.FlyoutFooter>
         <VerticalStackLayout Padding="10,10" BackgroundColor="{StaticResource BackgroundMedium}">
-            <Button Text="🔐 Cerrar Sesión"
+            <Button Text="{extensions:Translate Logout}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="{StaticResource TextPrimary}"
                     Margin="10"
