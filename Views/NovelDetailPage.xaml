@@ -242,21 +242,24 @@
                                    TextChanged="OnChapterSearchTextChanged"/>
 
                         <HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
-                            <Button Text="Todos"
+                            <Button x:Name="AllChaptersButton"
+                                    Text="{extensions:Translate AllChapters}"
                                     BackgroundColor="{StaticResource Primary}"
                                     TextColor="White"
                                     CornerRadius="15"
                                     Padding="15,5"
                                     FontSize="12"
                                     Clicked="OnChapterFilterClicked"/>
-                            <Button Text="Sin leer"
+                            <Button x:Name="UnreadButton"
+                                    Text="{extensions:Translate Unread}"
                                     BackgroundColor="{StaticResource BackgroundMedium}"
                                     TextColor="{StaticResource TextSecondary}"
                                     CornerRadius="15"
                                     Padding="15,5"
                                     FontSize="12"
                                     Clicked="OnChapterFilterClicked"/>
-                            <Button Text="↓↑"
+                            <Button x:Name="ReverseOrderButton"
+                                    Text="{extensions:Translate ReverseOrder}"
                                     BackgroundColor="{StaticResource BackgroundMedium}"
                                     TextColor="{StaticResource TextSecondary}"
                                     CornerRadius="15"

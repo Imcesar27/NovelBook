@@ -108,7 +108,10 @@ public partial class NovelDetailPage : ContentPage
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                await DisplayAlert("Error", "Error al cargar detalles: " + ex.Message, "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                $"{LocalizationService.GetString("ErrorLoadingDetails")}: {ex.Message}", // CAMBIO
+                LocalizationService.GetString("OK"));
             });
         }
     }
@@ -206,7 +209,7 @@ public partial class NovelDetailPage : ContentPage
                     System.Diagnostics.Debug.WriteLine("ERROR: No se encontró el botón ReadButton");
                     return;
                 }
-                readButton.Text = "Leer"; // Valor por defecto
+                readButton.Text = LocalizationService.GetString("Read2"); // CAMBIO
             });
 
             if (AuthService.CurrentUser == null || _novel == null) return;
@@ -230,25 +233,25 @@ public partial class NovelDetailPage : ContentPage
                     // Si hay progreso de lectura pero no está en biblioteca, agregarlo primero
                     if (novelInLibrary == null && currentProgress != null)
                     {
-                        readButton.Text = "Continuar lectura";
+                        readButton.Text = LocalizationService.GetString("ContinueReading"); // CAMBIO
                     }
                     else if (novelInLibrary != null)
                     {
                         // Si completó todos los capítulos
                         if (novelInLibrary.LastReadChapter >= _novel.ChapterCount)
                         {
-                            readButton.Text = "Releer";
+                            readButton.Text = LocalizationService.GetString("Reread"); // CAMBIO
                         }
                         // Si hay progreso parcial en algún capítulo
                         else if (currentProgress != null && !currentProgress.Value.IsCompleted)
                         {
-                            readButton.Text = $"Continuar Cap. {currentProgress.Value.ChapterNumber}";
+                            readButton.Text = $"{LocalizationService.GetString("ContinueCap")} {currentProgress.Value.ChapterNumber}"; // CAMBIO
                         }
                         // Si completó algunos capítulos pero no todos
                         else if (novelInLibrary.LastReadChapter > 0)
                         {
                             int nextChapter = novelInLibrary.LastReadChapter + 1;
-                            readButton.Text = $"Leer Cap. {nextChapter}";
+                            readButton.Text = $"{LocalizationService.GetString("ReadCap")} {nextChapter}"; // CAMBIO
                         }
                         else
                         {
@@ -257,7 +260,7 @@ public partial class NovelDetailPage : ContentPage
                     }
                     else
                     {
-                        readButton.Text = "Leer";
+                        readButton.Text = LocalizationService.GetString("Read2"); // CAMBIO
                     }
 
                     System.Diagnostics.Debug.WriteLine($"Botón actualizado a: {readButton.Text}");
@@ -414,13 +417,13 @@ public partial class NovelDetailPage : ContentPage
     {
         if (isInLibrary)
         {
-            button.Text = $"✓ {LocalizationService.GetString("RemoveFromLibrary")}";
+            button.Text = $"➖ {LocalizationService.GetString("RemoveFromLibrary")}";
             button.BackgroundColor = Color.FromArgb("#10B981");
             button.TextColor = Colors.White;
         }
         else
         {
-            button.Text = $"+ {LocalizationService.GetString("AddToLibrary")}";
+            button.Text = $"➕ {LocalizationService.GetString("AddToLibrary")}";
             button.BackgroundColor = Color.FromArgb("#2D2D2D");
             button.TextColor = Color.FromArgb("#FFFFFF");
         }
@@ -493,7 +496,7 @@ public partial class NovelDetailPage : ContentPage
             // Si no hay géneros, mostrar mensaje
             var label = new Label
             {
-                Text = "Sin géneros asignados",
+                Text = LocalizationService.GetString("WithoutGenres"), // CAMBIO
                 TextColor = Color.FromArgb("#808080"),
                 FontSize = 12,
                 FontAttributes = FontAttributes.Italic
@@ -876,13 +879,17 @@ public partial class NovelDetailPage : ContentPage
 
         var filteredChapters = new List<dynamic>();
 
+        var allText = LocalizationService.GetString("AllChapters");
+        var unreadText = LocalizationService.GetString("Unread");
+        var reverseText = LocalizationService.GetString("ReverseOrder");
+
         switch (_currentChapterFilter)
         {
-            case "Todos":
+            case var filter when filter == allText:
                 filteredChapters = _allChapters;
                 break;
 
-            case "Sin leer":
+            case var filter when filter == unreadText:
                 // Obtener capítulos no leídos
                 if (AuthService.CurrentUser != null)
                 {
@@ -895,9 +902,13 @@ public partial class NovelDetailPage : ContentPage
                 }
                 break;
 
-            case "↓↑": // Invertir orden
+            case var filter when filter == reverseText: // Invertir orden
                 filteredChapters = _allChapters.AsEnumerable().Reverse().ToList();
                 _allChapters = filteredChapters; // Actualizar la lista principal
+                break;
+
+            default:
+                filteredChapters = _allChapters;
                 break;
         }
 

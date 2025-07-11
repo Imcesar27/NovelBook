@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.MorePage"
-             Title="Más"
+             Title="{extensions:Translate More}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <ScrollView>
@@ -67,12 +68,12 @@
                                        Padding="15,0,0,0"
                                        VerticalOptions="Center">
                         <Label x:Name="UserNameLabel"
-                               Text="Usuario"
+                               Text="{extensions:Translate GuestUser}"
                                FontSize="20"
                                FontAttributes="Bold"
                                TextColor="{StaticResource TextPrimary}"/>
                         <Label x:Name="UserEmailLabel"
-                               Text="usuario@email.com"
+                               Text="{extensions:Translate NoEmailRegistered}"
                                FontSize="14"
                                TextColor="{StaticResource TextSecondary}"/>
                         <Label x:Name="MemberSinceLabel"
@@ -106,10 +107,10 @@
                            Margin="0,0,15,0"/>
 
                     <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Modo Incógnito"
+                        <Label Text="{extensions:Translate IncognitoMode}"
                                TextColor="{StaticResource TextPrimary}"
                                FontSize="16"/>
-                        <Label Text="Pausa el historial de lectura"
+                        <Label Text="{extensions:Translate IncognitoModeDescription}"
                                TextColor="{StaticResource TextSecondary}"
                                FontSize="12"/>
                     </VerticalStackLayout>
@@ -192,7 +193,7 @@
                                Margin="0,0,15,0"/>
 
                         <VerticalStackLayout Grid.Column="1">
-                            <Label Text="Crear Novela"
+                            <Label Text="{extensions:Translate CreateNovel}"
                                    TextColor="{StaticResource TextPrimary}"
                                    FontSize="16"/>
                             <Label Text="Agregar nueva novela a la biblioteca"
@@ -228,7 +229,7 @@
                                Margin="0,0,15,0"/>
 
                         <VerticalStackLayout Grid.Column="1">
-                            <Label Text="Gestionar Novelas"
+                            <Label Text="{extensions:Translate ManageNovels}"
                                    TextColor="{StaticResource TextPrimary}"
                                    FontSize="16"/>
                             <Label Text="Editar o eliminar novelas existentes"
@@ -265,10 +266,10 @@
                            Margin="0,0,15,0"/>
 
                     <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Descargas"
+                        <Label Text="{extensions:Translate Downloads}"
                                TextColor="{StaticResource TextPrimary}"
                                FontSize="16"/>
-                        <Label Text="Gestiona tus novelas offline"
+                        <Label Text="{extensions:Translate ManageNovel}"
                                TextColor="{StaticResource TextSecondary}"
                                FontSize="12"/>
                     </VerticalStackLayout>
@@ -301,10 +302,10 @@
                            Margin="0,0,15,0"/>
 
                     <VerticalStackLayout Grid.Column="1">
-                        <Label Text="Cola de descarga"
+                        <Label Text="{extensions:Translate DownloadQueue}"
                                TextColor="{StaticResource TextPrimary}"
                                FontSize="16"/>
-                        <Label Text="0 descargas pendientes"
+                        <Label Text="{extensions:Translate NoPendingDownloads}"
                                TextColor="{StaticResource TextSecondary}"
                                FontSize="12"/>
                     </VerticalStackLayout>
@@ -337,7 +338,7 @@
                            Margin="0,0,15,0"/>
 
                     <Label Grid.Column="1"
-                           Text="Categorías"
+                           Text="{extensions:Translate Categories}"
                            TextColor="{StaticResource TextPrimary}"
                            FontSize="16"
                            VerticalOptions="Center"/>
@@ -370,7 +371,7 @@
                            Margin="0,0,15,0"/>
 
                     <Label Grid.Column="1"
-                           Text="Estadísticas"
+                           Text="{extensions:Translate Statistics}"
                            TextColor="{StaticResource TextPrimary}"
                            FontSize="16"
                            VerticalOptions="Center"/>
@@ -403,7 +404,7 @@
                            Margin="0,0,15,0"/>
 
                     <Label Grid.Column="1"
-                           Text="Configuración"
+                           Text="{extensions:Translate Settings}"
                            TextColor="{StaticResource TextPrimary}"
                            FontSize="16"
                            VerticalOptions="Center"/>
@@ -436,7 +437,7 @@
                            Margin="0,0,15,0"/>
 
                     <Label Grid.Column="1"
-                           Text="Acerca de"
+                           Text="{extensions:Translate About}"
                            TextColor="{StaticResource TextPrimary}"
                            FontSize="16"
                            VerticalOptions="Center"/>
@@ -470,7 +471,7 @@
                            Margin="0,0,15,0"/>
 
                     <Label Grid.Column="1"
-                           Text="Cerrar Sesión"
+                           Text="{extensions:Translate Logout}"
                            TextColor="{StaticResource Error}"
                            FontSize="16"
                            VerticalOptions="Center"/>

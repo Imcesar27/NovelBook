@@ -142,7 +142,7 @@ public partial class ReaderPage : ContentPage
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     var viewModel = BindingContext as ReaderViewModel;
-                    viewModel.ChapterTitle = $"Capítulo {_currentChapter.ChapterNumber}: {_currentChapter.Title}";
+                    viewModel.ChapterTitle = $"{LocalizationService.GetString("Chapter")} {_currentChapter.ChapterNumber}: {_currentChapter.Title}";
                     viewModel.ChapterText = ProcessChapterContent(_currentChapter.Content);
                     viewModel.CurrentPage = $"Cap. {_currentChapter.ChapterNumber}";
 
@@ -157,7 +157,10 @@ public partial class ReaderPage : ContentPage
             {
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    await DisplayAlert("Error", "No se pudo cargar el capítulo", "OK");
+                    await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("ErrorLoadingChapter"),
+                        LocalizationService.GetString("OK"));
                     await Navigation.PopAsync();
                 });
             }
@@ -228,7 +231,7 @@ public partial class ReaderPage : ContentPage
         if (prevButton != null)
         {
             prevButton.IsEnabled = currentIndex > 0;
-            prevButton.Opacity = currentIndex > 0 ? 1.0 : 0.5;
+            prevButton.Opacity = currentIndex > 0 ? 1 : 0.5;
         }
 
         // Deshabilitar botón siguiente si es el último capítulo
@@ -236,7 +239,7 @@ public partial class ReaderPage : ContentPage
         if (nextButton != null)
         {
             nextButton.IsEnabled = currentIndex < _allChapters.Count - 1;
-            nextButton.Opacity = currentIndex < _allChapters.Count - 1 ? 1.0 : 0.5;
+            nextButton.Opacity = currentIndex < _allChapters.Count - 1 ? 1 : 0.5;
         }
     }
 
@@ -322,7 +325,10 @@ public partial class ReaderPage : ContentPage
         else
         {
             await SaveProgress(true);
-            await DisplayAlert("Fin", "Has llegado al último capítulo disponible", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("End"),
+            LocalizationService.GetString("EndOfChapter"),
+            LocalizationService.GetString("OK"));
         }
     }
 

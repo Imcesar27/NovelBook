@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.ReaderPage"
-             Title="Lector"
+             Title="{extensions:Translate Reader}"
              BackgroundColor="{StaticResource BackgroundDark}"
              Shell.NavBarIsVisible="False">
 
@@ -96,7 +97,7 @@
 
             <Button Grid.Column="0"
                     x:Name="PreviousButton"
-                    Text="← Anterior"
+                    Text="{extensions:Translate Previous}"
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource TextPrimary}"
                     FontSize="14"
@@ -119,7 +120,7 @@
 
             <Button Grid.Column="3"
                     x:Name="NextButton"
-                    Text="Siguiente →"
+                    Text="{extensions:Translate Next}"
                     BackgroundColor="Transparent"
                     TextColor="{StaticResource TextPrimary}"
                     FontSize="14"
@@ -141,7 +142,7 @@
 
             <ScrollView>
                 <VerticalStackLayout Spacing="20">
-                    <Label Text="Configuración de Lectura"
+                    <Label Text="{extensions:Translate ReadingSettings}"
                            FontSize="18"
                            FontAttributes="Bold"
                            TextColor="{StaticResource TextPrimary}"
@@ -156,7 +157,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Tamaño"
+                               Text="{extensions:Translate Size}"
                                TextColor="{StaticResource TextPrimary}"
                                VerticalOptions="Center"
                                WidthRequest="80"/>
@@ -186,7 +187,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Espaciado"
+                               Text="{extensions:Translate LineSpacing}"
                                TextColor="{StaticResource TextPrimary}"
                                VerticalOptions="Center"
                                WidthRequest="80"/>
@@ -209,7 +210,7 @@
 
                     <!-- Colores de fondo -->
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Color de fondo"
+                        <Label Text="{extensions:Translate BackgroundTheme}"
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
@@ -281,7 +282,7 @@
 
                     <!-- Alineación del texto -->
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Alineación"
+                        <Label Text="{extensions:Translate TextAlignment}"
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
@@ -310,11 +311,11 @@
 
                     <!-- Tipo de fuente -->
                     <VerticalStackLayout Spacing="10">
-                        <Label Text="Fuente"
+                        <Label Text="{extensions:Translate Font}"
                                TextColor="{StaticResource TextPrimary}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                            <Button Text="Original"
+                            <Button Text="{extensions:Translate Original}"
                                     BackgroundColor="{StaticResource Primary}"
                                     TextColor="White"
                                     Padding="15,10"
@@ -341,7 +342,7 @@
                     </VerticalStackLayout>
 
                     <!-- Botón cerrar -->
-                    <Button Text="Cerrar"
+                    <Button Text="{extensions:Translate Close}"
                             BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             CornerRadius="20"
