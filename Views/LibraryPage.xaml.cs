@@ -399,31 +399,31 @@ public partial class LibraryPage : ContentPage
         }
     }
 
-   /* private async void OnNovelLongPressed(object sender, EventArgs e)
-    {
-        try
-        {
-            if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
-            {
-                // Vibración para feedback
-                try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
+    /* private async void OnNovelLongPressed(object sender, EventArgs e)
+     {
+         try
+         {
+             if (sender is Button button && button.BindingContext is LibraryDisplayItem novel)
+             {
+                 // Vibración para feedback
+                 try { HapticFeedback.Default.Perform(HapticFeedbackType.LongPress); } catch { }
 
-                var action = await DisplayActionSheet(
-                    $"Opciones para: {novel.Title}",
-                    "Cancelar",
-                    null,
-                    "Marcar como favorito",
-                    "Cambiar estado de lectura",
-                    "Eliminar de biblioteca");
+                 var action = await DisplayActionSheet(
+                     $"Opciones para: {novel.Title}",
+                     "Cancelar",
+                     null,
+                     "Marcar como favorito",
+                     "Cambiar estado de lectura",
+                     "Eliminar de biblioteca");
 
-                await HandleNovelAction(action, novel.NovelId);
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error en long press: {ex.Message}");
-        }
-    }*/
+                 await HandleNovelAction(action, novel.NovelId);
+             }
+         }
+         catch (Exception ex)
+         {
+             System.Diagnostics.Debug.WriteLine($"Error en long press: {ex.Message}");
+         }
+     }*/
 
     /// <summary>
     /// Maneja las acciones del menú contextual
@@ -440,16 +440,28 @@ public partial class LibraryPage : ContentPage
 
             if (action == removeFromFavorites || action == addToFavorites)
             {
-                await _libraryService.ToggleFavoriteAsync(novel.LibraryItemId);
-                await LoadLibraryAsync();
+                // CAMBIO: Usar el nuevo método que acepta LibraryItemId
+                var success = await _libraryService.ToggleFavoriteByLibraryItemIdAsync(novel.LibraryItemId);
 
-                // Mostrar confirmación
-                await DisplayAlert(
-                    LocalizationService.GetString("Success"),
-                    action == addToFavorites ?
-                        LocalizationService.GetString("MarkedAsFavorite") :
-                        LocalizationService.GetString("RemovedFromFavorites"),
-                    LocalizationService.GetString("OK"));
+                if (success)
+                {
+                    await LoadLibraryAsync();
+
+                    // Mostrar confirmación
+                    await DisplayAlert(
+                        LocalizationService.GetString("Success"),
+                        action == addToFavorites ?
+                            LocalizationService.GetString("MarkedAsFavorite") :
+                            LocalizationService.GetString("RemovedFromFavorites"),
+                        LocalizationService.GetString("OK"));
+                }
+                else
+                {
+                    await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("ErrorPerformingAction"),
+                        LocalizationService.GetString("OK"));
+                }
             }
             else if (action == changeStatus)
             {
@@ -478,12 +490,24 @@ public partial class LibraryPage : ContentPage
 
                     if (statusValue != null)
                     {
-                        await _libraryService.UpdateReadingStatusAsync(novel.LibraryItemId, statusValue);
-                        await DisplayAlert(
-                            LocalizationService.GetString("Success"),
-                            LocalizationService.GetString("StatusUpdated"),
-                            LocalizationService.GetString("OK"));
-                        await LoadLibraryAsync();
+                        // CAMBIO: Usar el nuevo método que acepta LibraryItemId
+                        var success = await _libraryService.UpdateReadingStatusByLibraryItemIdAsync(novel.LibraryItemId, statusValue);
+
+                        if (success)
+                        {
+                            await DisplayAlert(
+                                LocalizationService.GetString("Success"),
+                                LocalizationService.GetString("StatusUpdated"),
+                                LocalizationService.GetString("OK"));
+                            await LoadLibraryAsync();
+                        }
+                        else
+                        {
+                            await DisplayAlert(
+                                LocalizationService.GetString("Error"),
+                                LocalizationService.GetString("ErrorPerformingAction"),
+                                LocalizationService.GetString("OK"));
+                        }
                     }
                 }
             }
@@ -497,8 +521,20 @@ public partial class LibraryPage : ContentPage
 
                 if (confirm)
                 {
-                    await _libraryService.RemoveFromLibraryAsync(novel.NovelId);
-                    await LoadLibraryAsync();
+                    // Este método sí usa NovelId, no LibraryItemId
+                    var success = await _libraryService.RemoveFromLibraryAsync(novel.NovelId);
+
+                    if (success)
+                    {
+                        await LoadLibraryAsync();
+                    }
+                    else
+                    {
+                        await DisplayAlert(
+                            LocalizationService.GetString("Error"),
+                            LocalizationService.GetString("ErrorPerformingAction"),
+                            LocalizationService.GetString("OK"));
+                    }
                 }
             }
         }

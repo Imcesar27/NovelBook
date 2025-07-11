@@ -151,8 +151,9 @@ public class LibraryService
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
 
+            // Corrección: SQL Server no soporta ~, usar CASE WHEN
             var query = @"UPDATE user_library 
-                     SET is_favorite = ~is_favorite 
+                     SET is_favorite = CASE WHEN is_favorite = 1 THEN 0 ELSE 1 END
                      WHERE user_id = @userId AND novel_id = @novelId";
 
             using var command = new SqlCommand(query, connection);
@@ -196,4 +197,67 @@ public class LibraryService
             return false;
         }
     }
+
+    /// <summary>
+    /// Alterna el estado de favorito usando el ID del item de biblioteca
+    /// </summary>
+    public async Task<bool> ToggleFavoriteByLibraryItemIdAsync(int libraryItemId)
+    {
+        if (AuthService.CurrentUser == null) return false;
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            // Nota: En SQL Server, NOT es el operador para negar booleanos
+            var query = @"UPDATE user_library 
+                     SET is_favorite = CASE WHEN is_favorite = 1 THEN 0 ELSE 1 END
+                     WHERE id = @libraryItemId AND user_id = @userId";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@libraryItemId", libraryItemId);
+            command.Parameters.AddWithValue("@userId", AuthService.CurrentUser.Id);
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error toggling favorite: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Actualiza el estado de lectura usando el ID del item de biblioteca
+    /// </summary>
+    public async Task<bool> UpdateReadingStatusByLibraryItemIdAsync(int libraryItemId, string newStatus)
+    {
+        if (AuthService.CurrentUser == null) return false;
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"UPDATE user_library 
+                     SET reading_status = @status 
+                     WHERE id = @libraryItemId AND user_id = @userId";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@libraryItemId", libraryItemId);
+            command.Parameters.AddWithValue("@userId", AuthService.CurrentUser.Id);
+            command.Parameters.AddWithValue("@status", newStatus);
+
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error updating status: {ex.Message}");
+            return false;
+        }
+    }
+
 }

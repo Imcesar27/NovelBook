@@ -101,7 +101,7 @@
                                     Padding="10,5"
                                     Clicked="OnReviewsClicked">
                                 <Button.Text>
-                                    <MultiBinding StringFormat="Ver reseñas ({0})">
+                                    <MultiBinding StringFormat="{extensions:Translate ViewReviews}">
                                         <Binding Path="ReviewCount" FallbackValue="0"/>
                                     </MultiBinding>
                                 </Button.Text>

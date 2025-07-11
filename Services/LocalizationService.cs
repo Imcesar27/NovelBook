@@ -69,6 +69,11 @@ namespace NovelBook.Services
                 ["RemoveFromLibrary"] = "Eliminar de biblioteca",
                 ["StatusUpdated"] = "Estado actualizado",
                 ["ErrorPerformingAction"] = "No se pudo realizar la acción",
+                ["NewStatus"] = "Nuevo estado",
+                ["ChangeStatusTo"] = "Cambiar estado de lectura",
+                ["ConfirmAction"] = "¿Estás seguro?",
+                ["MarkedAsFavorite"] = "Marcado como favorito",
+                ["RemovedFromFavorites"] = "Eliminado de favoritos",
 
                 // ExplorePage
                 ["ExploreNovels"] = "Explorar Novelas",
@@ -206,7 +211,7 @@ namespace NovelBook.Services
                 ["NovelDetails"] = "Detalles de Novela",
                 ["StartReading"] = "Empezar a leer",
                 ["ContinueReading"] = "Continuar leyendo",
-                ["AddToLibrary"] = "+ Agregar a biblioteca",
+                ["AddToLibrary"] = " Agregar a biblioteca",
                 ["RemoveFromLibrary"] = "Quitar de biblioteca",
                 ["Synopsis"] = "Sinopsis",
                 ["Details"] = "Detalles",
@@ -330,6 +335,11 @@ namespace NovelBook.Services
                 ["RemoveFromLibrary"] = "Remove from library",
                 ["StatusUpdated"] = "Status updated",
                 ["ErrorPerformingAction"] = "Could not perform action",
+                ["NewStatus"] = "New status",
+                ["ChangeStatusTo"] = "Change reading status",
+                ["ConfirmAction"] = "Are you sure?",
+                ["MarkedAsFavorite"] = "Marked as favorite",
+                ["RemovedFromFavorites"] = "Removed from favorites",
 
                 // ExplorePage
                 ["ExploreNovels"] = "Explore Novels",
@@ -467,7 +477,7 @@ namespace NovelBook.Services
                 ["NovelDetails"] = "Novel Details",
                 ["StartReading"] = "Start reading",
                 ["ContinueReading"] = "Continue reading",
-                ["AddToLibrary"] = "+ Add to library",
+                ["AddToLibrary"] = " Add to library",
                 ["RemoveFromLibrary"] = "Remove from library",
                 ["Synopsis"] = "Synopsis",
                 ["Details"] = "Details",
