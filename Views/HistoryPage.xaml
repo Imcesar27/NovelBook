@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.HistoryPage"
-             Title="Historial"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
+             Title="{extensions:Translate History}"
              BackgroundColor="{StaticResource BackgroundDark}">
 
     <Grid>
@@ -33,7 +34,7 @@
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center"/>
-                    <Label Text="Capítulos"
+                    <Label Text="{extensions:Translate Chapters}"
                            FontSize="12"
                            TextColor="{StaticResource TextSecondary}"
                            HorizontalTextAlignment="Center"/>
@@ -47,7 +48,7 @@
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center"/>
-                    <Label Text="Tiempo total"
+                    <Label Text="{extensions:Translate TotalTime}"
                            FontSize="12"
                            TextColor="{StaticResource TextSecondary}"
                            HorizontalTextAlignment="Center"/>
@@ -61,7 +62,7 @@
                            FontAttributes="Bold"
                            TextColor="{StaticResource Primary}"
                            HorizontalTextAlignment="Center"/>
-                    <Label Text="Días seguidos"
+                    <Label Text="{extensions:Translate ReadingStreak}"
                            FontSize="12"
                            TextColor="{StaticResource TextSecondary}"
                            HorizontalTextAlignment="Center"/>
@@ -110,7 +111,7 @@
 
                 <!-- Mensaje cuando no hay historial -->
                 <Label x:Name="NoHistoryLabel"
-                       Text="Aún no has leído ningún capítulo"
+                       Text="{extensions:Translate NoHistoryYet}"
                        TextColor="{StaticResource TextSecondary}"
                        HorizontalOptions="Center"
                        VerticalOptions="CenterAndExpand"

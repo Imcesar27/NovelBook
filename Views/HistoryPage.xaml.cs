@@ -24,7 +24,13 @@ public partial class HistoryPage : ContentPage
         _historyService = new HistoryService(_databaseService);
         _imageService = new ImageService(_databaseService);
 
-        // Configurar picker
+        // Configurar picker con traducciones
+        ViewPicker.Items.Clear();
+        ViewPicker.Items.Add(LocalizationService.GetString("CompleteHistory"));
+        ViewPicker.Items.Add(LocalizationService.GetString("ByNovel"));
+        ViewPicker.Items.Add(LocalizationService.GetString("Today"));
+        ViewPicker.Items.Add(LocalizationService.GetString("ThisWeek"));
+        ViewPicker.Items.Add(LocalizationService.GetString("ThisMonth"));
         ViewPicker.SelectedIndex = 0;
     }
 
@@ -71,7 +77,10 @@ public partial class HistoryPage : ContentPage
         catch (Exception ex)
         {
             LoadingIndicator.IsVisible = false;
-            await DisplayAlert("Error", "Error al cargar historial: " + ex.Message, "OK");
+            await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    string.Format(LocalizationService.GetString("ErrorLoadingHistory"), ex.Message),
+                    LocalizationService.GetString("OK"));
         }
     }
 
@@ -92,25 +101,31 @@ public partial class HistoryPage : ContentPage
     {
         HistoryContainer.Children.Clear();
 
+        var completeHistory = LocalizationService.GetString("CompleteHistory");
+        var byNovel = LocalizationService.GetString("ByNovel");
+        var today = LocalizationService.GetString("Today");
+        var thisWeek = LocalizationService.GetString("ThisWeek");
+        var thisMonth = LocalizationService.GetString("ThisMonth");
+
         switch (_currentView)
         {
-            case "📅 Historial completo":
+            case var v when v == completeHistory:
                 await LoadCompleteHistory();
                 break;
 
-            case "📚 Por novela":
+            case var v when v == byNovel:
                 await LoadNovelGroupedHistory();
                 break;
 
-            case "📆 Hoy":
+            case var v when v == today:
                 await LoadTodayHistory();
                 break;
 
-            case "📅 Esta semana":
+            case var v when v == thisWeek:
                 await LoadWeekHistory();
                 break;
 
-            case "📅 Este mes":
+            case var v when v == thisMonth:
                 await LoadMonthHistory();
                 break;
         }
@@ -183,7 +198,7 @@ public partial class HistoryPage : ContentPage
         var todayHistory = await _historyService.GetHistoryByDateRangeAsync(
             AuthService.CurrentUser.Id, today, tomorrow);
 
-        DisplayFilteredHistory(todayHistory, "No has leído nada hoy");
+        DisplayFilteredHistory(todayHistory, LocalizationService.GetString("NoReadingToday"));
     }
 
     /// <summary>
@@ -197,7 +212,7 @@ public partial class HistoryPage : ContentPage
         var weekHistory = await _historyService.GetHistoryByDateRangeAsync(
             AuthService.CurrentUser.Id, weekStart, today.AddDays(1));
 
-        DisplayFilteredHistory(weekHistory, "No has leído nada esta semana");
+        DisplayFilteredHistory(weekHistory, LocalizationService.GetString("NoReadingThisWeek"));
     }
 
     /// <summary>
@@ -211,7 +226,7 @@ public partial class HistoryPage : ContentPage
         var monthHistory = await _historyService.GetHistoryByDateRangeAsync(
             AuthService.CurrentUser.Id, monthStart, today.AddDays(1));
 
-        DisplayFilteredHistory(monthHistory, "No has leído nada este mes");
+        DisplayFilteredHistory(monthHistory, LocalizationService.GetString("NoReadingThisMonth"));
     }
 
     /// <summary>
@@ -242,12 +257,18 @@ public partial class HistoryPage : ContentPage
     {
         string dateText;
         if (date.Date == DateTime.Today)
-            dateText = "Hoy";
+            dateText = LocalizationService.GetString("Today");
         else if (date.Date == DateTime.Today.AddDays(-1))
-            dateText = "Ayer";
+            dateText = LocalizationService.GetString("Yesterday");
         else
-            dateText = date.ToString("dddd, dd 'de' MMMM",
-                new System.Globalization.CultureInfo("es-ES"));
+        {
+            // Para el formato de fecha, mantener el formato localizado
+            var culture = LocalizationService.CurrentLanguage == "es" ?
+                new System.Globalization.CultureInfo("es-ES") :
+                new System.Globalization.CultureInfo("en-US");
+
+            dateText = date.ToString("dddd, dd 'de' MMMM", culture);
+        }
 
         return new Label
         {
@@ -335,7 +356,7 @@ public partial class HistoryPage : ContentPage
         {
             var completedLabel = new Label
             {
-                Text = "✓ Completado",
+                Text = LocalizationService.GetString("Completed2"),
                 TextColor = Color.FromArgb("#4CAF50"),
                 FontSize = 12
             };
@@ -483,7 +504,7 @@ public partial class HistoryPage : ContentPage
         // Capítulos leídos
         var chaptersLabel = new Label
         {
-            Text = $"📖 {group.ChaptersRead} capítulos",
+            Text = string.Format(LocalizationService.GetString("ChaptersRead"), group.ChaptersRead),
             TextColor = Color.FromArgb("#E91E63"),
             FontSize = 12
         };
@@ -505,7 +526,7 @@ public partial class HistoryPage : ContentPage
         // Última lectura
         var lastReadLabel = new Label
         {
-            Text = $"📅 {group.LastReadFormatted}",
+            Text = string.Format(LocalizationService.GetString("LastRead"), group.LastReadFormatted),
             TextColor = Color.FromArgb("#808080"),
             FontSize = 12,
             Margin = new Thickness(0, 5, 0, 0)
@@ -538,7 +559,7 @@ public partial class HistoryPage : ContentPage
     private void ShowNoUserMessage()
     {
         HistoryContainer.Children.Clear();
-        NoHistoryLabel.Text = "Inicia sesión para ver tu historial de lectura";
+        NoHistoryLabel.Text = LocalizationService.GetString("LoginToSeeHistory");
         NoHistoryLabel.IsVisible = true;
 
         // Ocultar estadísticas
@@ -566,9 +587,11 @@ public partial class HistoryPage : ContentPage
     {
         if (AuthService.CurrentUser == null) return;
 
-        bool confirm = await DisplayAlert("Confirmar",
-            "¿Estás seguro de que quieres borrar todo tu historial de lectura?",
-            "Sí", "No");
+        bool confirm = await DisplayAlert(
+            LocalizationService.GetString("Confirm"),
+            LocalizationService.GetString("ConfirmClearHistory"),
+            LocalizationService.GetString("Yes"),
+            LocalizationService.GetString("No"));
 
         if (confirm)
         {
@@ -576,12 +599,18 @@ public partial class HistoryPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("Éxito", "Tu historial ha sido borrado", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                LocalizationService.GetString("HistoryCleared"),
+                LocalizationService.GetString("OK"));
                 await LoadHistoryData();
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo borrar el historial", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorClearingHistory"),
+                LocalizationService.GetString("OK"));
             }
         }
     }

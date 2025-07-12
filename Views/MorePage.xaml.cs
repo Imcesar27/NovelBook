@@ -155,7 +155,10 @@ public partial class MorePage : ContentPage
     {
         if (AuthService.CurrentUser == null)
         {
-            await DisplayAlert("Información", "Debes iniciar sesión para cambiar tu foto de perfil", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Info"),
+            LocalizationService.GetString("LoginRequiredProfilePhoto"), // CAMBIO
+            LocalizationService.GetString("OK"));
             return;
         }
 
@@ -200,7 +203,7 @@ public partial class MorePage : ContentPage
                 // Tomar foto
                 var photo = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions
                 {
-                    Title = "Tomar foto de perfil"
+                    Title = LocalizationService.GetString("TakeProfilePhotoTitle") // CAMBIO
                 });
 
                 if (photo != null)
@@ -210,20 +213,32 @@ public partial class MorePage : ContentPage
             }
             else
             {
-                await DisplayAlert("Permisos", "Se necesitan permisos de cámara para tomar fotos", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Permissions"),
+                LocalizationService.GetString("CameraPermissionRequired"), // CAMBIO
+                LocalizationService.GetString("OK"));
             }
         }
         catch (FeatureNotSupportedException)
         {
-            await DisplayAlert("Error", "La cámara no está disponible en este dispositivo", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("CameraNotAvailable"), 
+            LocalizationService.GetString("OK"));
         }
         catch (PermissionException)
         {
-            await DisplayAlert("Error", "No se otorgaron los permisos de cámara", "OK");
+            await DisplayAlert(
+           LocalizationService.GetString("Error"),
+           LocalizationService.GetString("CameraPermissionDenied"), // CAMBIO
+           LocalizationService.GetString("OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al tomar la foto: {ex.Message}", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            string.Format(LocalizationService.GetString("ErrorTakingPhoto"), ex.Message), // CAMBIO
+            LocalizationService.GetString("OK"));
         }
     }
 
@@ -246,7 +261,7 @@ public partial class MorePage : ContentPage
                 // Seleccionar foto
                 var photo = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
                 {
-                    Title = "Seleccionar foto de perfil"
+                    Title = LocalizationService.GetString("SelectProfilePhotoTitle") // CAMBIO
                 });
 
                 if (photo != null)
@@ -256,20 +271,32 @@ public partial class MorePage : ContentPage
             }
             else
             {
-                await DisplayAlert("Permisos", "Se necesitan permisos para acceder a las fotos", "OK");
+                await DisplayAlert(
+                LocalizationService.GetString("Permissions"),
+                LocalizationService.GetString("PhotosPermissionRequired"), // CAMBIO
+                LocalizationService.GetString("OK"));
             }
         }
         catch (FeatureNotSupportedException)
         {
-            await DisplayAlert("Error", "La galería no está disponible en este dispositivo", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("GalleryNotAvailable"), 
+            LocalizationService.GetString("OK"));
         }
         catch (PermissionException)
         {
-            await DisplayAlert("Error", "No se otorgaron los permisos de galería", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            LocalizationService.GetString("PhotosPermissionDenied"), // CAMBIO
+            LocalizationService.GetString("OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al seleccionar la foto: {ex.Message}", "OK");
+            await DisplayAlert(
+            LocalizationService.GetString("Error"),
+            string.Format(LocalizationService.GetString("ErrorSelectingPhoto"), ex.Message), // CAMBIO
+            LocalizationService.GetString("OK"));
         }
     }
 
@@ -331,11 +358,17 @@ public partial class MorePage : ContentPage
                 }
             });
 
-            await DisplayAlert("Éxito", "Foto de perfil actualizada correctamente", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                LocalizationService.GetString("PhotoUpdateSuccess"), 
+                LocalizationService.GetString("OK"));
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al procesar la foto: {ex.Message}", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                string.Format(LocalizationService.GetString("ErrorProcessingPhoto"), ex.Message), // Ya lo tienes
+                LocalizationService.GetString("OK"));
         }
     }
 
@@ -447,11 +480,10 @@ public partial class MorePage : ContentPage
                     break;
 
                 case "About":
-                    await DisplayAlert("Acerca de",
-                        "NovelBook v1.0.0\n\n" +
-                        "Tu biblioteca personal de novelas ligeras\n\n" +
-                        "Desarrollado con ❤️ por tu equipo",
-                        "OK");
+                    await DisplayAlert(
+                            LocalizationService.GetString("About"),
+                            LocalizationService.GetString("AboutMessage"), // CAMBIO
+                            LocalizationService.GetString("OK"));
                     break;
 
                 case "CreateNovel":
@@ -472,9 +504,13 @@ public partial class MorePage : ContentPage
     // Manejar el evento de cierre de sesión
     private async Task HandleLogout()
     {
-        bool confirm = await DisplayAlert("Cerrar Sesión",
-            "¿Estás seguro de que deseas cerrar sesión?",
-            "Sí", "No");
+        bool confirm = await DisplayAlert(
+            LocalizationService.GetString("Logout"), // Título: "Cerrar Sesión"
+            LocalizationService.GetString("LogoutConfirmMessage"), // Mensaje: "¿Estás seguro de que deseas cerrar sesión?"
+            LocalizationService.GetString("Yes"), // Botón de confirmación: "Sí"
+            LocalizationService.GetString("No")   // Botón de cancelación: "No"
+);
+
 
         if (confirm)
         {

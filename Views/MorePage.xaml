@@ -196,7 +196,7 @@
                             <Label Text="{extensions:Translate CreateNovel}"
                                    TextColor="{StaticResource TextPrimary}"
                                    FontSize="16"/>
-                            <Label Text="Agregar nueva novela a la biblioteca"
+                            <Label Text="{extensions:Translate AddNovel}"
                                    TextColor="{StaticResource TextSecondary}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
@@ -232,7 +232,7 @@
                             <Label Text="{extensions:Translate ManageNovels}"
                                    TextColor="{StaticResource TextPrimary}"
                                    FontSize="16"/>
-                            <Label Text="Editar o eliminar novelas existentes"
+                            <Label Text="{extensions:Translate EditNovel}"
                                    TextColor="{StaticResource TextSecondary}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
@@ -269,7 +269,7 @@
                         <Label Text="{extensions:Translate Downloads}"
                                TextColor="{StaticResource TextPrimary}"
                                FontSize="16"/>
-                        <Label Text="{extensions:Translate ManageNovel}"
+                        <Label Text="{extensions:Translate ManageDownload}"
                                TextColor="{StaticResource TextSecondary}"
                                FontSize="12"/>
                     </VerticalStackLayout>
