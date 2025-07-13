@@ -223,8 +223,8 @@
                                  VerticalOptions="Center"
                                  HorizontalOptions="Center"
                                  Spacing="20"
-                                 IsVisible="False"
-                                 BackgroundColor="{StaticResource BackgroundDark}">
+                                 IsVisible="False">
+                                 
                 <Label Text="📚"
                        FontSize="60"
                        HorizontalOptions="Center"/>

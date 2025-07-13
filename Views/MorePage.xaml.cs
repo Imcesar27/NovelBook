@@ -521,12 +521,22 @@ public partial class MorePage : ContentPage
             // Limpiar preferencias
             Preferences.Clear();
 
-            // Volver al login
-            Application.Current.MainPage = new NavigationPage(new LoginPage())
+            // Volver al login con tema dinámico
+            var navigationPage = new NavigationPage(new LoginPage());
+
+            // Aplicar colores según el tema actual
+            if (Application.Current.RequestedTheme == AppTheme.Light)
             {
-                BarBackgroundColor = Color.FromArgb("#1A1A1A"),
-                BarTextColor = Colors.White
-            };
+                navigationPage.BarBackgroundColor = (Color)Application.Current.Resources["White"];
+                navigationPage.BarTextColor = (Color)Application.Current.Resources["Black"];
+            }
+            else
+            {
+                navigationPage.BarBackgroundColor = Color.FromArgb("#1A1A1A");
+                navigationPage.BarTextColor = Colors.White;
+            }
+
+            Application.Current.MainPage = navigationPage;
         }
     }
 }

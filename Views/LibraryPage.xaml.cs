@@ -587,20 +587,12 @@ public partial class LibraryPage : ContentPage
         DroppedButton.TextColor = inactiveTextColor;
         FavoritesButton.BackgroundColor = inactiveBackgroundColor;
         FavoritesButton.TextColor = inactiveTextColor;
+        PlanToReadButton.BackgroundColor = inactiveBackgroundColor;
+        PlanToReadButton.TextColor = inactiveTextColor;
 
         // Aplicar estilo activo al botón seleccionado
-        var activeButton = _currentFilter switch
-        {
-            "all" => AllButton,
-            "reading" => ReadingButton,
-            "completed" => CompletedButton,
-            "dropped" => DroppedButton,
-            "favorites" => FavoritesButton,
-            _ => AllButton
-        };
-
-        activeButton.BackgroundColor = (Color)Application.Current.Resources["Primary"];
-        activeButton.TextColor = Colors.White;
+        selectedButton.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+        selectedButton.TextColor = Colors.White;
     }
 
     /// <summary>

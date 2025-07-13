@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.LoginPage"
-             Title="{extensions:Translate Login}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate Login}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
@@ -22,24 +21,24 @@
             <VerticalStackLayout Spacing="15" Margin="0,10,0,0">
                 <Label Text="{extensions:Translate Login}" 
                        FontSize="20"
-                       TextColor="{StaticResource TextPrimary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                        HorizontalOptions="Center"/>
 
                 <!-- Campo de correo -->
-                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="15,10">
                     <Entry x:Name="EmailEntry"
                            Placeholder="{extensions:Translate Email}" 
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            Keyboard="Email"
                            BackgroundColor="Transparent"/>
                 </Frame>
 
                 <!-- Campo de contraseña con ojito -->
-                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="0">
@@ -52,8 +51,8 @@
                         <Entry x:Name="PasswordEntry"
                                Grid.Column="0"
                                Placeholder="{extensions:Translate Password}" 
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                IsPassword="True"
                                BackgroundColor="Transparent"
                                ReturnType="Go"
@@ -88,7 +87,6 @@
                 <Button x:Name="LoginButton"
                         Text="{extensions:Translate Login}"
                         BackgroundColor="{StaticResource Primary}"
-                        TextColor="{StaticResource TextPrimary}"
                         CornerRadius="10"
                         HeightRequest="50"
                         FontAttributes="Bold"
@@ -96,7 +94,7 @@
 
                 <!-- Texto de inicio con redes sociales -->
                 <Label Text="{extensions:Translate LoginWithSocial}"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        HorizontalOptions="Center"
                        Margin="0,20,0,10"/>
 
@@ -142,7 +140,7 @@
                 <!-- Link para registro e invitado -->
                 <HorizontalStackLayout HorizontalOptions="Center" Margin="0,20,0,0">
                     <Label Text="{extensions:Translate NoAccount}"
-                           TextColor="{StaticResource TextSecondary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
                     <Label Text="{extensions:Translate Register}" 
                            TextColor="{StaticResource Primary}"
                            FontAttributes="Bold">
@@ -152,7 +150,7 @@
                     </Label>
                     <Label Text="   ⠀" />
                     <Label Text="{extensions:Translate Guest}" 
-                           TextColor="{StaticResource TextSecondary}">
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnGuestTapped"/>
                         </Label.GestureRecognizers>
