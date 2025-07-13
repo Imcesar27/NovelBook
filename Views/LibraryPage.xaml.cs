@@ -568,21 +568,39 @@ public partial class LibraryPage : ContentPage
     /// </summary>
     private void UpdateFilterButtons(Button selectedButton)
     {
-        // Resetear todos los botones a estado no seleccionado
-        foreach (var child in FilterLayout.Children)
+        // Restablecer todos los botones al estilo inactivo usando AppThemeBinding
+        var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+            : (Color)Application.Current.Resources["BackgroundMedium"];
+
+        var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : (Color)Application.Current.Resources["TextSecondary"];
+
+        AllButton.BackgroundColor = inactiveBackgroundColor;
+        AllButton.TextColor = inactiveTextColor;
+        ReadingButton.BackgroundColor = inactiveBackgroundColor;
+        ReadingButton.TextColor = inactiveTextColor;
+        CompletedButton.BackgroundColor = inactiveBackgroundColor;
+        CompletedButton.TextColor = inactiveTextColor;
+        DroppedButton.BackgroundColor = inactiveBackgroundColor;
+        DroppedButton.TextColor = inactiveTextColor;
+        FavoritesButton.BackgroundColor = inactiveBackgroundColor;
+        FavoritesButton.TextColor = inactiveTextColor;
+
+        // Aplicar estilo activo al botón seleccionado
+        var activeButton = _currentFilter switch
         {
-            if (child is Button btn)
-            {
-                btn.BackgroundColor = Color.FromArgb("#2D2D2D");
-                btn.TextColor = Color.FromArgb("#B0B0B0");
-            }
-        }
+            "all" => AllButton,
+            "reading" => ReadingButton,
+            "completed" => CompletedButton,
+            "dropped" => DroppedButton,
+            "favorites" => FavoritesButton,
+            _ => AllButton
+        };
 
-        // Marcar el botón seleccionado
-        selectedButton.BackgroundColor = Color.FromArgb("#8B5CF6");
-        selectedButton.TextColor = Colors.White;
-
-        _currentFilter = selectedButton.Text;
+        activeButton.BackgroundColor = (Color)Application.Current.Resources["Primary"];
+        activeButton.TextColor = Colors.White;
     }
 
     /// <summary>

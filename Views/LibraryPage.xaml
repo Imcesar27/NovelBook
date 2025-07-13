@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.LibraryPage"
-             Title="{extensions:Translate MyLibrary}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate MyLibrary}">
 
     <Grid Padding="10">
         <Grid.RowDefinitions>
@@ -16,9 +15,6 @@
         <!-- Barra de búsqueda -->
         <SearchBar x:Name="searchBar"
                    Placeholder="{extensions:Translate SearchLibrary}"
-                   PlaceholderColor="{StaticResource TextMuted}"
-                   TextColor="{StaticResource TextPrimary}"
-                   BackgroundColor="{StaticResource BackgroundMedium}"
                    Grid.Row="0"
                    Margin="0,0,0,10"
                    TextChanged="OnSearchTextChanged"/>
@@ -37,32 +33,32 @@
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
                     <Button x:Name="ReadingButton"
-                            BackgroundColor="{StaticResource BackgroundMedium}"
-                            TextColor="{StaticResource TextSecondary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
                     <Button x:Name="CompletedButton"
-                            BackgroundColor="{StaticResource BackgroundMedium}"
-                            TextColor="{StaticResource TextSecondary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
                     <Button x:Name="FavoritesButton"
-                            BackgroundColor="{StaticResource BackgroundMedium}"
-                            TextColor="{StaticResource TextSecondary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
                     <Button x:Name="DroppedButton"
-                            BackgroundColor="{StaticResource BackgroundMedium}"
-                            TextColor="{StaticResource TextSecondary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
                     <Button x:Name="PlanToReadButton"
-                            BackgroundColor="{StaticResource BackgroundMedium}"
-                            TextColor="{StaticResource TextSecondary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                             CornerRadius="15"
                             Padding="15,5"
                             Clicked="OnFilterClicked"/>
@@ -71,8 +67,8 @@
 
             <!-- Botón de ordenamiento -->
             <Button Text="⇅"
-                    BackgroundColor="{StaticResource BackgroundMedium}"
-                    TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                     WidthRequest="40"
                     HeightRequest="40"
                     CornerRadius="20"
@@ -96,7 +92,7 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                            <Frame 
                                    CornerRadius="10"
                                    Padding="0"
                                    HasShadow="True">
@@ -166,14 +162,14 @@
                                                        Padding="10"
                                                        Spacing="5">
                                         <Label Text="{Binding Title}"
-                                               TextColor="{StaticResource TextPrimary}"
+                                              
                                                FontSize="14"
                                                FontAttributes="Bold"
                                                MaxLines="2"
                                                LineBreakMode="TailTruncation"/>
                                         <!--Boton autor-->
                                         <Label Text="{Binding Author}"
-                                               TextColor="{StaticResource TextSecondary}"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                                FontSize="12"
                                                LineBreakMode="TailTruncation">
                                             <Label.GestureRecognizers>
@@ -234,7 +230,7 @@
                        HorizontalOptions="Center"/>
                 <Label x:Name="EmptyStateMessage"
                        Text="{extensions:Translate NoNovels}"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        FontSize="16"
                        HorizontalOptions="Center"/>
                 <Button Text="{extensions:Translate ExploreNovels}"

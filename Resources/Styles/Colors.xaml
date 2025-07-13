@@ -5,32 +5,59 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- Colores principales de NovelBook -->
-    <Color x:Key="Primary">#8B5CF6</Color> <!-- Morado principal -->
-    <Color x:Key="PrimaryDark">#7C3AED</Color> <!-- Morado más oscuro -->
-    <Color x:Key="PrimaryLight">#A78BFA</Color> <!-- Morado más claro -->
-    
-    <!-- Colores de fondo -->
-    <Color x:Key="BackgroundDark">#1A1A1A</Color> <!-- Fondo principal oscuro -->
-    <Color x:Key="BackgroundMedium">#2D2D2D</Color> <!-- Fondo de tarjetas -->
-    <Color x:Key="BackgroundLight">#3D3D3D</Color> <!-- Fondo de elementos -->
-    
-    <!-- Colores de texto -->
-    <Color x:Key="TextPrimary">#FFFFFF</Color> <!-- Texto principal blanco -->
-    <Color x:Key="TextSecondary">#B0B0B0</Color> <!-- Texto secundario gris -->
-    <Color x:Key="TextMuted">#808080</Color> <!-- Texto deshabilitado -->
+    <Color x:Key="Primary">#8B5CF6</Color>
+    <!-- Morado principal -->
+    <Color x:Key="PrimaryDark">#7C3AED</Color>
+    <!-- Morado más oscuro -->
+    <Color x:Key="PrimaryLight">#A78BFA</Color>
+    <!-- Morado más claro -->
+
+    <!-- Colores de fondo MODO OSCURO -->
+    <Color x:Key="BackgroundDark">#1A1A1A</Color>
+    <!-- Fondo principal oscuro -->
+    <Color x:Key="BackgroundMedium">#2D2D2D</Color>
+    <!-- Fondo de tarjetas -->
+    <Color x:Key="BackgroundLight">#3D3D3D</Color>
+    <!-- Fondo de elementos -->
+
+    <!-- Colores de fondo MODO CLARO (nuevos) -->
+    <Color x:Key="BackgroundDarkLight">#FFFFFF</Color>
+    <!-- Fondo principal claro -->
+    <Color x:Key="BackgroundMediumLight">#F5F5F5</Color>
+    <!-- Fondo de tarjetas claro -->
+    <Color x:Key="BackgroundLightLight">#E8E8E8</Color>
+    <!-- Fondo de elementos claro -->
+
+    <!-- Colores de texto MODO OSCURO -->
+    <Color x:Key="TextPrimary">#FFFFFF</Color>
+    <!-- Texto principal blanco -->
+    <Color x:Key="TextSecondary">#B0B0B0</Color>
+    <!-- Texto secundario gris -->
+    <Color x:Key="TextMuted">#808080</Color>
+    <!-- Texto deshabilitado -->
+
+    <!-- Colores de texto MODO CLARO (nuevos) -->
+    <Color x:Key="TextPrimaryLight">#1A1A1A</Color>
+    <!-- Texto principal negro -->
+    <Color x:Key="TextSecondaryLight">#606060</Color>
+    <!-- Texto secundario gris oscuro -->
+    <Color x:Key="TextMutedLight">#999999</Color>
+    <!-- Texto deshabilitado claro -->
+
+    <!-- Otros colores existentes -->
     <Color x:Key="PrimaryDarkText">#FFFFFF</Color>
     <Color x:Key="MidnightBlue">#191970</Color>
     <Color x:Key="Secondary">#E0E0E0</Color>
     <Color x:Key="OffBlack">#121212</Color>
     <Color x:Key="SecondaryDarkText">#606060</Color>
     <Color x:Key="Magenta">#FF00FF</Color>
-    
-    <!-- Otros colores -->
+
+    <!-- Colores de estado (se mantienen igual en ambos temas) -->
     <Color x:Key="Success">#10B981</Color>
     <Color x:Key="Warning">#F59E0B</Color>
     <Color x:Key="Error">#EF4444</Color>
     <Color x:Key="Info">#3B82F6</Color>
-    
+
     <!-- Colores del sistema (no cambiar estos nombres) -->
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
