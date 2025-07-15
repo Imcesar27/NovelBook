@@ -413,21 +413,30 @@ public partial class NovelDetailPage : ContentPage
     /// <summary>
     /// Actualiza la apariencia del botón
     /// </summary>
-    private void UpdateButtonAppearance(Button button, bool isInLibrary)
+private void UpdateButtonAppearance(Button button, bool isInLibrary)
+{
+    // Obtener colores según el tema actual
+    var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light 
+        ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+        : (Color)Application.Current.Resources["BackgroundMedium"];
+    
+    var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+        ? (Color)Application.Current.Resources["TextPrimaryLight"] 
+        : (Color)Application.Current.Resources["TextPrimary"];
+
+    if (isInLibrary)
     {
-        if (isInLibrary)
-        {
-            button.Text = $"➖ {LocalizationService.GetString("RemoveFromLibrary")}";
-            button.BackgroundColor = Color.FromArgb("#10B981");
-            button.TextColor = Colors.White;
-        }
-        else
-        {
-            button.Text = $"➕ {LocalizationService.GetString("AddToLibrary")}";
-            button.BackgroundColor = Color.FromArgb("#2D2D2D");
-            button.TextColor = Color.FromArgb("#FFFFFF");
-        }
+        button.Text = $"➖ {LocalizationService.GetString("RemoveFromLibrary")}";
+        button.BackgroundColor = Color.FromArgb("#10B981"); // Verde - se mantiene igual
+        button.TextColor = Colors.White;
     }
+    else
+    {
+        button.Text = $"➕ {LocalizationService.GetString("AddToLibrary")}";
+        button.BackgroundColor = inactiveBackgroundColor;
+        button.TextColor = inactiveTextColor;
+    }
+}
 
     /// <summary>
     /// Convierte el estado interno a texto para mostrar
@@ -470,38 +479,58 @@ public partial class NovelDetailPage : ContentPage
         // Cargar géneros reales de la novela
         if (_novel != null && _novel.Genres != null && _novel.Genres.Count > 0)
         {
+            // Obtener color de texto según el tema
+            var genreTextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : (Color)Application.Current.Resources["TextPrimary"];
+
             foreach (var genre in _novel.Genres)
             {
                 var frame = new Frame
                 {
-                    BackgroundColor = Color.FromArgb("#3D3D3D"),
+                    BackgroundColor = (Color)Application.Current.Resources["Primary"],
                     CornerRadius = 15,
                     Padding = new Thickness(12, 6),
-                    Margin = new Thickness(0, 0, 8, 8),
-                    HasShadow = false
+                    HasShadow = false,
+                    Margin = new Thickness(0, 0, 5, 5)
                 };
 
-                frame.Content = new Label
+                var label = new Label
                 {
                     Text = genre.Name,
                     TextColor = Colors.White,
                     FontSize = 12
                 };
 
+                frame.Content = label;
+
+                // Agregar tap para ver novelas del género
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += async (s, e) =>
+                {
+                    await Navigation.PushAsync(new GenreDetailPage(genre.Id, genre.Name));
+                };
+                frame.GestureRecognizers.Add(tapGesture);
+
                 GenresLayout.Children.Add(frame);
             }
         }
         else
         {
-            // Si no hay géneros, mostrar mensaje
-            var label = new Label
+            // Obtener color de texto según el tema
+            var noGenresTextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextMutedLight"]
+                : (Color)Application.Current.Resources["TextMuted"];
+
+            // Replace the problematic line with the following code:
+            var noGenresLabel = new Label
             {
-                Text = LocalizationService.GetString("WithoutGenres"), // CAMBIO
-                TextColor = Color.FromArgb("#808080"),
-                FontSize = 12,
+                Text = LocalizationService.GetString("WithoutGenres"),
+                TextColor = noGenresTextColor,
+                FontSize = 14,
                 FontAttributes = FontAttributes.Italic
             };
-            GenresLayout.Children.Add(label);
+            GenresLayout.Children.Add(noGenresLabel);
         }
     }
 
@@ -525,9 +554,13 @@ public partial class NovelDetailPage : ContentPage
             _allChapters = chapters.Select(ch => new
             {
                 Id = ch.Id,
-                Title = $"{LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}",
+                Title = readChapters.Contains(ch.Id)
+                    ? $"✓ {LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}"
+                    : $"{LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}",
                 Date = ch.CreatedAt.ToString("dd/MM/yyyy"),
-                TitleColor = readChapters.Contains(ch.Id) ? "#808080" : "#FFFFFF", // Gris si está leído
+                TitleColor = readChapters.Contains(ch.Id)
+                    ? (Application.Current.RequestedTheme == AppTheme.Light ? "#6B7280" : "#9CA3AF")
+                    : (Application.Current.RequestedTheme == AppTheme.Light ? "#1F2937" : "#F3F4F6"),
                 ChapterNumber = ch.ChapterNumber
             }).Cast<dynamic>().ToList();
 
@@ -782,25 +815,30 @@ public partial class NovelDetailPage : ContentPage
         ChaptersContent.IsVisible = false;
         DetailsContent.IsVisible = false;
 
+        // Obtener colores según el tema actual
+        var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : (Color)Application.Current.Resources["TextSecondary"];
+
         // Resetear colores de tabs
-        SynopsisTab.TextColor = Color.FromArgb("#B0B0B0");
-        ChaptersTab.TextColor = Color.FromArgb("#B0B0B0");
-        DetailsTab.TextColor = Color.FromArgb("#B0B0B0");
+        SynopsisTab.TextColor = inactiveTextColor;
+        ChaptersTab.TextColor = inactiveTextColor;
+        DetailsTab.TextColor = inactiveTextColor;
 
         // Mostrar tab seleccionado
         switch (tabName)
         {
             case "Synopsis":
                 SynopsisContent.IsVisible = true;
-                SynopsisTab.TextColor = Color.FromArgb("#8B5CF6");
+                SynopsisTab.TextColor = (Color)Application.Current.Resources["Primary"];
                 break;
             case "Chapters":
                 ChaptersContent.IsVisible = true;
-                ChaptersTab.TextColor = Color.FromArgb("#8B5CF6");
+                ChaptersTab.TextColor = (Color)Application.Current.Resources["Primary"];
                 break;
             case "Details":
                 DetailsContent.IsVisible = true;
-                DetailsTab.TextColor = Color.FromArgb("#8B5CF6");
+                DetailsTab.TextColor = (Color)Application.Current.Resources["Primary"];
                 break;
         }
     }
@@ -851,19 +889,28 @@ public partial class NovelDetailPage : ContentPage
         var parent = selectedButton.Parent as HorizontalStackLayout;
         if (parent != null)
         {
+            // Obtener colores según el tema actual
+            var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+                : (Color)Application.Current.Resources["BackgroundMedium"];
+
+            var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : (Color)Application.Current.Resources["TextSecondary"];
+
             foreach (var child in parent.Children)
             {
                 if (child is Button btn)
                 {
                     if (btn == selectedButton)
                     {
-                        btn.BackgroundColor = Color.FromArgb("#8B5CF6");
+                        btn.BackgroundColor = (Color)Application.Current.Resources["Primary"];
                         btn.TextColor = Colors.White;
                     }
                     else
                     {
-                        btn.BackgroundColor = Color.FromArgb("#2D2D2D");
-                        btn.TextColor = Color.FromArgb("#B0B0B0");
+                        btn.BackgroundColor = inactiveBackgroundColor;
+                        btn.TextColor = inactiveTextColor;
                     }
                 }
             }

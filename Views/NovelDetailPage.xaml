@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.NovelDetailPage"
-             Title="{extensions:Translate NovelDetails}"
+             Title="{extensions:Translate NovelDetails}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="0">
@@ -236,7 +236,7 @@
                         <!-- Barra de busqueda y filtros -->
                         <SearchBar Placeholder="{extensions:Translate SearchChapter}"
                                    PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
-                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                    TextChanged="OnChapterSearchTextChanged"/>
 
@@ -288,7 +288,7 @@
 
                                             <VerticalStackLayout Grid.Column="0">
                                                 <Label Text="{Binding Title}"
-                                                       TextColor="{Binding TitleColor}"
+                                                       TextColor="{Binding TextColor}"
                                                        FontSize="14"/>
                                                 <Label Text="{Binding Date}"
                                                        TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"

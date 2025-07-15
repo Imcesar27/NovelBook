@@ -40,12 +40,17 @@ public partial class ReaderPage : ContentPage
         _databaseService = new DatabaseService();
         _chapterService = new ChapterService(_databaseService);
 
+        // Obtener el tema actual
+        var currentTheme = Application.Current.RequestedTheme;
+
         // Configuración inicial del ViewModel
         BindingContext = new ReaderViewModel
         {
             NovelTitle = novelTitle,
-            BackgroundColor = Color.FromArgb("#1A1A1A"),
-            TextColor = Colors.White,
+            BackgroundColor = currentTheme == AppTheme.Light ?
+            Color.FromArgb("#FFFFFF") : Color.FromArgb("#1A1A1A"),
+            TextColor = currentTheme == AppTheme.Light ?
+            Color.FromArgb("#1A1A1A") : Colors.White,
             FontSize = 16,
             FontFamily = "OpenSansRegular",
             LineHeight = 1.5,
@@ -382,13 +387,29 @@ public partial class ReaderPage : ContentPage
             var colorHex = tap.CommandParameter as string;
             if (BindingContext is ReaderViewModel vm)
             {
-                vm.BackgroundColor = Color.FromArgb(colorHex);
+                // Si selecciona blanco o negro, debe respetar el tema actual
+                if (colorHex == "#FFFFFF" && Application.Current.RequestedTheme == AppTheme.Dark)
+                {
+                    // En modo oscuro, no permitir fondo blanco puro
+                    vm.BackgroundColor = Color.FromArgb("#F5F5F5");
+                    vm.TextColor = Color.FromArgb("#1A1A1A");
+                }
+                else if (colorHex == "#1A1A1A" && Application.Current.RequestedTheme == AppTheme.Light)
+                {
+                    // En modo claro, no permitir fondo negro puro
+                    vm.BackgroundColor = Color.FromArgb("#2D2D2D");
+                    vm.TextColor = Colors.White;
+                }
+                else
+                {
+                    vm.BackgroundColor = Color.FromArgb(colorHex);
 
-                // Ajustar color de texto según el fondo
-                vm.TextColor = colorHex == "#1A1A1A" ? Colors.White :
-                              colorHex == "#FFFFFF" ? Colors.Black :
-                              colorHex == "#F5E6D3" ? Color.FromArgb("#333333") :
-                              Color.FromArgb("#2E7D32");
+                    // Ajustar color de texto según el fondo
+                    vm.TextColor = colorHex == "#1A1A1A" ? Colors.White :
+                                  colorHex == "#FFFFFF" ? Colors.Black :
+                                  colorHex == "#F5E6D3" ? Color.FromArgb("#333333") :
+                                  Color.FromArgb("#2E7D32");
+                }
             }
         }
     }
@@ -447,6 +468,9 @@ public partial class ReaderPage : ContentPage
     {
         base.OnAppearing();
         Shell.SetNavBarIsVisible(this, false);
+
+        // Actualizar colores si el tema cambió mientras estaba en otra página
+        UpdateThemeColors();
     }
 
     protected override void OnDisappearing()
@@ -467,6 +491,23 @@ public partial class ReaderPage : ContentPage
         });
     }
 
+    private void UpdateThemeColors()
+    {
+        if (BindingContext is ReaderViewModel vm)
+        {
+            var currentTheme = Application.Current.RequestedTheme;
+
+            // Solo actualizar si no se ha personalizado manualmente
+            if (vm.BackgroundColor == Color.FromArgb("#1A1A1A") ||
+                vm.BackgroundColor == Color.FromArgb("#FFFFFF"))
+            {
+                vm.BackgroundColor = currentTheme == AppTheme.Light ?
+                    Color.FromArgb("#FFFFFF") : Color.FromArgb("#1A1A1A");
+                vm.TextColor = currentTheme == AppTheme.Light ?
+                    Color.FromArgb("#1A1A1A") : Colors.White;
+            }
+        }
+    }
 
     /// <summary>
     /// ViewModel para el lector de novelas

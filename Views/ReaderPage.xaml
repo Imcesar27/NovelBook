@@ -4,7 +4,6 @@
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.ReaderPage"
              Title="{extensions:Translate Reader}"
-             BackgroundColor="{StaticResource BackgroundDark}"
              Shell.NavBarIsVisible="False">
 
     <Grid>
@@ -17,7 +16,7 @@
 
         <!-- Header -->
         <Grid Grid.Row="0" 
-              BackgroundColor="{StaticResource BackgroundMedium}"
+              BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
               Padding="10"
               x:Name="HeaderBar">
             <Grid.ColumnDefinitions>
@@ -30,7 +29,7 @@
                     Text="←"
                     FontSize="24"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     Clicked="OnBackClicked"/>
 
             <VerticalStackLayout Grid.Column="1" 
@@ -38,12 +37,12 @@
                                HorizontalOptions="Center">
                 <Label Text="{Binding NovelTitle}"
                        FontSize="14"
-                       TextColor="{StaticResource TextPrimary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                        HorizontalTextAlignment="Center"
                        LineBreakMode="TailTruncation"/>
                 <Label Text="{Binding ChapterTitle}"
                        FontSize="12"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        HorizontalTextAlignment="Center"
                        LineBreakMode="TailTruncation"/>
             </VerticalStackLayout>
@@ -52,7 +51,7 @@
                     Text="⋮"
                     FontSize="24"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     Clicked="OnMenuClicked"/>
         </Grid>
 
@@ -80,12 +79,12 @@
                      x:Name="ReadingProgress"
                      Progress="0.3"
                      ProgressColor="{StaticResource Primary}"
-                     BackgroundColor="{StaticResource BackgroundMedium}"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                      HeightRequest="3"/>
 
         <!-- Controles inferiores -->
         <Grid Grid.Row="3" 
-              BackgroundColor="{StaticResource BackgroundMedium}"
+              BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
               Padding="10"
               x:Name="BottomBar">
             <Grid.ColumnDefinitions>
@@ -99,20 +98,20 @@
                     x:Name="PreviousButton"
                     Text="{extensions:Translate Previous}"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     FontSize="14"
                     Clicked="OnPreviousChapterClicked"/>
 
             <Label Grid.Column="1"
                    Text="{Binding CurrentPage}"
-                   TextColor="{StaticResource TextSecondary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                    VerticalOptions="Center"
                    HorizontalOptions="Center"
                    FontSize="12"/>
 
             <Label Grid.Column="2"
                    Text=" | 100%"
-                   TextColor="{StaticResource TextSecondary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                    VerticalOptions="Center"
                    HorizontalOptions="Center"
                    FontSize="12"
@@ -122,7 +121,7 @@
                     x:Name="NextButton"
                     Text="{extensions:Translate Next}"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     FontSize="14"
                     HorizontalOptions="End"
                     Clicked="OnNextChapterClicked"/>
@@ -132,7 +131,7 @@
         <Frame Grid.Row="1" 
                Grid.RowSpan="3"
                x:Name="SettingsPanel"
-               BackgroundColor="{StaticResource BackgroundDark}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                CornerRadius="20"
                Margin="20"
                Padding="20"
@@ -145,7 +144,7 @@
                     <Label Text="{extensions:Translate ReadingSettings}"
                            FontSize="18"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            HorizontalOptions="Center"/>
 
                     <!-- Tamaño de texto -->
@@ -158,7 +157,7 @@
 
                         <Label Grid.Column="0"
                                Text="{extensions:Translate Size}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                VerticalOptions="Center"
                                WidthRequest="80"/>
 
@@ -170,11 +169,11 @@
                                 ValueChanged="OnFontSizeChanged"
                                 ThumbColor="{StaticResource Primary}"
                                 MinimumTrackColor="{StaticResource Primary}"
-                                MaximumTrackColor="{StaticResource BackgroundMedium}"/>
+                                MaximumTrackColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"/>
 
                         <Label Grid.Column="2"
                                Text="{Binding Source={x:Reference FontSizeSlider}, Path=Value, StringFormat='{0:F0}'}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                WidthRequest="30"/>
                     </Grid>
 
@@ -188,7 +187,7 @@
 
                         <Label Grid.Column="0"
                                Text="{extensions:Translate LineSpacing}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                VerticalOptions="Center"
                                WidthRequest="80"/>
 
@@ -200,18 +199,18 @@
                                 ValueChanged="OnLineHeightChanged"
                                 ThumbColor="{StaticResource Primary}"
                                 MinimumTrackColor="{StaticResource Primary}"
-                                MaximumTrackColor="{StaticResource BackgroundMedium}"/>
+                                MaximumTrackColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"/>
 
                         <Label Grid.Column="2"
                                Text="{Binding Source={x:Reference LineHeightSlider}, Path=Value, StringFormat='{0:F1}'}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                WidthRequest="30"/>
                     </Grid>
 
                     <!-- Colores de fondo -->
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{extensions:Translate BackgroundTheme}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
                             <Frame WidthRequest="50" 
@@ -283,13 +282,13 @@
                     <!-- Alineación del texto -->
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{extensions:Translate TextAlignment}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
                             <Button Text="⬅"
                                     WidthRequest="60"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                     Clicked="OnAlignmentChanged"
                                     CommandParameter="Start"/>
 
@@ -302,8 +301,8 @@
 
                             <Button Text="➡"
                                     WidthRequest="60"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                     Clicked="OnAlignmentChanged"
                                     CommandParameter="End"/>
                         </HorizontalStackLayout>
@@ -312,7 +311,7 @@
                     <!-- Tipo de fuente -->
                     <VerticalStackLayout Spacing="10">
                         <Label Text="{extensions:Translate Font}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
                             <Button Text="{extensions:Translate Original}"
@@ -324,16 +323,16 @@
                                     CommandParameter="OpenSansRegular"/>
 
                             <Button Text="Serif"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                     Padding="15,10"
                                     CornerRadius="15"
                                     Clicked="OnFontChanged"
                                     CommandParameter="Georgia"/>
 
                             <Button Text="Mono"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                     Padding="15,10"
                                     CornerRadius="15"
                                     Clicked="OnFontChanged"
