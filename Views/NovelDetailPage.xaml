@@ -4,7 +4,6 @@
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.NovelDetailPage"
              Title="{extensions:Translate NovelDetails}"
-             BackgroundColor="{StaticResource BackgroundDark}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="0">
@@ -20,8 +19,8 @@
                     <BoxView.Background>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                             <GradientStop Color="Transparent" Offset="0"/>
-                            <GradientStop Color="{StaticResource BackgroundDark}" Offset="1"/>
-                        </LinearGradientBrush>
+                        <GradientStop Color="{AppThemeBinding Light={StaticResource BackgroundDarkLight}, Dark={StaticResource BackgroundDark}}" Offset="1"/>
+                    </LinearGradientBrush>
                     </BoxView.Background>
                 </BoxView>
 
@@ -51,12 +50,12 @@
                         <Label Text="{Binding Title}"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                LineBreakMode="WordWrap"/>
 
                         <Label Text="{Binding Author}"
                                FontSize="14"
-                               TextColor="{StaticResource TextSecondary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -68,7 +67,7 @@
 
                             <!-- Rating -->
                             <Label Grid.Column="0" 
-                                   TextColor="{StaticResource Primary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    Margin="0,0,15,0">
                                 <Label.FormattedText>
                                     <FormattedString>
@@ -80,7 +79,7 @@
 
                             <!-- Capítulos -->
                             <Label Grid.Column="1"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    Margin="0,0,15,0">
                                 <Label.FormattedText>
                                     <FormattedString>
@@ -149,8 +148,8 @@
                 <Button Grid.Column="1"
                         x:Name="AddToLibraryButton"
                         Text="{extensions:Translate AddToLibrary}"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                         FontAttributes="Bold"
                         CornerRadius="20"
                         HeightRequest="50"
@@ -165,7 +164,7 @@
             </Grid>
 
             <!-- Tabs de informacion -->
-            <Grid BackgroundColor="{StaticResource BackgroundMedium}" 
+        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" 
                   HeightRequest="50">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -185,19 +184,19 @@
                         Grid.Column="1"
                         Text="{extensions:Translate Chapters}"
                         BackgroundColor="Transparent"
-                        TextColor="{StaticResource TextSecondary}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                         Clicked="OnChaptersTabClicked"/>
 
                 <Button x:Name="DetailsTab"
                         Grid.Column="2"
                         Text="{extensions:Translate Details}"
                         BackgroundColor="Transparent"
-                        TextColor="{StaticResource TextSecondary}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                         Clicked="OnDetailsTabClicked"/>
             </Grid>
 
             <!-- Contenido de los tabs -->
-            <Frame BackgroundColor="{StaticResource BackgroundDark}"
+        <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundDarkLight}, Dark={StaticResource BackgroundDark}}"
                    Padding="20"
                    CornerRadius="0">
                 <Grid>
@@ -207,10 +206,10 @@
                         <Label Text="{extensions:Translate Synopsis}"
                                FontSize="18"
                                FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <Label Text="{Binding Synopsis}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                LineHeight="1.5"
                                LineBreakMode="WordWrap"/>
 
@@ -218,7 +217,7 @@
                         <Label Text="{extensions:Translate Genres}"
                                FontSize="16"
                                FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                Margin="0,10,0,0"/>
 
                         <FlexLayout x:Name="GenresLayout"
@@ -236,9 +235,9 @@
                                        Spacing="10">
                         <!-- Barra de busqueda y filtros -->
                         <SearchBar Placeholder="{extensions:Translate SearchChapter}"
-                                   PlaceholderColor="{StaticResource TextMuted}"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   BackgroundColor="{StaticResource BackgroundMedium}"
+                                   PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}"
+                                   BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                    TextChanged="OnChapterSearchTextChanged"/>
 
                         <HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
@@ -252,16 +251,16 @@
                                     Clicked="OnChapterFilterClicked"/>
                             <Button x:Name="UnreadButton"
                                     Text="{extensions:Translate Unread}"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextSecondary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                     CornerRadius="15"
                                     Padding="15,5"
                                     FontSize="12"
                                     Clicked="OnChapterFilterClicked"/>
                             <Button x:Name="ReverseOrderButton"
                                     Text="{extensions:Translate ReverseOrder}"
-                                    BackgroundColor="{StaticResource BackgroundMedium}"
-                                    TextColor="{StaticResource TextSecondary}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                     CornerRadius="15"
                                     Padding="10,5"
                                     FontSize="12"
@@ -273,7 +272,7 @@
                                         HeightRequest="400">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                            CornerRadius="10"
                                            Padding="15,10"
                                            Margin="0,2">
@@ -292,7 +291,7 @@
                                                        TextColor="{Binding TitleColor}"
                                                        FontSize="14"/>
                                                 <Label Text="{Binding Date}"
-                                                       TextColor="{StaticResource TextMuted}"
+                                                       TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                                                        FontSize="11"/>
                                             </VerticalStackLayout>
 
@@ -327,7 +326,7 @@
 
                         <Label Grid.Row="0" Grid.Column="0"
                                Text="{extensions:Translate Author}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontAttributes="Bold"/>
                         <!--Boton autor-->
                         <Label Grid.Row="0" Grid.Column="1"
@@ -341,35 +340,35 @@
 
                         <Label Grid.Row="1" Grid.Column="0"
                                Text="{extensions:Translate Status}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="1" Grid.Column="1"
                                Text="{Binding Status}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <Label Grid.Row="2" Grid.Column="0"
                                Text="{extensions:Translate Chapters}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="2" Grid.Column="1"
                                Text="{Binding ChapterCount}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <Label Grid.Row="3" Grid.Column="0"
                                Text="{extensions:Translate LastUpdate}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="3" Grid.Column="1"
                                Text="{Binding LastUpdated}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                         <Label Grid.Row="4" Grid.Column="0"
                                Text="{extensions:Translate Views}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontAttributes="Bold"/>
                         <Label Grid.Row="4" Grid.Column="1"
                                Text="{Binding Views}"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                     </Grid>
                 </Grid>
             </Frame>
