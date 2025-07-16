@@ -9,7 +9,7 @@ namespace NovelBook.Views;
 public partial class SettingsPage : ContentPage
 {
     private readonly IFingerprint _fingerprint;
-    private bool _isLoadingSettings = true; // 🛑 Bandera para evitar ejecución automática del evento del switch
+    private bool _isLoadingSettings = true; // Bandera para evitar ejecución automática del evento del switch
 
     public SettingsPage()
     {
@@ -80,10 +80,37 @@ public partial class SettingsPage : ContentPage
     {
         ThemeStatusLabel.Text = theme switch
         {
-            "Light" => "Claro",
-            "Dark" => "Oscuro",
-            _ => "Sistema"
+            "Light" => LocalizationService.GetString("Light"),
+            "Dark" => LocalizationService.GetString("Dark"),
+            _ => LocalizationService.GetString("System")
         };
+    }
+
+    /// <summary>
+    /// Actualiza la etiqueta de estado del idioma
+    /// </summary>
+    private void UpdateLanguageStatusLabel(string language)
+    {
+        LanguageStatusLabel.Text = language switch
+        {
+            "es" => LocalizationService.GetString("Spanish"),
+            "en" => LocalizationService.GetString("English"),
+            _ => LocalizationService.GetString("System")
+        };
+    }
+
+    /// <summary>
+    /// Obtiene el idioma del sistema operativo
+    /// </summary>
+    private string GetSystemLanguage()
+    {
+        // Obtener el idioma del sistema
+        var culture = CultureInfo.CurrentUICulture;
+        var languageCode = culture.TwoLetterISOLanguageName.ToLower();
+
+        // Si el idioma del sistema es español o inglés, usarlo
+        // De lo contrario, usar español como predeterminado
+        return (languageCode == "es" || languageCode == "en") ? languageCode : "es";
     }
 
     /// <summary>
@@ -164,7 +191,7 @@ public partial class SettingsPage : ContentPage
                 // Dispositivo no soporta biometría
                 BiometricSwitch.IsEnabled = false;
                 BiometricSwitch.IsToggled = false;
-                BiometricStatusLabel.Text = "No disponible en este dispositivo";
+                BiometricStatusLabel.Text = LocalizationService.GetString("BiometricNotAvailable");
                 return;
             }
 
@@ -177,7 +204,9 @@ public partial class SettingsPage : ContentPage
 
             // Actualizar UI
             BiometricSwitch.IsToggled = hasBiometric;
-            BiometricStatusLabel.Text = hasBiometric ? "Activado" : "No configurado";
+            BiometricStatusLabel.Text = hasBiometric ?
+                LocalizationService.GetString("Activated") :
+                LocalizationService.GetString("Deactivated");
 
             // Reconectar evento
             BiometricSwitch.Toggled += OnBiometricToggled;
@@ -192,6 +221,8 @@ public partial class SettingsPage : ContentPage
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error verificando biometría: {ex.Message}");
+            BiometricSwitch.IsEnabled = false;
+            BiometricStatusLabel.Text = LocalizationService.GetString("Error");
         }
     }
 
@@ -368,8 +399,11 @@ private async void OnChangePasswordTapped(object sender, EventArgs e)
         // Verificar que haya un usuario autenticado
         if (AuthService.CurrentUser == null)
         {
-            await DisplayAlert("Error", "Debes iniciar sesión para cambiar tu contraseña", "OK");
-            return;
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("LoginRequired"),
+                    "OK");
+                return;
         }
 
         // Crear y mostrar el diálogo de cambio de contraseña
@@ -445,10 +479,10 @@ private async void OnChangePasswordTapped(object sender, EventArgs e)
     private async void OnClearCacheTapped(object sender, EventArgs e)
     {
         var confirm = await DisplayAlert(
-            "Limpiar Caché",
-            "¿Estás seguro de que deseas eliminar todos los archivos en caché?\n\nEsto liberará espacio pero tendrás que descargar de nuevo los capítulos.",
-            "Sí, limpiar",
-            "Cancelar");
+            LocalizationService.GetString("ClearCache"),
+            LocalizationService.GetString("ClearCacheConfirm"),
+            LocalizationService.GetString("Yes"),
+            LocalizationService.GetString("No"));
 
         if (confirm)
         {
@@ -469,12 +503,19 @@ private async void OnChangePasswordTapped(object sender, EventArgs e)
                     }
                 }
 
-                await DisplayAlert("Éxito", "Caché limpiado correctamente", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    LocalizationService.GetString("CacheCleared"),
+                    "OK");
                 UpdateCacheSize();
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Error al limpiar caché: {ex.Message}", "OK");
+                System.Diagnostics.Debug.WriteLine($"Error clearing cache: {ex.Message}");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("ClearCacheError"),
+                    "OK");
             }
         }
     }

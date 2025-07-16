@@ -70,7 +70,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Cambiar contraseña"
+                               Text="{extensions:Translate ChangePassword}"
                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
@@ -85,7 +85,7 @@
             </Frame>
 
             <!-- Sección de Lectura -->
-            <Label Text="Lectura"
+            <Label Text="{extensions:Translate Reading}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{StaticResource Primary}"
@@ -106,7 +106,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Tamaño de letra"
+                               Text="{extensions:Translate FontSize}"
                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
@@ -142,7 +142,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Modo nocturno automático"
+                               Text="{extensions:Translate NightMode}"
                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
@@ -167,7 +167,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0"
-                               Text="Mantener pantalla encendida"
+                               Text="{extensions:Translate KeepScreenOn}"
                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
@@ -183,7 +183,7 @@
             </Frame>
 
             <!-- Sección de Apariencia -->
-            <Label Text="Apariencia"
+            <Label Text="{extensions:Translate Appearance}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{StaticResource Primary}"
@@ -203,11 +203,11 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Tema de la aplicación"
+                            <Label Text="{extensions:Translate AppTheme}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="ThemeStatusLabel"
-                                   Text="Sistema"
+                                   Text="{extensions:Translate System}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="14"/>
                         </VerticalStackLayout>
@@ -237,11 +237,11 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Idioma"
+                            <Label Text="{extensions:Translate Language}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="LanguageStatusLabel"
-                                   Text="Español"
+                                   Text="{extensions:Translate Spanish}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="14"/>
                         </VerticalStackLayout>
@@ -261,7 +261,7 @@
             </Frame>
             
             <!-- Sección de Notificaciones -->
-            <Label Text="Notificaciones"
+            <Label Text="{extensions:Translate Notifications}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{StaticResource Primary}"
@@ -281,10 +281,10 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Nuevos capítulos"
+                            <Label Text="{extensions:Translate NewChapters}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
-                            <Label Text="Notificar cuando haya nuevos capítulos"
+                            <Label Text="{extensions:Translate NotifyNewChapters}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
@@ -309,7 +309,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Recomendaciones"
+                            <Label Text="{extensions:Translate RecommendedNovels}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="Sugerencias basadas en tu lectura"
@@ -328,7 +328,7 @@
             </Frame>
 
             <!-- Sección de Descargas -->
-            <Label Text="Descargas"
+            <Label Text="{extensions:Translate Downloads}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{StaticResource Primary}"
@@ -348,7 +348,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Solo WiFi"
+                            <Label Text="{extensions:Translate WifiOnly}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="Descargar solo con conexión WiFi"
@@ -376,11 +376,11 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Límite de descargas"
+                            <Label Text="{extensions:Translate ChapterLimit}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="DownloadLimitLabel"
-                                   Text="Máximo 10 capítulos"
+                                   Text="{extensions:Translate MaxChaptersPerNovel}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
@@ -409,7 +409,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Limpiar caché"
+                            <Label Text="{extensions:Translate ClearCache}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="CacheSizeLabel"
@@ -427,7 +427,7 @@
             </Frame>
 
             <!-- Sección de Cuenta -->
-            <Label Text="Cuenta"
+            <Label Text="{extensions:Translate Account}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{StaticResource Primary}"
@@ -450,7 +450,7 @@
                         </Grid.ColumnDefinitions>
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="Información de la cuenta"
+                            <Label Text="{extensions:Translate AccountInfo}"
                                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="AccountEmailLabel"
@@ -476,7 +476,7 @@
                             <TapGestureRecognizer Tapped="OnLogoutTapped"/>
                         </Grid.GestureRecognizers>
 
-                        <Label Text="Cerrar sesión"
+                        <Label Text="{extensions:Translate Logout}"
                                TextColor="{StaticResource Error}"
                                FontSize="16"
                                HorizontalOptions="Center"
