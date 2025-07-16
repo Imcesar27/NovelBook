@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.ExplorePage"
-             Title="{extensions:Translate Explore}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate Explore}">
 
     <Grid Padding="10">
         <Grid.RowDefinitions>
@@ -16,7 +15,7 @@
 
         <!-- Barra de búsqueda con estilo personalizado -->
         <Frame Grid.Row="0" 
-               BackgroundColor="{StaticResource BackgroundMedium}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                CornerRadius="20"
                Padding="5,0"
                Margin="0,5,0,10"
@@ -36,8 +35,8 @@
 
                 <Entry x:Name="searchEntry"
                        Placeholder="{extensions:Translate SearchNovels}"
-                       PlaceholderColor="{StaticResource TextMuted}"
-                       TextColor="{StaticResource TextPrimary}"
+                       PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                        BackgroundColor="Transparent"
                        VerticalOptions="Center"
                        Grid.Column="1"
@@ -45,7 +44,7 @@
 
                 <Button Text="⚙️"
                         BackgroundColor="Transparent"
-                        TextColor="{StaticResource TextPrimary}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                         WidthRequest="55"
                         HeightRequest="40"
                         FontSize="20"
@@ -58,7 +57,7 @@
         <Label Text="{extensions:Translate PopularGenres}" 
                FontSize="18"
                FontAttributes="Bold"
-               TextColor="{StaticResource TextPrimary}"
+               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                Grid.Row="1"
                Margin="5,0,0,5"/>
 
@@ -101,7 +100,7 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                    CornerRadius="10"
                                    Padding="0"
                                    HasShadow="False">
@@ -139,16 +138,16 @@
                                     <StackLayout Grid.Row="1" 
                                                  Padding="10" 
                                                  Spacing="5"
-                                                 BackgroundColor="{StaticResource BackgroundMedium}">
+                                                 BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}">
                                         <Label Text="{Binding Title}"
-                                               TextColor="{StaticResource TextPrimary}"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                                FontAttributes="Bold"
                                                FontSize="14"
                                                LineBreakMode="TailTruncation"
                                                MaxLines="2"/>
                                         <!-- Boton de autor -->
                                         <Label Text="{Binding Author}"
-                                               TextColor="{StaticResource TextSecondary}"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                                FontSize="14"
                                                LineBreakMode="TailTruncation">
                                             <Label.GestureRecognizers>
@@ -174,7 +173,7 @@
                                             </Label>
 
                                             <Label Grid.Column="1"
-                                                   TextColor="{StaticResource TextSecondary}"
+                                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                                    FontSize="12">
                                                 <Label.FormattedText>
                                                     <FormattedString>

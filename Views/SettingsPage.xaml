@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.SettingsPage"
              Title="{extensions:Translate Settings}"
-             xmlns:extensions="clr-namespace:NovelBook.Extensions"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             xmlns:extensions="clr-namespace:NovelBook.Extensions">
 
     <ScrollView>
         <VerticalStackLayout Spacing="0" Padding="20">
@@ -13,7 +12,7 @@
             <Label Text="{extensions:Translate Settings}"
                    FontSize="28"
                    FontAttributes="Bold"
-                   TextColor="{StaticResource TextPrimary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                    Margin="0,10,0,20"/>
 
             <!-- Sección de Seguridad -->
@@ -23,7 +22,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -31,7 +30,7 @@
 
                     <!-- Opción de Face ID/Touch ID -->
                     <Grid Padding="20,15"
-                          BackgroundColor="{StaticResource BackgroundMedium}">
+                          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -39,11 +38,11 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Face ID / Touch ID"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="BiometricStatusLabel"
                                    Text="No configurado"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -56,12 +55,12 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Cambiar contraseña -->
                     <Grid Padding="20,15"
-                          BackgroundColor="{StaticResource BackgroundMedium}">
+                          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnChangePasswordTapped"/>
                         </Grid.GestureRecognizers>
@@ -72,13 +71,13 @@
 
                         <Label Grid.Column="0"
                                Text="Cambiar contraseña"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
 
                         <Label Grid.Column="1"
                                Text="→"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="20"
                                VerticalOptions="Center"/>
                     </Grid>
@@ -92,7 +91,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -108,7 +107,7 @@
 
                         <Label Grid.Column="0"
                                Text="Tamaño de letra"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
 
@@ -125,14 +124,14 @@
                         <Label Grid.Column="2"
                                x:Name="FontSizeLabel"
                                Text="16"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="16"
                                HorizontalTextAlignment="Center"
                                VerticalOptions="Center"/>
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Modo de lectura nocturno -->
@@ -144,7 +143,7 @@
 
                         <Label Grid.Column="0"
                                Text="Modo nocturno automático"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
 
@@ -157,7 +156,7 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Mantener pantalla encendida -->
@@ -169,7 +168,7 @@
 
                         <Label Grid.Column="0"
                                Text="Mantener pantalla encendida"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"
                                VerticalOptions="Center"/>
 
@@ -190,7 +189,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -205,11 +204,11 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Tema de la aplicación"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="ThemeStatusLabel"
                                    Text="Sistema"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="14"/>
                         </VerticalStackLayout>
 
@@ -227,7 +226,7 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Idioma -->
@@ -239,11 +238,11 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Idioma"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="LanguageStatusLabel"
                                    Text="Español"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="14"/>
                         </VerticalStackLayout>
 
@@ -268,7 +267,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -283,10 +282,10 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Nuevos capítulos"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="Notificar cuando haya nuevos capítulos"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -299,7 +298,7 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Notificaciones de recomendaciones -->
@@ -311,10 +310,10 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Recomendaciones"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="Sugerencias basadas en tu lectura"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -335,7 +334,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -350,10 +349,10 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Solo WiFi"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="Descargar solo con conexión WiFi"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -366,7 +365,7 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Límite de descargas -->
@@ -378,11 +377,11 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Límite de descargas"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="DownloadLimitLabel"
                                    Text="Máximo 10 capítulos"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -396,7 +395,7 @@
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Limpiar caché -->
@@ -411,11 +410,11 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Limpiar caché"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="CacheSizeLabel"
                                    Text="0 MB"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
@@ -434,7 +433,7 @@
                    TextColor="{StaticResource Primary}"
                    Margin="0,0,0,10"/>
 
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="0"
                    Margin="0,0,0,20">
@@ -452,23 +451,23 @@
 
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
                             <Label Text="Información de la cuenta"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label x:Name="AccountEmailLabel"
                                    Text="usuario@email.com"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
                         <Label Grid.Column="1"
                                Text="→"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="20"
                                VerticalOptions="Center"/>
                     </Grid>
 
                     <BoxView HeightRequest="1" 
-                             BackgroundColor="{StaticResource BackgroundDark}" 
+                             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                              Margin="20,0"/>
 
                     <!-- Cerrar sesión -->

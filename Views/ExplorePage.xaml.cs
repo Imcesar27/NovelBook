@@ -133,6 +133,15 @@ public partial class ExplorePage : ContentPage
                     CategoryButtons.Children.RemoveAt(1);
                 }
 
+                // Obtener colores según el tema actual
+                var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                    ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+                    : (Color)Application.Current.Resources["BackgroundMedium"];
+
+                var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+                    ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                    : (Color)Application.Current.Resources["TextSecondary"];
+
                 // Agregar botones para géneros populares
                 if (_popularGenres != null)
                 {
@@ -148,8 +157,8 @@ public partial class ExplorePage : ContentPage
                 var moreButton = new Button
                 {
                     Text = $"{LocalizationService.GetString("ViewMore")} →",
-                    BackgroundColor = Color.FromArgb("#1E1E1E"),
-                    TextColor = Color.FromArgb("#E91E63"),
+                    BackgroundColor = inactiveBackgroundColor,
+                    TextColor = (Color)Application.Current.Resources["Primary"],
                     CornerRadius = 15,
                     Padding = new Thickness(15, 5),
                     FontAttributes = FontAttributes.Bold
@@ -171,11 +180,20 @@ public partial class ExplorePage : ContentPage
     /// </summary>
     private Button CreateCategoryButton(string text, bool isSelected)
     {
+        // Obtener colores según el tema actual
+        var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+            : (Color)Application.Current.Resources["BackgroundMedium"];
+
+        var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : (Color)Application.Current.Resources["TextSecondary"];
+
         var button = new Button
         {
             Text = text,
-            BackgroundColor = isSelected ? Color.FromArgb("#E91E63") : Color.FromArgb("#1E1E1E"),
-            TextColor = isSelected ? Colors.White : Color.FromArgb("#808080"),
+            BackgroundColor = isSelected ? (Color)Application.Current.Resources["Primary"] : inactiveBackgroundColor,
+            TextColor = isSelected ? Colors.White : inactiveTextColor,
             CornerRadius = 15,
             Padding = new Thickness(15, 5)
         };
@@ -288,14 +306,23 @@ public partial class ExplorePage : ContentPage
     {
         if (CategoryButtons != null)
         {
+            // Obtener colores según el tema actual
+            var inactiveBackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+                : (Color)Application.Current.Resources["BackgroundMedium"];
+
+            var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : (Color)Application.Current.Resources["TextSecondary"];
+
             foreach (var child in CategoryButtons.Children)
             {
-                if (child is Button btn && btn.Text != "Ver más →")
+                if (child is Button btn && btn.Text != $"{LocalizationService.GetString("ViewMore")} →")
                 {
                     bool isSelected = btn == selectedButton;
                     btn.BackgroundColor = isSelected ?
-                        Color.FromArgb("#E91E63") : Color.FromArgb("#1E1E1E");
-                    btn.TextColor = isSelected ? Colors.White : Color.FromArgb("#808080");
+                        (Color)Application.Current.Resources["Primary"] : inactiveBackgroundColor;
+                    btn.TextColor = isSelected ? Colors.White : inactiveTextColor;
                 }
             }
         }

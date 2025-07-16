@@ -558,7 +558,7 @@ private void UpdateButtonAppearance(Button button, bool isInLibrary)
                     ? $"✓ {LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}"
                     : $"{LocalizationService.GetString("Chapter")} {ch.ChapterNumber}: {ch.Title}",
                 Date = ch.CreatedAt.ToString("dd/MM/yyyy"),
-                TitleColor = readChapters.Contains(ch.Id)
+                TextColor = readChapters.Contains(ch.Id)
                     ? (Application.Current.RequestedTheme == AppTheme.Light ? "#6B7280" : "#9CA3AF")
                     : (Application.Current.RequestedTheme == AppTheme.Light ? "#1F2937" : "#F3F4F6"),
                 ChapterNumber = ch.ChapterNumber

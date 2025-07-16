@@ -155,7 +155,9 @@ public partial class ReviewsPage : ContentPage
     {
         var frame = new Frame
         {
-            BackgroundColor = Color.FromArgb("#1E1E1E"),
+            BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+            : Color.FromArgb("#1E1E1E"),
             CornerRadius = 10,
             Padding = 15,
             HasShadow = false
@@ -179,7 +181,9 @@ public partial class ReviewsPage : ContentPage
         var nameLabel = new Label
         {
             Text = review.UserName,
-            TextColor = Colors.White,
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextPrimaryLight"]
+            : Colors.White,
             FontAttributes = FontAttributes.Bold,
             FontSize = 16
         };
@@ -200,7 +204,9 @@ public partial class ReviewsPage : ContentPage
         var dateLabel = new Label
         {
             Text = review.CreatedAt.ToString("dd/MM/yyyy"),
-            TextColor = Color.FromArgb("#808080"),
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : Color.FromArgb("#808080"),
             FontSize = 12,
             VerticalOptions = LayoutOptions.Start
         };
@@ -215,7 +221,9 @@ public partial class ReviewsPage : ContentPage
             var commentLabel = new Label
             {
                 Text = review.Comment,
-                TextColor = Color.FromArgb("#CCCCCC"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : Color.FromArgb("#CCCCCC"),
                 FontSize = 14,
                 LineBreakMode = LineBreakMode.WordWrap
             };
@@ -228,8 +236,12 @@ public partial class ReviewsPage : ContentPage
             var deleteButton = new Button
             {
                 Text = "Eliminar mi reseña",
-                BackgroundColor = Color.FromArgb("#B71C1C"),
-                TextColor = Colors.White,
+                BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundLightLight"]
+                : Color.FromArgb("#2A2A2A"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : Colors.White,
                 CornerRadius = 20,
                 HeightRequest = 35,
                 FontSize = 12,

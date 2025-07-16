@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.RegisterPage"
-             Title="{extensions:Translate RegisterTitle}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate RegisterTitle}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="CenterAndExpand">
@@ -28,47 +27,47 @@
                 <!-- Subtítulo -->
                 <Label Text="{extensions:Translate YourLightNovelWorld}" 
                        FontSize="14"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        HorizontalOptions="Center"/>
             </VerticalStackLayout>
 
             <!-- Título de la sección -->
             <Label Text="{extensions:Translate FillAllFieldsLabel}" 
                    FontSize="16"
-                   TextColor="{StaticResource TextPrimary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                    HorizontalOptions="Start"
                    Margin="0,20,0,0"/>
 
             <!-- Campos de registro -->
             <VerticalStackLayout Spacing="15">
                 <!-- Campo de nombre -->
-                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="15,10">
                     <Entry x:Name="NameEntry"
                            Placeholder="{extensions:Translate Name}" 
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            BackgroundColor="Transparent"/>
                 </Frame>
 
                 <!-- Campo de correo -->
-                <Frame BackgroundColor="{StaticResource BackgroundMedium}" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="15,10">
                     <Entry x:Name="EmailEntry"
                            Placeholder="{extensions:Translate Email}" 
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            Keyboard="Email"
                            BackgroundColor="Transparent"/>
                 </Frame>
 
                 <!-- Campo de contraseña con ojito -->
                 <Frame x:Name="PasswordFrame"
-                       BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="0">
@@ -81,8 +80,8 @@
                         <Entry x:Name="PasswordEntry"
                                Grid.Column="0"
                                Placeholder="{extensions:Translate Password}" 
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                IsPassword="True"
                                BackgroundColor="Transparent"
                                Margin="15,10"
@@ -103,7 +102,7 @@
 
                 <!-- Campo de confirmar contraseña con ojito -->
                 <Frame x:Name="ConfirmPasswordFrame"
-                       BackgroundColor="{StaticResource BackgroundMedium}" 
+                       BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}" 
                        BorderColor="Transparent"
                        CornerRadius="10"
                        Padding="0">
@@ -116,8 +115,8 @@
                         <Entry x:Name="ConfirmPasswordEntry"
                                Grid.Column="0"
                                Placeholder="{extensions:Translate ConfirmPassword}" 
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                IsPassword="True"
                                BackgroundColor="Transparent"
                                Margin="15,10"
@@ -146,14 +145,14 @@
 
                 <!-- Indicador de requisitos de contraseña -->
                 <Label Text="{extensions:Translate PasswordRequirement}"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        FontSize="12"
                        Margin="5,0,0,0"/>
 
                 <!-- Botón de crear cuenta -->
                 <Button Text="{extensions:Translate CreateAccount}"
                         BackgroundColor="{StaticResource Primary}"
-                        TextColor="{StaticResource TextPrimary}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                         CornerRadius="10"
                         HeightRequest="50"
                         FontAttributes="Bold"
@@ -161,7 +160,7 @@
                         Clicked="OnRegisterClicked"/>
 
                 <!-- Línea separadora -->
-                <BoxView BackgroundColor="{StaticResource TextMuted}"
+                <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                          HeightRequest="1"
                          Margin="0,20,0,10"
                          Opacity="0.3"/>
@@ -169,7 +168,7 @@
                 <!-- Enlaces para volver al login -->
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                     <Label Text="{extensions:Translate AlreadyHaveAccount}" 
-                           TextColor="{StaticResource TextSecondary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
                     <Label Text="{extensions:Translate Login}" 
                            TextColor="{StaticResource Primary}"
                            FontAttributes="Bold">

@@ -3,14 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.MorePage"
-             Title="{extensions:Translate More}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate More}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="0" Padding="0">
 
             <!-- Header con información del usuario -->
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="0"
                    Padding="20"
                    Margin="0,0,0,20">
@@ -47,7 +46,7 @@
                                    IsVisible="True"/>
                             <!-- Ícono de cámara overlay -->
                             <Frame CornerRadius="12"
-                                   BackgroundColor="{StaticResource BackgroundDark}"
+                                   BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                                    Padding="0"
                                    WidthRequest="24"
                                    HeightRequest="24"
@@ -71,11 +70,11 @@
                                Text="{extensions:Translate GuestUser}"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                         <Label x:Name="UserEmailLabel"
                                Text="{extensions:Translate NoEmailRegistered}"
                                FontSize="14"
-                               TextColor="{StaticResource TextSecondary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
                         <Label x:Name="MemberSinceLabel"
                                Text="Miembro desde: Enero 2024"
                                FontSize="12"
@@ -89,7 +88,7 @@
             <VerticalStackLayout Spacing="0" Padding="0">
 
                 <!-- Modo de lectura -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="ReadingMode"/>
@@ -108,10 +107,10 @@
 
                     <VerticalStackLayout Grid.Column="1">
                         <Label Text="{extensions:Translate IncognitoMode}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"/>
                         <Label Text="{extensions:Translate IncognitoModeDescription}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="12"/>
                     </VerticalStackLayout>
 
@@ -122,10 +121,10 @@
                             Toggled="OnIncognitoToggled"/>
                 </Grid>
 
-                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                 <!-- Gestionar Face ID/Touch ID -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="BiometricSettings"/>
@@ -145,17 +144,17 @@
                     <VerticalStackLayout Grid.Column="1" 
                                        VerticalOptions="Center">
                         <Label Text="Face ID / Touch ID"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"/>
                         <Label x:Name="BiometricStatusMoreLabel"
                                Text="No configurado"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="12"/>
                     </VerticalStackLayout>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
@@ -163,7 +162,7 @@
                 <!-- Sección Admin (solo visible para administradores) -->
                 <BoxView x:Name="AdminSeparator" 
                          HeightRequest="10" 
-                         BackgroundColor="{StaticResource BackgroundMedium}" 
+                         BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" 
                          Margin="0,20,0,20"
                          IsVisible="False"/>
 
@@ -175,7 +174,7 @@
                            Margin="20,0,0,10"/>
 
                     <!-- Crear Novela -->
-                    <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                           Padding="20,15">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="CreateNovel"/>
@@ -194,24 +193,24 @@
 
                         <VerticalStackLayout Grid.Column="1">
                             <Label Text="{extensions:Translate CreateNovel}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="{extensions:Translate AddNovel}"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
                         <Label Grid.Column="2"
                                Text="→"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="20"
                                VerticalOptions="Center"/>
                     </Grid>
 
-                    <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                    <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                     <!-- Gestionar Novelas -->
-                    <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                           Padding="20,15">
                         <Grid.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="ManageNovels"/>
@@ -230,25 +229,25 @@
 
                         <VerticalStackLayout Grid.Column="1">
                             <Label Text="{extensions:Translate ManageNovels}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                    FontSize="16"/>
                             <Label Text="{extensions:Translate EditNovel}"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                    FontSize="12"/>
                         </VerticalStackLayout>
 
                         <Label Grid.Column="2"
                                Text="→"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="20"
                                VerticalOptions="Center"/>
                     </Grid>
                 </VerticalStackLayout>
 
-                <BoxView HeightRequest="10" BackgroundColor="{StaticResource BackgroundMedium}" Margin="0,20,0,0"/>
+                <BoxView HeightRequest="10" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="0,20,0,0"/>
 
                 <!-- Descargas -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="Downloads"/>
@@ -267,24 +266,24 @@
 
                     <VerticalStackLayout Grid.Column="1">
                         <Label Text="{extensions:Translate Downloads}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"/>
                         <Label Text="{extensions:Translate ManageDownload}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="12"/>
                     </VerticalStackLayout>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
-                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                 <!-- Cola de descargas -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="DownloadQueue"/>
@@ -303,24 +302,24 @@
 
                     <VerticalStackLayout Grid.Column="1">
                         <Label Text="{extensions:Translate DownloadQueue}"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                FontSize="16"/>
                         <Label Text="{extensions:Translate NoPendingDownloads}"
-                               TextColor="{StaticResource TextSecondary}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                FontSize="12"/>
                     </VerticalStackLayout>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
-                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                 <!-- Categorías -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="Categories"/>
@@ -339,21 +338,21 @@
 
                     <Label Grid.Column="1"
                            Text="{extensions:Translate Categories}"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            FontSize="16"
                            VerticalOptions="Center"/>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
-                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                 <!-- Estadísticas -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="Statistics"/>
@@ -372,21 +371,21 @@
 
                     <Label Grid.Column="1"
                            Text="{extensions:Translate Statistics}"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            FontSize="16"
                            VerticalOptions="Center"/>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
-                <BoxView HeightRequest="10" BackgroundColor="{StaticResource BackgroundMedium}" Margin="0,20,0,0"/>
+                <BoxView HeightRequest="10" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="0,20,0,0"/>
 
                 <!-- Configuración -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="Settings"/>
@@ -405,21 +404,21 @@
 
                     <Label Grid.Column="1"
                            Text="{extensions:Translate Settings}"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            FontSize="16"
                            VerticalOptions="Center"/>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
-                <BoxView HeightRequest="1" BackgroundColor="{StaticResource BackgroundMedium}" Margin="20,0"/>
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="20,0"/>
 
                 <!-- Acerca de -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="About"/>
@@ -438,22 +437,22 @@
 
                     <Label Grid.Column="1"
                            Text="{extensions:Translate About}"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            FontSize="16"
                            VerticalOptions="Center"/>
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>
 
                 <!-- Separador antes de logout -->
-                <BoxView HeightRequest="10" BackgroundColor="{StaticResource BackgroundMedium}" Margin="0,20,0,0"/>
+                <BoxView HeightRequest="10" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}" Margin="0,20,0,0"/>
 
                 <!-- Cerrar Sesión -->
-                <Grid BackgroundColor="{StaticResource BackgroundDark}"
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundDark}}"
                       Padding="20,15">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnOptionTapped" CommandParameter="Logout"/>
@@ -478,7 +477,7 @@
 
                     <Label Grid.Column="2"
                            Text="→"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            FontSize="20"
                            VerticalOptions="Center"/>
                 </Grid>

@@ -273,7 +273,9 @@ public partial class HistoryPage : ContentPage
         return new Label
         {
             Text = dateText,
-            TextColor = Colors.White,
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextPrimaryLight"]
+            : (Color)Application.Current.Resources["TextPrimary"],
             FontSize = 18,
             FontAttributes = FontAttributes.Bold,
             Margin = new Thickness(0, 15, 0, 5)
@@ -287,7 +289,9 @@ public partial class HistoryPage : ContentPage
     {
         var frame = new Frame
         {
-            BackgroundColor = Color.FromArgb("#1E1E1E"),
+            BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+            : Color.FromArgb("#1E1E1E"),
             CornerRadius = 10,
             Padding = 15,
             HasShadow = false
@@ -330,7 +334,9 @@ public partial class HistoryPage : ContentPage
         var novelLabel = new Label
         {
             Text = item.NovelTitle,
-            TextColor = Colors.White,
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextPrimaryLight"]
+            : Colors.White,
             FontAttributes = FontAttributes.Bold,
             FontSize = 16,
             LineBreakMode = LineBreakMode.TailTruncation
@@ -340,7 +346,9 @@ public partial class HistoryPage : ContentPage
         var chapterLabel = new Label
         {
             Text = item.ChapterDescription,
-            TextColor = Color.FromArgb("#CCCCCC"),
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : Color.FromArgb("#B0B0B0"),
             FontSize = 14,
             LineBreakMode = LineBreakMode.TailTruncation
         };
@@ -367,7 +375,9 @@ public partial class HistoryPage : ContentPage
             var progressLabel = new Label
             {
                 Text = $"📖 {item.ReadingProgress:F0}%",
-                TextColor = Color.FromArgb("#FFA726"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : Color.FromArgb("#B0B0B0"),
                 FontSize = 12
             };
             progressStack.Children.Add(progressLabel);
@@ -389,7 +399,9 @@ public partial class HistoryPage : ContentPage
         var timeLabel = new Label
         {
             Text = item.ReadAt.ToString("HH:mm"),
-            TextColor = Color.FromArgb("#808080"),
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : Color.FromArgb("#B0B0B0"),
             FontSize = 12,
             HorizontalTextAlignment = TextAlignment.End
         };
@@ -430,7 +442,9 @@ public partial class HistoryPage : ContentPage
     {
         var frame = new Frame
         {
-            BackgroundColor = Color.FromArgb("#1E1E1E"),
+            BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["BackgroundMediumLight"]
+            : Color.FromArgb("#1E1E1E"),
             CornerRadius = 10,
             Padding = 15,
             HasShadow = false
@@ -472,7 +486,9 @@ public partial class HistoryPage : ContentPage
         var titleLabel = new Label
         {
             Text = group.NovelTitle,
-            TextColor = Colors.White,
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextPrimaryLight"]
+            : Colors.White,
             FontAttributes = FontAttributes.Bold,
             FontSize = 18,
             LineBreakMode = LineBreakMode.TailTruncation
@@ -482,7 +498,9 @@ public partial class HistoryPage : ContentPage
         var authorLabel = new Label
         {
             Text = group.NovelAuthor,
-            TextColor = Color.FromArgb("#CCCCCC"),
+            TextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? (Color)Application.Current.Resources["TextSecondaryLight"]
+            : Color.FromArgb("#B0B0B0"),
             FontSize = 14
         };
         infoStack.Children.Add(authorLabel);

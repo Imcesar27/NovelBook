@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.HistoryPage"
              xmlns:extensions="clr-namespace:NovelBook.Extensions"
-             Title="{extensions:Translate History}"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="{extensions:Translate History}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -15,7 +14,7 @@
 
         <!-- Header con estadísticas -->
         <Frame Grid.Row="0"
-               BackgroundColor="{StaticResource BackgroundMedium}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                CornerRadius="0"
                Padding="20"
                Margin="0,0,0,10">
@@ -36,7 +35,7 @@
                            HorizontalTextAlignment="Center"/>
                     <Label Text="{extensions:Translate Chapters}"
                            FontSize="12"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
@@ -50,7 +49,7 @@
                            HorizontalTextAlignment="Center"/>
                     <Label Text="{extensions:Translate TotalTime}"
                            FontSize="12"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
 
@@ -64,7 +63,7 @@
                            HorizontalTextAlignment="Center"/>
                     <Label Text="{extensions:Translate ReadingStreak}"
                            FontSize="12"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                            HorizontalTextAlignment="Center"/>
                 </VerticalStackLayout>
             </Grid>
@@ -80,8 +79,8 @@
             <!-- Filtro de vista -->
             <Picker x:Name="ViewPicker"
                     Grid.Column="0"
-                    BackgroundColor="{StaticResource BackgroundMedium}"
-                    TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     SelectedIndexChanged="OnViewPickerChanged">
                 <Picker.Items>
                     <x:String>📅 Historial completo</x:String>
@@ -96,8 +95,8 @@
             <Button Grid.Column="1"
                     x:Name="ClearButton"
                     Text="🗑️"
-                    BackgroundColor="{StaticResource BackgroundMedium}"
-                    TextColor="{StaticResource TextSecondary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                     WidthRequest="50"
                     HeightRequest="40"
                     CornerRadius="20"
@@ -112,7 +111,7 @@
                 <!-- Mensaje cuando no hay historial -->
                 <Label x:Name="NoHistoryLabel"
                        Text="{extensions:Translate NoHistoryYet}"
-                       TextColor="{StaticResource TextSecondary}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                        HorizontalOptions="Center"
                        VerticalOptions="CenterAndExpand"
                        FontSize="16"
