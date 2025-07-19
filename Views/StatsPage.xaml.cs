@@ -305,8 +305,10 @@ public partial class StatsPage : ContentPage
             var bar = new Frame
             {
                 BackgroundColor = date == today ?
-                    Color.FromArgb("#8B5CF6") :
-                    Color.FromArgb("#4A4A4A"),
+                    (Color)Application.Current.Resources["Primary"] :  // Usar Primary en lugar de color fijo
+                    (Application.Current.RequestedTheme == AppTheme.Light
+                    ? Color.FromArgb("#A0A0A0")  // Gris más claro para modo claro
+                    : Color.FromArgb("#4A4A4A")), // Gris oscuro para modo oscuro
                 CornerRadius = 5,
                 VerticalOptions = LayoutOptions.End,
                 HeightRequest = Math.Max(5, height * 120),
@@ -322,7 +324,9 @@ public partial class StatsPage : ContentPage
             {
                 Text = date.ToString("ddd")[0].ToString(),
                 FontSize = 12,
-                TextColor = Color.FromArgb("#B0B0B0"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                        ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                        : Color.FromArgb("#B0B0B0"),
                 HorizontalTextAlignment = TextAlignment.Center
             };
 
@@ -337,7 +341,9 @@ public partial class StatsPage : ContentPage
                 {
                     Text = chapters.ToString(),
                     FontSize = 10,
-                    TextColor = Colors.White,
+                    TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                        ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                        : Colors.White,
                     HorizontalOptions = LayoutOptions.Center,
                     VerticalOptions = LayoutOptions.End,
                     Margin = new Thickness(0, 0, 0, 5)
@@ -366,7 +372,9 @@ public partial class StatsPage : ContentPage
             var noDataLabel = new Label
             {
                 Text = "No hay datos de géneros aún",
-                TextColor = Color.FromArgb("#B0B0B0"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : Color.FromArgb("#B0B0B0"),
                 FontSize = 14
             };
             GenreStatsContainer.Children.Add(noDataLabel);
@@ -377,7 +385,9 @@ public partial class StatsPage : ContentPage
         {
             var genreFrame = new Frame
             {
-                BackgroundColor = Color.FromArgb("#3D3D3D"),
+                BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundLightLight"]
+                : Color.FromArgb("#3D3D3D"),
                 CornerRadius = 10,
                 Padding = 10,
                 HasShadow = false
@@ -397,7 +407,9 @@ public partial class StatsPage : ContentPage
                 Text = genre.GenreName,
                 FontSize = 16,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White,
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : Colors.White,
                 VerticalOptions = LayoutOptions.Center
             };
             grid.Children.Add(nameLabel);
@@ -408,7 +420,7 @@ public partial class StatsPage : ContentPage
                 Text = $"{genre.Percentage:F1}%",
                 FontSize = 18,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Color.FromArgb("#8B5CF6"),
+                TextColor = (Color)Application.Current.Resources["Primary"], // Primary funciona en ambos temas
                 VerticalOptions = LayoutOptions.Center
             };
             grid.Children.Add(percentLabel);
@@ -431,7 +443,9 @@ public partial class StatsPage : ContentPage
             var noDataLabel = new Label
             {
                 Text = "No hay datos de autores aún",
-                TextColor = Color.FromArgb("#B0B0B0"),
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : Color.FromArgb("#B0B0B0"),
                 FontSize = 14
             };
             AuthorStatsContainer.Children.Add(noDataLabel);
@@ -442,7 +456,9 @@ public partial class StatsPage : ContentPage
         {
             var authorFrame = new Frame
             {
-                BackgroundColor = Color.FromArgb("#3D3D3D"),
+                BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundLightLight"]
+                : Color.FromArgb("#3D3D3D"),
                 CornerRadius = 10,
                 Padding = 10,
                 HasShadow = false
@@ -465,7 +481,9 @@ public partial class StatsPage : ContentPage
                 Text = author.AuthorName,
                 FontSize = 16,
                 FontAttributes = FontAttributes.Bold,
-                TextColor = Colors.White
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : Colors.White
             };
             infoStack.Children.Add(nameLabel);
 
@@ -473,7 +491,9 @@ public partial class StatsPage : ContentPage
             {
                 Text = $"{author.ChaptersRead} capítulos • {author.NovelsRead} novelas",
                 FontSize = 12,
-                TextColor = Color.FromArgb("#B0B0B0")
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextSecondaryLight"]
+                : Color.FromArgb("#B0B0B0")
             };
             infoStack.Children.Add(statsLabel);
 
@@ -487,7 +507,7 @@ public partial class StatsPage : ContentPage
                 {
                     Text = $"⭐ {author.AverageRating:F1}",
                     FontSize = 16,
-                    TextColor = Color.FromArgb("#FFD700"),
+                    TextColor = Color.FromArgb("#FFD700"), // Dorado funciona en ambos temas
                     VerticalOptions = LayoutOptions.Center
                 };
                 grid.Children.Add(ratingLabel);
@@ -512,7 +532,9 @@ public partial class StatsPage : ContentPage
         {
             var achievementFrame = new Frame
             {
-                BackgroundColor = Color.FromArgb("#3D3D3D"),
+                BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["BackgroundLightLight"]
+                : Color.FromArgb("#3D3D3D"),
                 CornerRadius = 10,
                 Padding = 10,
                 WidthRequest = 100,
@@ -539,7 +561,9 @@ public partial class StatsPage : ContentPage
             {
                 Text = achievement.Name,
                 FontSize = 11,
-                TextColor = Colors.White,
+                TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                ? (Color)Application.Current.Resources["TextPrimaryLight"]
+                : Colors.White,
                 HorizontalTextAlignment = TextAlignment.Center,
                 MaxLines = 2,
                 LineBreakMode = LineBreakMode.WordWrap,

@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.ManageNovelsPage"
-             Title="Gestionar Novelas"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             Title="Gestionar Novelas">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -14,7 +13,7 @@
 
        <!-- Header personalizado -->
         <Grid Grid.Row="0"
-              BackgroundColor="{StaticResource BackgroundMedium}"
+              BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
               Padding="10"
               HeightRequest="56">
             <Grid.ColumnDefinitions>
@@ -26,7 +25,7 @@
                     Text="←"
                     FontSize="24"
                     BackgroundColor="Transparent"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     WidthRequest="48"
                     HeightRequest="48"
                     Clicked="OnBackButtonClicked"/>
@@ -35,14 +34,14 @@
                    Text="Gestionar Novelas"
                    FontSize="20"
                    FontAttributes="Bold"
-                   TextColor="{StaticResource TextPrimary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                    VerticalOptions="Center"
                    HorizontalOptions="Center"/>
         </Grid>
 
         <!-- Barra de búsqueda y estadísticas -->
         <Frame Grid.Row="0"
-               BackgroundColor="{StaticResource BackgroundMedium}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                CornerRadius="10"
                Margin="10"
                Padding="15">
@@ -64,16 +63,16 @@
                          Spacing="20" 
                          HorizontalOptions="Center"
                          Margin="0,0,0,5">
-                        <Label TextColor="{StaticResource TextPrimary}">
+                        <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="📚 Total: " TextColor="{StaticResource TextSecondary}"/>
+                                    <Span Text="📚 Total: " TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="TotalNovelsLabel"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
 
-                        <Label TextColor="{StaticResource TextPrimary}">
+                        <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="✅ Activas: " TextColor="{StaticResource Success}"/>
@@ -88,7 +87,7 @@
                          Spacing="20" 
                          HorizontalOptions="Center"
                          Margin="0,0,0,10">
-                        <Label TextColor="{StaticResource TextPrimary}">
+                        <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="📗 Completadas: " TextColor="#10B981"/>
@@ -97,7 +96,7 @@
                             </Label.FormattedText>
                         </Label>
 
-                        <Label TextColor="{StaticResource TextPrimary}">
+                        <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="⏸️ Pausadas: " TextColor="#F59E0B"/>
@@ -106,7 +105,7 @@
                             </Label.FormattedText>
                         </Label>
 
-                        <Label TextColor="{StaticResource TextPrimary}">
+                        <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="❌ Canceladas: " TextColor="{StaticResource Error}"/>
@@ -121,9 +120,9 @@
                 <SearchBar Grid.Row="1"
                            x:Name="SearchBar"
                            Placeholder="Buscar novela..."
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
-                           BackgroundColor="{StaticResource BackgroundLight}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight},Dark={StaticResource BackgroundLight}}"
                            TextChanged="OnSearchTextChanged"/>
             </Grid>
         </Frame>
@@ -147,8 +146,8 @@
 
             <Button Grid.Column="1"
                     Text="🏷️ Géneros"
-                    BackgroundColor="{StaticResource BackgroundMedium}"
-                    TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     FontAttributes="Bold"
                     CornerRadius="20"
                     HeightRequest="45"
@@ -163,7 +162,7 @@
                             Margin="10">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+                        <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                CornerRadius="10"
                                Padding="15"
                                Margin="0,5">
@@ -189,18 +188,18 @@
                                                    Padding="10,0"
                                                    Spacing="5">
                                     <Label Text="{Binding Title}"
-                                           TextColor="{StaticResource TextPrimary}"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                            FontSize="16"
                                            FontAttributes="Bold"
                                            LineBreakMode="TailTruncation"/>
 
                                     <Label Text="{Binding Author}"
-                                           TextColor="{StaticResource TextSecondary}"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                                            FontSize="13"
                                            LineBreakMode="TailTruncation"/>
 
                                     <HorizontalStackLayout Spacing="15">
-                                        <Label TextColor="{StaticResource TextMuted}"
+                                        <Label TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                                                FontSize="12">
                                             <Label.FormattedText>
                                                 <FormattedString>
@@ -222,7 +221,7 @@
                                     </HorizontalStackLayout>
 
                                     <Label Text="{Binding UpdatedAtText}"
-                                           TextColor="{StaticResource TextMuted}"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                                            FontSize="11"/>
                                 </VerticalStackLayout>
 
@@ -278,7 +277,7 @@
                    FontSize="60"
                    HorizontalOptions="Center"/>
             <Label Text="No hay novelas registradas"
-                   TextColor="{StaticResource TextSecondary}"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                    FontSize="16"
                    HorizontalOptions="Center"/>
             <Button Text="Agregar primera novela"

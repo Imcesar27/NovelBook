@@ -2,13 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.StatsPage"
-             Title="Estadísticas"
-             BackgroundColor="{StaticResource PageBackgroundColor}">
+             Title="Estadísticas">
 
     <ScrollView>
         <StackLayout Padding="15" Spacing="15">
             <!-- Header con resumen principal -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -18,11 +17,11 @@
                         <Label Text="Tu Resumen de Lectura"
                                FontSize="24"
                                FontAttributes="Bold"
-                               TextColor="White" />
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
                         <Label x:Name="MemberSinceLabel"
                                Text="Miembro desde: -"
                                FontSize="14"
-                               TextColor="#B0B0B0" />
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark={AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}}" />
                     </StackLayout>
 
                     <!-- Estadísticas principales en grid -->
@@ -33,11 +32,11 @@
                                    Text="0"
                                    FontSize="32"
                                    FontAttributes="Bold"
-                                   TextColor="{StaticResource PrimaryColor}"
+                                   TextColor="{StaticResource Primary}"
                                    HorizontalTextAlignment="Center" />
                             <Label Text="Capítulos"
                                    FontSize="12"
-                                   TextColor="#B0B0B0"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}"
                                    HorizontalTextAlignment="Center" />
                         </StackLayout>
 
@@ -51,7 +50,7 @@
                                    HorizontalTextAlignment="Center" />
                             <Label Text="Novelas"
                                    FontSize="12"
-                                   TextColor="#B0B0B0"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}"
                                    HorizontalTextAlignment="Center" />
                         </StackLayout>
 
@@ -65,7 +64,7 @@
                                    HorizontalTextAlignment="Center" />
                             <Label Text="Tiempo"
                                    FontSize="12"
-                                   TextColor="#B0B0B0"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}"
                                    HorizontalTextAlignment="Center" />
                         </StackLayout>
 
@@ -79,7 +78,7 @@
                                    HorizontalTextAlignment="Center" />
                             <Label Text="Racha"
                                    FontSize="12"
-                                   TextColor="#B0B0B0"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}"
                                    HorizontalTextAlignment="Center" />
                         </StackLayout>
                     </Grid>
@@ -90,20 +89,20 @@
                                x:Name="AvgChaptersLabel"
                                Text="📖 0 cap/día"
                                FontSize="14"
-                               TextColor="White"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}"
                                HorizontalTextAlignment="Center" />
                         <Label Grid.Column="1"
                                x:Name="AvgTimeLabel"
                                Text="⏱️ 0 min/día"
                                FontSize="14"
-                               TextColor="White"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}"
                                HorizontalTextAlignment="Center" />
                     </Grid>
                 </Grid>
             </Frame>
 
             <!-- Estado de la biblioteca -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -111,7 +110,7 @@
                     <Label Text="Mi Biblioteca"
                            FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
 
                     <!-- Gráfico circular de estados -->
                     <Grid ColumnDefinitions="*,Auto">
@@ -133,34 +132,34 @@
                                      Margin="20,0,0,0">
                             <HorizontalStackLayout>
                                 <BoxView Color="#4CAF50" WidthRequest="15" HeightRequest="15" CornerRadius="2" />
-                                <Label x:Name="ReadingCountLabel" Text="Leyendo: 0" Margin="10,0,0,0" TextColor="White" />
+                                <Label x:Name="ReadingCountLabel" Text="Leyendo: 0" Margin="10,0,0,0" TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark=White}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
                                 <BoxView Color="#2196F3" WidthRequest="15" HeightRequest="15" CornerRadius="2" />
-                                <Label x:Name="CompletedCountLabel" Text="Completados: 0" Margin="10,0,0,0" TextColor="White" />
+                                <Label x:Name="CompletedCountLabel" Text="Completados: 0" Margin="10,0,0,0" TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark=White}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
                                 <BoxView Color="#FF9800" WidthRequest="15" HeightRequest="15" CornerRadius="2" />
-                                <Label x:Name="PlanToReadCountLabel" Text="Por leer: 0" Margin="10,0,0,0" TextColor="White" />
+                                <Label x:Name="PlanToReadCountLabel" Text="Por leer: 0" Margin="10,0,0,0" TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark=White}" />
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
                                 <BoxView Color="#E91E63" WidthRequest="15" HeightRequest="15" CornerRadius="2" />
-                                <Label x:Name="FavoritesCountLabel" Text="Favoritos: 0" Margin="10,0,0,0" TextColor="White" />
+                                <Label x:Name="FavoritesCountLabel" Text="Favoritos: 0" Margin="10,0,0,0" TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark=White}" />
                             </HorizontalStackLayout>
                         </StackLayout>
                     </Grid>
 
                     <!-- Tasa de completación -->
                     <StackLayout>
-                        <Label Text="Tasa de completación" FontSize="14" TextColor="#B0B0B0" />
-                        <ProgressBar x:Name="CompletionProgressBar" Progress="0" ProgressColor="{StaticResource PrimaryColor}" />
-                        <Label x:Name="CompletionRateLabel" Text="0% completado" FontSize="12" TextColor="#B0B0B0" HorizontalTextAlignment="Center" />
+                        <Label Text="Tasa de completación" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}" />
+                        <ProgressBar x:Name="CompletionProgressBar" Progress="0" ProgressColor="{StaticResource Primary}" BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource BackgroundLight}}" />
+                        <Label x:Name="CompletionRateLabel" Text="0% completado" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}" HorizontalTextAlignment="Center" />
                     </StackLayout>
                 </StackLayout>
             </Frame>
 
             <!-- Actividad de los últimos 7 días -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -168,7 +167,7 @@
                     <Label Text="Últimos 7 días"
                            FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
 
                     <!-- Gráfico de barras -->
                     <Grid x:Name="WeeklyChartContainer"
@@ -181,13 +180,13 @@
                     <Label x:Name="WeeklyTotalLabel"
                            Text="Total esta semana: 0 capítulos"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}"
                            HorizontalTextAlignment="Center" />
                 </StackLayout>
             </Frame>
 
             <!-- Géneros favoritos -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -195,7 +194,7 @@
                     <Label Text="Géneros más leídos"
                            FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
 
                     <StackLayout x:Name="GenreStatsContainer" Spacing="10">
                         <!-- Los géneros se agregarán dinámicamente -->
@@ -204,7 +203,7 @@
             </Frame>
 
             <!-- Autores favoritos -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -212,7 +211,7 @@
                     <Label Text="Autores favoritos"
                            FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
 
                     <StackLayout x:Name="AuthorStatsContainer" Spacing="10">
                         <!-- Los autores se agregarán dinámicamente -->
@@ -221,7 +220,7 @@
             </Frame>
 
             <!-- Logros -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -231,11 +230,11 @@
                                Text="Logros desbloqueados"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="White" />
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
                         <Button Grid.Column="1"
                                 Text="Ver todos"
                                 BackgroundColor="Transparent"
-                                TextColor="{StaticResource PrimaryColor}"
+                                TextColor="{StaticResource Primary}"
                                 FontSize="14"
                                 Clicked="OnViewAllAchievements" />
                     </Grid>
@@ -249,12 +248,12 @@
                     <Label x:Name="AchievementCountLabel"
                            Text="0/10 logros desbloqueados"
                            FontSize="14"
-                           TextColor="#B0B0B0" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}" />
                 </StackLayout>
             </Frame>
 
             <!-- Horas de lectura -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight},Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
@@ -262,11 +261,11 @@
                     <Label Text="Horas más activas"
                            FontSize="20"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight},Dark={StaticResource TextPrimary}}" />
 
                     <Label Text="Descubre cuándo lees más"
                            FontSize="14"
-                           TextColor="#B0B0B0" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight},Dark=#B0B0B0}" />
 
                     <Grid x:Name="HourlyChartContainer"
                           HeightRequest="150">
@@ -279,7 +278,6 @@
             <ActivityIndicator x:Name="LoadingIndicator"
                                IsRunning="False"
                                IsVisible="False"
-                               Color="{StaticResource PrimaryColor}"
                                VerticalOptions="CenterAndExpand"
                                HorizontalOptions="CenterAndExpand" />
         </StackLayout>

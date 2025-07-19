@@ -40,9 +40,14 @@ public partial class SettingsPage : ContentPage
         UpdateThemeStatusLabel(currentTheme);
 
         // Cargar configuración de idioma
-        var currentLanguage = Preferences.Get("AppLanguage", "es");
-        LanguagePicker.SelectedIndex = currentLanguage == "en" ? 1 : 0;
-        LanguageStatusLabel.Text = currentLanguage == "en" ? "English" : "Español";
+        var currentLanguage = Preferences.Get("AppLanguage", "system");
+        LanguagePicker.SelectedIndex = currentLanguage switch
+        {
+            "es" => 1,     // Español
+            "en" => 2,     // English
+            _ => 0         // Sistema
+        };
+        UpdateLanguageStatusLabel(currentLanguage);
 
         // Cargar configuraciones de lectura
         FontSizeSlider.Value = Preferences.Get("FontSize", 16.0);
@@ -66,7 +71,8 @@ public partial class SettingsPage : ContentPage
         }
         else
         {
-            AccountEmailLabel.Text = "Modo invitado";
+            AccountEmailLabel.Text = LocalizationService.GetString("GuestMode");
+
         }
 
         // Calcular tamaño de caché
@@ -151,27 +157,39 @@ public partial class SettingsPage : ContentPage
         if (_isLoadingSettings) return;
 
         var selectedIndex = LanguagePicker.SelectedIndex;
-        var language = selectedIndex == 1 ? "en" : "es";
-        var languageName = selectedIndex == 1 ? "English" : "Español";
+        string language;
+        string actualLanguage;
+
+        switch (selectedIndex)
+        {
+            case 1: // Español
+                language = "es";
+                actualLanguage = "es";
+                break;
+            case 2: // English
+                language = "en";
+                actualLanguage = "en";
+                break;
+            default: // Sistema
+                language = "system";
+                actualLanguage = GetSystemLanguage();
+                break;
+        }
 
         // Guardar preferencia
         Preferences.Set("AppLanguage", language);
-        LanguageStatusLabel.Text = languageName;
+        UpdateLanguageStatusLabel(language);
 
         // Cambiar el idioma de la aplicación
-        var culture = new CultureInfo(language);
-        Thread.CurrentThread.CurrentCulture = culture;
-        Thread.CurrentThread.CurrentUICulture = culture;
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        LocalizationService.SetLanguage(actualLanguage);
 
         // Mostrar mensaje de confirmación
-        var message = language == "es" 
-            ? "El cambio de idioma se aplicará completamente al reiniciar la aplicación" 
+        var message = actualLanguage == "es"
+            ? "El cambio de idioma se aplicará completamente al reiniciar la aplicación"
             : "The language change will be fully applied after restarting the app";
-        
+
         await DisplayAlert(
-            language == "es" ? "Idioma cambiado" : "Language changed",
+            actualLanguage == "es" ? "Idioma cambiado" : "Language changed",
             message,
             "OK");
     }

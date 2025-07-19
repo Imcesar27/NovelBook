@@ -252,6 +252,7 @@
                                 TextColor="{StaticResource Primary}"
                                 SelectedIndexChanged="OnLanguageChanged">
                             <Picker.Items>
+                                <x:String>Sistema</x:String>
                                 <x:String>Español</x:String>
                                 <x:String>English</x:String>
                             </Picker.Items>

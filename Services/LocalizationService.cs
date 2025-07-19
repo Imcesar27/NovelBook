@@ -698,7 +698,21 @@ namespace NovelBook.Services
         /// <summary>
         /// Obtiene el idioma actual de la aplicación
         /// </summary>
-        public static string CurrentLanguage => Preferences.Get("AppLanguage", "es");
+        public static string CurrentLanguage
+        {
+            get
+            {
+                var savedLanguage = Preferences.Get("AppLanguage", "system");
+                if (savedLanguage == "system")
+                {
+                    // Obtener el idioma del sistema
+                    var culture = CultureInfo.CurrentUICulture;
+                    var languageCode = culture.TwoLetterISOLanguageName.ToLower();
+                    return (languageCode == "es" || languageCode == "en") ? languageCode : "es";
+                }
+                return savedLanguage;
+            }
+        }
 
         /// <summary>
         /// Obtiene una traducción para la clave especificada
@@ -730,7 +744,11 @@ namespace NovelBook.Services
         /// </summary>
         public static void SetLanguage(string languageCode)
         {
-            Preferences.Set("AppLanguage", languageCode);
+            // Solo aceptar códigos de idioma válidos, no "system"
+            if (languageCode != "es" && languageCode != "en")
+            {
+                return;
+            }
 
             var culture = new CultureInfo(languageCode);
             Thread.CurrentThread.CurrentCulture = culture;

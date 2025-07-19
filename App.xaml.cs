@@ -1,5 +1,7 @@
 ﻿using NovelBook.Views;
 using System.Globalization;
+using NovelBook.Services;
+
 
 namespace NovelBook
 {
@@ -48,13 +50,36 @@ namespace NovelBook
         /// </summary>
         private void ApplySavedLanguage()
         {
-            var savedLanguage = Preferences.Get("AppLanguage", "es");
+            try
+            {
+                var savedLanguage = Preferences.Get("AppLanguage", "system");
+                string languageToApply;
 
-            var culture = new CultureInfo(savedLanguage);
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
+                if (savedLanguage == "system")
+                {
+                    // Obtener el idioma del sistema
+                    var culture = CultureInfo.CurrentUICulture;
+                    var systemLanguage = culture.TwoLetterISOLanguageName.ToLower();
+
+                    // Si el sistema está en español o inglés, usar ese idioma
+                    // De lo contrario, usar español como predeterminado
+                    languageToApply = (systemLanguage == "es" || systemLanguage == "en") ? systemLanguage : "es";
+                }
+                else
+                {
+                    // Usar el idioma guardado específicamente
+                    languageToApply = savedLanguage;
+                }
+
+                // Aplicar el idioma
+                LocalizationService.SetLanguage(languageToApply);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error aplicando idioma: {ex.Message}");
+                // En caso de error, usar español como predeterminado
+                LocalizationService.SetLanguage("es");
+            }
         }
 
         // Método para cambiar a la app principal después del login
