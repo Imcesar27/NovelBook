@@ -88,10 +88,10 @@
 
     <!-- Footer menú -->
     <Shell.FlyoutFooter>
-        <VerticalStackLayout Padding="10,10" BackgroundColor="{StaticResource BackgroundMedium}">
+        <VerticalStackLayout Padding="10,10" BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}">
             <Button Text="{extensions:Translate Logout}"
                     BackgroundColor="{StaticResource Primary}"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     Margin="10"
                     Clicked="OnLogoutClicked"/>
         </VerticalStackLayout>

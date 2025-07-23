@@ -27,7 +27,7 @@ public partial class ReviewsPage : ContentPage
 
         _novelId = novelId;
         _novelTitle = novelTitle;
-        Title = $"Reseñas - {novelTitle}";
+        Title = LocalizationService.GetString("ReviewsOf", novelTitle);
 
         // Inicializar servicios
         _databaseService = new DatabaseService();
@@ -70,7 +70,8 @@ public partial class ReviewsPage : ContentPage
 
                 // Actualizar texto del botón
                 WriteReviewButton.Text = _userReview != null ?
-                    "Editar mi reseña" : "Escribir reseña";
+                    LocalizationService.GetString("EditMyReview") :
+                    LocalizationService.GetString("WriteReview");
             }
             else
             {
@@ -82,7 +83,11 @@ public partial class ReviewsPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al cargar reseñas: " + ex.Message, "OK");
+            await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("ErrorLoadingReviews", ex.Message),
+                    LocalizationService.GetString("OK")
+);
         }
     }
 
@@ -104,7 +109,9 @@ public partial class ReviewsPage : ContentPage
         StarsLabel.Text = stars;
 
         // Total de reseñas
-        TotalReviewsLabel.Text = $"{stats.TotalReviews} reseña{(stats.TotalReviews != 1 ? "s" : "")}";
+        TotalReviewsLabel.Text = stats.TotalReviews == 1 ?
+            $"{stats.TotalReviews} {LocalizationService.GetString("Review")}" :
+            $"{stats.TotalReviews} {LocalizationService.GetString("ReviewPlural")}";
 
         // Actualizar barras de progreso
         Stars5Bar.Progress = stats.GetPercentage(5) / 100;
@@ -235,7 +242,7 @@ public partial class ReviewsPage : ContentPage
         {
             var deleteButton = new Button
             {
-                Text = "Eliminar mi reseña",
+                Text = LocalizationService.GetString("DeleteReview"),
                 BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
                 ? (Color)Application.Current.Resources["BackgroundLightLight"]
                 : Color.FromArgb("#2A2A2A"),
@@ -263,8 +270,10 @@ public partial class ReviewsPage : ContentPage
     {
         if (AuthService.CurrentUser == null)
         {
-            await DisplayAlert("Iniciar sesión",
-                "Debes iniciar sesión para escribir una reseña", "OK");
+            await DisplayAlert(
+                 LocalizationService.GetString("LoginRequired"),
+                 LocalizationService.GetString("LoginToReview"),
+                 LocalizationService.GetString("OK"));
             return;
         }
 
@@ -277,8 +286,11 @@ public partial class ReviewsPage : ContentPage
     /// </summary>
     private async Task DeleteReview(int reviewId)
     {
-        bool confirm = await DisplayAlert("Confirmar",
-            "¿Estás seguro de que quieres eliminar tu reseña?", "Sí", "No");
+        bool confirm = await DisplayAlert(
+                LocalizationService.GetString("Confirm"),
+                LocalizationService.GetString("ConfirmDeleteReview"),
+                LocalizationService.GetString("Yes"),
+                LocalizationService.GetString("No"));
 
         if (!confirm) return;
 
@@ -289,19 +301,30 @@ public partial class ReviewsPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("Éxito", "Tu reseña ha sido eliminada", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    LocalizationService.GetString("ReviewDeleted"),
+                    LocalizationService.GetString("OK"));
                 _userReview = null;
-                WriteReviewButton.Text = "Escribir reseña";
+                WriteReviewButton.Text = LocalizationService.GetString("WriteReview");
                 LoadReviews(); // Recargar
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo eliminar la reseña", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("ErrorDeletingReview"),
+                    LocalizationService.GetString("OK")
+                );
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al eliminar: " + ex.Message, "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorDeleting", ex.Message),
+                LocalizationService.GetString("OK")
+            );
         }
     }
 }

@@ -78,10 +78,10 @@ public class CategoryService
     public async Task<(bool success, string message, int categoryId)> CreateCategoryAsync(UserCategory category)
     {
         if (AuthService.CurrentUser == null)
-            return (false, "Debes iniciar sesión", 0);
+            return (false, LocalizationService.GetString("MustBeLoggedIn"), 0);
 
         if (!category.IsValidName())
-            return (false, "El nombre debe tener entre 3 y 100 caracteres", 0);
+            return (false, LocalizationService.GetString("NameLengthError"), 0);
 
         try
         {
@@ -97,7 +97,7 @@ public class CategoryService
 
             var exists = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (exists)
-                return (false, "Ya tienes una categoría con ese nombre", 0);
+                return (false, LocalizationService.GetString("CategoryNameExists"), 0);
 
             // Insertar la nueva categoría
             var insertQuery = @"INSERT INTO user_categories 
@@ -116,7 +116,7 @@ public class CategoryService
                 string.IsNullOrEmpty(category.Icon) ? "📁" : category.Icon);
 
             var categoryId = (int)await insertCommand.ExecuteScalarAsync();
-            return (true, "Categoría creada exitosamente", categoryId);
+            return (true, LocalizationService.GetString("CategoryCreated"), categoryId);
         }
         catch (Exception ex)
         {
@@ -130,10 +130,10 @@ public class CategoryService
     public async Task<(bool success, string message)> UpdateCategoryAsync(UserCategory category)
     {
         if (AuthService.CurrentUser == null)
-            return (false, "Debes iniciar sesión");
+            return (false, LocalizationService.GetString("MustBeLoggedIn"));
 
         if (!category.IsValidName())
-            return (false, "El nombre debe tener entre 3 y 100 caracteres");
+            return (false, LocalizationService.GetString("NameLengthError"));
 
         try
         {
@@ -149,7 +149,7 @@ public class CategoryService
 
             var isOwner = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (!isOwner)
-                return (false, "No tienes permiso para editar esta categoría");
+                return (false, LocalizationService.GetString("NoPermissionEdit"));
 
             // Actualizar la categoría
             var updateQuery = @"UPDATE user_categories 
@@ -169,7 +169,7 @@ public class CategoryService
             updateCommand.Parameters.AddWithValue("@icon", category.Icon);
 
             await updateCommand.ExecuteNonQueryAsync();
-            return (true, "Categoría actualizada exitosamente");
+            return (true, LocalizationService.GetString("CategoryUpdated"));
         }
         catch (Exception ex)
         {
@@ -183,7 +183,7 @@ public class CategoryService
     public async Task<(bool success, string message)> DeleteCategoryAsync(int categoryId)
     {
         if (AuthService.CurrentUser == null)
-            return (false, "Debes iniciar sesión");
+            return (false, LocalizationService.GetString("MustBeLoggedIn"));
 
         try
         {
@@ -199,7 +199,7 @@ public class CategoryService
 
             var isOwner = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (!isOwner)
-                return (false, "No tienes permiso para eliminar esta categoría");
+                return (false, LocalizationService.GetString("NoPermissionDelete"));
 
             // Eliminar la categoría (las novelas se eliminarán en cascada)
             var deleteQuery = "DELETE FROM user_categories WHERE id = @id";
@@ -207,7 +207,7 @@ public class CategoryService
             deleteCommand.Parameters.AddWithValue("@id", categoryId);
 
             await deleteCommand.ExecuteNonQueryAsync();
-            return (true, "Categoría eliminada exitosamente");
+            return (true, LocalizationService.GetString("CategoryDeleted"));
         }
         catch (Exception ex)
         {
@@ -221,7 +221,7 @@ public class CategoryService
     public async Task<(bool success, string message)> AddNovelToCategoryAsync(int categoryId, int novelId)
     {
         if (AuthService.CurrentUser == null)
-            return (false, "Debes iniciar sesión");
+            return (false, LocalizationService.GetString("MustBeLoggedIn"));
 
         try
         {
@@ -237,7 +237,7 @@ public class CategoryService
 
             var isOwner = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (!isOwner)
-                return (false, "No tienes permiso para agregar a esta categoría");
+                return (false, LocalizationService.GetString("NoPermissionAdd"));
 
             // Verificar si la novela ya está en la categoría
             var existsQuery = @"SELECT COUNT(*) FROM category_novels 
@@ -248,7 +248,7 @@ public class CategoryService
 
             var exists = (int)await existsCommand.ExecuteScalarAsync() > 0;
             if (exists)
-                return (false, "La novela ya está en esta categoría");
+                return (false, LocalizationService.GetString("NovelAlreadyInCategory"));
 
             // Agregar la novela a la categoría
             var insertQuery = @"INSERT INTO category_novels (category_id, novel_id) 
@@ -258,7 +258,7 @@ public class CategoryService
             insertCommand.Parameters.AddWithValue("@novelId", novelId);
 
             await insertCommand.ExecuteNonQueryAsync();
-            return (true, "Novela agregada a la categoría");
+            return (true, LocalizationService.GetString("NovelAddedToCategory"));
         }
         catch (Exception ex)
         {
@@ -272,7 +272,7 @@ public class CategoryService
     public async Task<(bool success, string message)> RemoveNovelFromCategoryAsync(int categoryId, int novelId)
     {
         if (AuthService.CurrentUser == null)
-            return (false, "Debes iniciar sesión");
+            return (false, LocalizationService.GetString("MustBeLoggedIn"));
 
         try
         {
@@ -288,7 +288,7 @@ public class CategoryService
 
             var isOwner = (int)await checkCommand.ExecuteScalarAsync() > 0;
             if (!isOwner)
-                return (false, "No tienes permiso para modificar esta categoría");
+                return (false, LocalizationService.GetString("NoPermissionModify"));
 
             // Eliminar la novela de la categoría
             var deleteQuery = @"DELETE FROM category_novels 
@@ -299,9 +299,9 @@ public class CategoryService
 
             var rowsAffected = await deleteCommand.ExecuteNonQueryAsync();
             if (rowsAffected == 0)
-                return (false, "La novela no estaba en esta categoría");
+                return (false, LocalizationService.GetString("NovelNotInCategory"));
 
-            return (true, "Novela eliminada de la categoría");
+            return (true, LocalizationService.GetString("NovelRemovedFromCategory"));
         }
         catch (Exception ex)
         {

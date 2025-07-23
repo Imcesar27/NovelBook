@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.ManageNovelsPage"
-             Title="Gestionar Novelas">
+             Title="{extensions:Translate ManageNovels}">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -31,7 +32,7 @@
                     Clicked="OnBackButtonClicked"/>
 
             <Label Grid.Column="1"
-                   Text="Gestionar Novelas"
+                   Text="{extensions:Translate ManageNovels}"
                    FontSize="20"
                    FontAttributes="Bold"
                    TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
@@ -66,7 +67,7 @@
                         <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="📚 Total: " TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
+                                    <Span Text="{extensions:Translate Total}" TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="TotalNovelsLabel"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -75,7 +76,7 @@
                         <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="✅ Activas: " TextColor="{StaticResource Success}"/>
+                                    <Span Text="{extensions:Translate Active}" TextColor="{StaticResource Success}"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="ActiveNovelsLabel" TextColor="{StaticResource Success}"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -90,7 +91,7 @@
                         <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="📗 Completadas: " TextColor="#10B981"/>
+                                    <Span Text="{extensions:Translate Completed2}" TextColor="#10B981"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="CompletedNovelsLabel" TextColor="#10B981"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -99,7 +100,7 @@
                         <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="⏸️ Pausadas: " TextColor="#F59E0B"/>
+                                    <Span Text="{extensions:Translate Paused2}" TextColor="#F59E0B"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="PausedNovelsLabel" TextColor="#F59E0B"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -108,7 +109,7 @@
                         <Label TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="❌ Canceladas: " TextColor="{StaticResource Error}"/>
+                                    <Span Text="{extensions:Translate Cancelled2}" TextColor="{StaticResource Error}"/>
                                     <Span Text="0" FontAttributes="Bold" x:Name="CancelledNovelsLabel" TextColor="{StaticResource Error}"/>
                                 </FormattedString>
                             </Label.FormattedText>
@@ -119,7 +120,7 @@
                 <!-- Buscador -->
                 <SearchBar Grid.Row="1"
                            x:Name="SearchBar"
-                           Placeholder="Buscar novela..."
+                           Placeholder="{extensions:Translate SearchNovel}"
                            PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight},Dark={StaticResource BackgroundLight}}"
@@ -135,7 +136,7 @@
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
-                    Text="+ Nueva Novela"
+                    Text="{extensions:Translate NewNovel}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
                     FontAttributes="Bold"
@@ -145,7 +146,7 @@
                     Clicked="OnAddNovelClicked"/>
 
             <Button Grid.Column="1"
-                    Text="🏷️ Géneros"
+                    Text="{extensions:Translate Genres2}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                     TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                     FontAttributes="Bold"
@@ -276,11 +277,11 @@
             <Label Text="📚"
                    FontSize="60"
                    HorizontalOptions="Center"/>
-            <Label Text="No hay novelas registradas"
+            <Label Text="{extensions:Translate NoNovelsRegistered}"
                    TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
                    FontSize="16"
                    HorizontalOptions="Center"/>
-            <Button Text="Agregar primera novela"
+            <Button Text="{extensions:Translate AddFirstNovel}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
                     CornerRadius="20"

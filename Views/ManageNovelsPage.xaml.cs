@@ -48,7 +48,10 @@ public partial class ManageNovelsPage : ContentPage
         // Verificar que el usuario es administrador
         if (AuthService.CurrentUser == null || !AuthService.CurrentUser.IsAdmin)
         {
-            await DisplayAlert("Acceso Denegado", "No tienes permisos para acceder a esta sección", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("AccessDenied"),
+                LocalizationService.GetString("NoPermissions"),
+                LocalizationService.GetString("OK"));
             await Navigation.PopAsync();
             return;
         }
@@ -89,7 +92,10 @@ public partial class ManageNovelsPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al cargar novelas: {ex.Message}", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorLoadingNovels", ex.Message),
+                LocalizationService.GetString("OK"));
         }
         finally
         {
@@ -110,13 +116,13 @@ public partial class ManageNovelsPage : ContentPage
             {
                 Id = novel.Id,
                 Title = novel.Title,
-                Author = novel.Author ?? "Sin autor",
+                Author = novel.Author ?? LocalizationService.GetString("NoAuthor"),
                 CoverImageSource = await _imageService.GetCoverImageAsync(novel.CoverImage),
                 ChapterCount = novel.ChapterCount,
                 Status = novel.Status,
                 StatusText = GetStatusText(novel.Status),
                 StatusColor = GetStatusColor(novel.Status),
-                UpdatedAtText = $"Actualizado: {novel.UpdatedAt:dd/MM/yyyy}"
+                UpdatedAtText = $"{LocalizationService.GetString("Updated")}{novel.UpdatedAt:dd/MM/yyyy}"
             };
 
             _novels.Add(displayItem);
@@ -130,10 +136,10 @@ public partial class ManageNovelsPage : ContentPage
     {
         return status switch
         {
-            "ongoing" => "En curso",
-            "completed" => "Completado",
-            "hiatus" => "En pausa",
-            "cancelled" => "Cancelada",
+            "ongoing" => LocalizationService.GetString("OnGoing2"),
+            "completed" => LocalizationService.GetString("CompletedStatus"),
+            "hiatus" => LocalizationService.GetString("Hiatus2"),
+            "cancelled" => LocalizationService.GetString("CancelledStatus"),
             _ => status
         };
     }
@@ -222,11 +228,10 @@ public partial class ManageNovelsPage : ContentPage
 
             // Confirmar eliminación
             bool confirm = await DisplayAlert(
-                "Confirmar Eliminación",
-                $"¿Estás seguro de eliminar '{novel.Title}'?\n\n" +
-                "Esta acción eliminará también todos sus capítulos y no se puede deshacer.",
-                "Eliminar",
-                "Cancelar");
+                    LocalizationService.GetString("ConfirmDeletion"),
+                    LocalizationService.GetString("ConfirmDeleteNovel", novel.Title),
+                    LocalizationService.GetString("Delete"),
+                    LocalizationService.GetString("Cancel"));
 
             if (!confirm) return;
 
@@ -240,19 +245,31 @@ public partial class ManageNovelsPage : ContentPage
 
                 if (success)
                 {
-                    await DisplayAlert("Éxito", "Novela eliminada correctamente", "OK");
+                    await DisplayAlert(
+                            LocalizationService.GetString("Success"),
+                            LocalizationService.GetString("NovelDeletedSuccess"),
+                            LocalizationService.GetString("OK")
+                        );
 
                     // Recargar la lista
                     await LoadNovelsAsync();
                 }
                 else
                 {
-                    await DisplayAlert("Error", "No se pudo eliminar la novela", "OK");
+                    await DisplayAlert(
+                            LocalizationService.GetString("Error"),
+                            LocalizationService.GetString("ErrorDeletingNovel"),
+                            LocalizationService.GetString("OK")
+                        );
                 }
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Error", $"Error al eliminar: {ex.Message}", "OK");
+                await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("ErrorDeleting", ex.Message),
+                        LocalizationService.GetString("OK")
+                    );
             }
             finally
             {
@@ -291,7 +308,11 @@ public partial class ManageNovelsPage : ContentPage
             catch
             {
                 // Si todo falla, mostrar mensaje
-                await DisplayAlert("Error", "No se pudo volver a la página anterior", "OK");
+                await DisplayAlert(
+                        LocalizationService.GetString("Error"),
+                        LocalizationService.GetString("ErrorNavigatingBack"),
+                        LocalizationService.GetString("OK")
+                    );
             }
         }
 

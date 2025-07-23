@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.CreateCategoryPage"
-             Title="Nueva Categoría"
-             BackgroundColor="{StaticResource PageBackgroundColor}">
+             Title="{extensions:Translate CreateCategory}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundDarkLight}, Dark=#121212}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Cancelar"
+        <ToolbarItem Text="{extensions:Translate Cancel}"
                      Clicked="OnCancelClicked"
                      Order="Primary" />
-        <ToolbarItem Text="Guardar"
+        <ToolbarItem Text="{extensions:Translate Save}"
                      Clicked="OnSaveClicked"
                      Order="Primary" />
     </ContentPage.ToolbarItems>
@@ -18,60 +19,60 @@
         <StackLayout Spacing="20">
             <!-- Título de la página -->
             <Label x:Name="TitleLabel"
-                   Text="Crear nueva categoría"
+                   Text="{extensions:Translate CreateCategory}"
                    FontSize="24"
                    FontAttributes="Bold"
-                   TextColor="White"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                    HorizontalOptions="Center" />
 
             <!-- Nombre de la categoría -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="0"
                    HasShadow="False">
                 <StackLayout Padding="15">
-                    <Label Text="Nombre *"
+                    <Label Text="{extensions:Translate CategoryName}"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                            Margin="0,0,0,5" />
                     <Entry x:Name="NameEntry"
-                           Placeholder="Ej: Para leer en vacaciones"
-                           PlaceholderColor="#606060"
-                           TextColor="White"
-                           BackgroundColor="Transparent"
+                           Placeholder="{extensions:Translate EnterCategoryName}"
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#808080}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
                            MaxLength="100" />
                 </StackLayout>
             </Frame>
 
             <!-- Descripción -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="0"
                    HasShadow="False">
                 <StackLayout Padding="15">
-                    <Label Text="Descripción (opcional)"
+                    <Label Text="{extensions:Translate CategoryDescription}"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                            Margin="0,0,0,5" />
                     <Editor x:Name="DescriptionEditor"
-                            Placeholder="Describe esta categoría..."
-                            PlaceholderColor="#606060"
-                            TextColor="White"
-                            BackgroundColor="Transparent"
+                            Placeholder="{extensions:Translate DescribeCategoryPurpose}"
+                            PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#808080}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
                             HeightRequest="100"
                             MaxLength="500" />
                 </StackLayout>
             </Frame>
 
             <!-- Selección de ícono -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
                    CornerRadius="15"
                    Padding="15"
                    HasShadow="False">
                 <StackLayout>
-                    <Label Text="Ícono"
+                    <Label Text="{extensions:Translate ChooseIcon}"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                            Margin="0,0,0,10" />
 
                     <FlexLayout x:Name="IconsLayout"
@@ -85,14 +86,14 @@
             </Frame>
 
             <!-- Selección de color -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
                    CornerRadius="15"
                    Padding="15"
                    HasShadow="False">
                 <StackLayout>
-                    <Label Text="Color"
+                    <Label Text="{extensions:Translate ChooseColor}"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                            Margin="0,0,0,10" />
 
                     <FlexLayout x:Name="ColorsLayout"
@@ -106,18 +107,18 @@
             </Frame>
 
             <!-- Vista previa -->
-            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="15"
                    Padding="20"
                    HasShadow="False">
                 <StackLayout>
-                    <Label Text="Vista previa"
+                    <Label Text="{extensions:Translate Preview}"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                            Margin="0,0,0,15" />
 
                     <Frame x:Name="PreviewFrame"
-                           BackgroundColor="#2D2D2D"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
                            CornerRadius="15"
                            Padding="15"
                            HasShadow="False">
@@ -141,14 +142,14 @@
                                          Margin="15,0,0,0"
                                          VerticalOptions="Center">
                                 <Label x:Name="PreviewNameLabel"
-                                       Text="Nueva categoría"
+                                       Text="{extensions:Translate NewCategory}"
                                        FontSize="18"
                                        FontAttributes="Bold"
-                                       TextColor="White" />
+                                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}" />
                                 <Label x:Name="PreviewDescriptionLabel"
-                                       Text="Sin descripción"
+                                       Text="{extensions:Translate NoDescription}"
                                        FontSize="14"
-                                       TextColor="#B0B0B0" />
+                                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark=#B0B0B0}" />
                             </StackLayout>
                         </Grid>
                     </Frame>
@@ -164,9 +165,9 @@
 
                 <!-- Botón Cancelar -->
                 <Button Grid.Column="0"
-                        Text="Cancelar"
-                        BackgroundColor="#404040"
-                        TextColor="White"
+                        Text="{extensions:Translate Cancel}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark=#404040}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                         CornerRadius="20"
                         HeightRequest="45"
                         Margin="0,0,5,0"
@@ -175,8 +176,8 @@
                 <!-- Botón Guardar/Crear -->
                 <Button Grid.Column="1"
                         x:Name="SaveButton"
-                        Text="Crear categoría"
-                        BackgroundColor="{StaticResource PrimaryColor}"
+                        Text="{extensions:Translate CreateCategoryButton}"
+                        BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="20"
                         HeightRequest="45"

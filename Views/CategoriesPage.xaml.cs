@@ -172,9 +172,11 @@ public partial class CategoriesPage : ContentPage
 
             var descriptionLabel = new Label
             {
-                Text = string.IsNullOrEmpty(category.Description) ?
-                       $"{category.NovelCount} novela{(category.NovelCount != 1 ? "s" : "")}" :
-                       category.Description,
+                Text = !string.IsNullOrWhiteSpace(category.Description) ?
+                    category.Description :
+                    category.NovelCount == 1 ?
+                    $"{category.NovelCount} {LocalizationService.GetString("Novel")}" :
+                    $"{category.NovelCount} {LocalizationService.GetString("Novels")}",
                 FontSize = 14,
                 TextColor = Color.FromArgb("#B0B0B0")
             };
@@ -233,10 +235,10 @@ public partial class CategoriesPage : ContentPage
     {
         var action = await DisplayActionSheet(
             category.Name,
-            "Cancelar",
-            "Eliminar",
-            "Editar",
-            "Ver novelas"
+            LocalizationService.GetString("Cancel"),
+            LocalizationService.GetString("Delete"),
+            LocalizationService.GetString("Edit"),
+            LocalizationService.GetString("ViewNovels")
         );
 
         switch (action)
@@ -250,10 +252,10 @@ public partial class CategoriesPage : ContentPage
 
             case "Eliminar":
                 var confirm = await DisplayAlert(
-                    "Confirmar",
-                    $"¿Eliminar la categoría '{category.Name}'?\n\nLas novelas no se eliminarán de tu biblioteca.",
-                    "Eliminar",
-                    "Cancelar"
+                    LocalizationService.GetString("Confirm"),
+                    LocalizationService.GetString("ConfirmDeleteCategory", category.Name),
+                    LocalizationService.GetString("Yes"),
+                    LocalizationService.GetString("No")
                 );
 
                 if (confirm)
@@ -261,12 +263,18 @@ public partial class CategoriesPage : ContentPage
                     var result = await _categoryService.DeleteCategoryAsync(category.Id);
                     if (result.success)
                     {
-                        await DisplayAlert("Éxito", result.message, "OK");
+                        await DisplayAlert(
+                            LocalizationService.GetString("Success"),
+                            LocalizationService.GetString("CategoryDeleted"),
+                            LocalizationService.GetString("OK"));
                         await LoadCategoriesAsync();
                     }
                     else
                     {
-                        await DisplayAlert("Error", result.message, "OK");
+                        await DisplayAlert(
+                            LocalizationService.GetString("Error"),
+                            LocalizationService.GetString("ErrorDeletingCategory"),
+                            LocalizationService.GetString("OK"));
                     }
                 }
                 break;

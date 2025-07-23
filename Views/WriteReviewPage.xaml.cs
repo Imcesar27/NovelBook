@@ -36,8 +36,12 @@ public partial class WriteReviewPage : ContentPage
 
         // Configurar UI
         NovelTitleLabel.Text = novelTitle;
-        Title = existingReview != null ? "Editar Reseña" : "Escribir Reseña";
-        SaveButton.Text = existingReview != null ? "Actualizar reseña" : "Publicar reseña";
+        Title = existingReview != null ?
+                LocalizationService.GetString("EditReviewTitle") :
+                LocalizationService.GetString("WriteReviewTitle");
+        SaveButton.Text = _existingReview != null ?
+                LocalizationService.GetString("UpdateReview") :
+                LocalizationService.GetString("PublishReview");
 
         // Lista de botones de estrellas para facilitar el manejo
         _starButtons = new List<Button> { Star1, Star2, Star3, Star4, Star5 };
@@ -95,12 +99,12 @@ public partial class WriteReviewPage : ContentPage
         // Actualizar descripción
         RatingDescriptionLabel.Text = _selectedRating switch
         {
-            1 => "Muy mala",
-            2 => "Mala",
-            3 => "Regular",
-            4 => "Buena",
-            5 => "Excelente",
-            _ => "Toca las estrellas para calificar"
+            1 => LocalizationService.GetString("VeryBad"),
+            2 => LocalizationService.GetString("Bad"),
+            3 => LocalizationService.GetString("Regular"),
+            4 => LocalizationService.GetString("Good"),
+            5 => LocalizationService.GetString("Excellent"),
+            _ => LocalizationService.GetString("TouchStarsToRate")
         };
 
         // Cambiar color del texto según si ha calificado
@@ -125,7 +129,7 @@ public partial class WriteReviewPage : ContentPage
     private void UpdateCharCount()
     {
         int charCount = CommentEditor.Text?.Length ?? 0;
-        CharCountLabel.Text = $"{charCount} / 1000 caracteres";
+        CharCountLabel.Text = LocalizationService.GetString("Characters", charCount);
 
         // Cambiar color si se acerca al límite
         if (charCount > 900)
@@ -143,9 +147,11 @@ public partial class WriteReviewPage : ContentPage
     /// </summary>
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        bool confirm = await DisplayAlert("Cancelar",
-            "¿Estás seguro de que quieres cancelar? Se perderán los cambios no guardados.",
-            "Sí", "No");
+        bool confirm = await DisplayAlert(
+            LocalizationService.GetString("CancelReview"),
+            LocalizationService.GetString("ConfirmCancel"),
+            LocalizationService.GetString("Yes"),
+            LocalizationService.GetString("No"));
 
         if (confirm)
         {
@@ -161,13 +167,16 @@ public partial class WriteReviewPage : ContentPage
         // Validar que haya calificación
         if (_selectedRating == 0)
         {
-            await DisplayAlert("Error", "Debes seleccionar una calificación", "OK");
+            await DisplayAlert(
+                 LocalizationService.GetString("Error"),
+                 LocalizationService.GetString("MustSelectRating"),
+                 LocalizationService.GetString("OK"));
             return;
         }
 
         // Deshabilitar botón mientras guarda
         SaveButton.IsEnabled = false;
-        SaveButton.Text = "Guardando...";
+        SaveButton.Text = LocalizationService.GetString("Saving");
 
         try
         {
@@ -184,29 +193,42 @@ public partial class WriteReviewPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("Éxito",
-                    _existingReview != null ? "Tu reseña ha sido actualizada" : "Tu reseña ha sido publicada",
-                    "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    _existingReview != null ?
+                        LocalizationService.GetString("ReviewUpdated") :
+                        LocalizationService.GetString("ReviewPublished"),
+                    LocalizationService.GetString("OK"));
 
                 // Volver a la página anterior
                 await Navigation.PopAsync();
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo guardar la reseña", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("ErrorSavingReview"),
+                    LocalizationService.GetString("OK"));
 
                 // Rehabilitar botón
                 SaveButton.IsEnabled = true;
-                SaveButton.Text = _existingReview != null ? "Actualizar reseña" : "Publicar reseña";
+                SaveButton.Text = _existingReview != null ?
+                    LocalizationService.GetString("UpdateReview") :
+                    LocalizationService.GetString("PublishReview");
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al guardar: " + ex.Message, "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorSaving", ex.Message),
+                LocalizationService.GetString("OK"));
 
             // Rehabilitar botón
             SaveButton.IsEnabled = true;
-            SaveButton.Text = _existingReview != null ? "Actualizar reseña" : "Publicar reseña";
+            SaveButton.Text = _existingReview != null ?
+                LocalizationService.GetString("UpdateReview") :
+                LocalizationService.GetString("PublishReview");
         }
     }
 }

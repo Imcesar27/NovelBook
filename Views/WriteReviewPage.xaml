@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.WriteReviewPage"
-             Title="Escribir Reseña"
-             BackgroundColor="#121212">
+             Title="{extensions:Translate WriteReviewTitle}"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundDarkLight}, Dark=#121212}">
 
     <ContentPage.Content>
         <ScrollView>
@@ -11,19 +12,19 @@
 
                 <!-- Título de la novela -->
                 <Label x:Name="NovelTitleLabel"
-                       TextColor="White"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                        FontSize="20"
                        FontAttributes="Bold"
                        HorizontalOptions="Center"/>
 
                 <!-- Sección de calificación -->
-                <Frame BackgroundColor="#1E1E1E" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark=#1E1E1E}" 
                        CornerRadius="10" 
                        Padding="20"
                        HasShadow="False">
                     <StackLayout Spacing="15">
-                        <Label Text="Tu calificación"
-                               TextColor="White"
+                        <Label Text="{extensions:Translate YourRating}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                FontSize="18"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"/>
@@ -86,36 +87,36 @@
 
                         <!-- Texto descriptivo de la calificación -->
                         <Label x:Name="RatingDescriptionLabel"
-                               Text="Toca las estrellas para calificar"
-                               TextColor="#808080"
+                               Text="{extensions:Translate TouchStarsToRate}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark=#808080}"
                                FontSize="14"
                                HorizontalOptions="Center"/>
                     </StackLayout>
                 </Frame>
 
                 <!-- Sección de comentario -->
-                <Frame BackgroundColor="#1E1E1E" 
+                <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark=#1E1E1E}" 
                        CornerRadius="10" 
                        Padding="20"
                        HasShadow="False">
                     <StackLayout Spacing="10">
-                        <Label Text="Tu comentario (opcional)"
-                               TextColor="White"
+                        <Label Text="{extensions:Translate YourComment}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                FontSize="18"
                                FontAttributes="Bold"/>
 
                         <Editor x:Name="CommentEditor"
-                                BackgroundColor="#2A2A2A"
-                                TextColor="White"
-                                PlaceholderColor="#808080"
-                                Placeholder="Comparte tu opinión sobre esta novela..."
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark=#2A2A2A}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
+                                PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#808080}"
+                                Placeholder="{extensions:Translate ShareYourOpinion}"
                                 MinimumHeightRequest="150"
                                 AutoSize="TextChanges"
                                 MaxLength="1000"/>
 
                         <Label x:Name="CharCountLabel"
-                               Text="0 / 1000 caracteres"
-                               TextColor="#808080"
+                               Text="0 / 1000"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark=#808080}"
                                FontSize="12"
                                HorizontalOptions="End"/>
                     </StackLayout>
@@ -124,17 +125,17 @@
                 <!-- Botones de acción -->
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                     <Button Grid.Column="0"
-                            Text="Cancelar"
-                            BackgroundColor="#333333"
-                            TextColor="White"
+                            Text="{extensions:Translate CancelReview}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark=#333333}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                             CornerRadius="25"
                             HeightRequest="50"
                             Clicked="OnCancelClicked"/>
 
                     <Button Grid.Column="1"
                             x:Name="SaveButton"
-                            Text="Guardar reseña"
-                            BackgroundColor="#E91E63"
+                            Text="{extensions:Translate SaveReview}"
+                            BackgroundColor="{StaticResource Primary}"
                             TextColor="White"
                             CornerRadius="25"
                             HeightRequest="50"
@@ -143,8 +144,8 @@
                 </Grid>
 
                 <!-- Mensaje de ayuda -->
-                <Label Text="Tu reseña ayudará a otros lectores a decidir si leer esta novela."
-                       TextColor="#808080"
+                <Label Text="{extensions:Translate HelpMessage}"
+                       TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark=#808080}"
                        FontSize="12"
                        HorizontalOptions="Center"
                        HorizontalTextAlignment="Center"/>

@@ -51,14 +51,14 @@ public partial class CreateCategoryPage : ContentPage
         // Configurar página según si es edición o creación
         if (_categoryToEdit != null)
         {
-            Title = "Editar Categoría";
-            TitleLabel.Text = "Editar categoría";
-            SaveButton.Text = "Guardar cambios";
+            Title = LocalizationService.GetString("EditCategory");
+            TitleLabel.Text = LocalizationService.GetString("EditCategory");
+            SaveButton.Text = LocalizationService.GetString("SaveChanges");
             LoadCategoryData();
         }
         else
         {
-            SaveButton.Text = "Crear categoría";
+            SaveButton.Text = LocalizationService.GetString("CreateCategoryButton");
         }
 
         // Configurar eventos
@@ -233,10 +233,10 @@ public partial class CreateCategoryPage : ContentPage
         PreviewIconFrame.BackgroundColor = Color.FromArgb(_selectedColor).WithAlpha(0.2f);
 
         PreviewNameLabel.Text = string.IsNullOrWhiteSpace(NameEntry.Text) ?
-                                "Nueva categoría" : NameEntry.Text;
+                                LocalizationService.GetString("NewCategory") : NameEntry.Text;
 
         PreviewDescriptionLabel.Text = string.IsNullOrWhiteSpace(DescriptionEditor.Text) ?
-                                       "Sin descripción" : DescriptionEditor.Text;
+                                LocalizationService.GetString("NoDescription") : DescriptionEditor.Text;
     }
 
     /// <summary>
@@ -271,13 +271,19 @@ public partial class CreateCategoryPage : ContentPage
         // Validar nombre
         if (string.IsNullOrWhiteSpace(NameEntry.Text))
         {
-            await DisplayAlert("Error", "El nombre es obligatorio", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("NameRequired"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         if (NameEntry.Text.Length < 3)
         {
-            await DisplayAlert("Error", "El nombre debe tener al menos 3 caracteres", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("NameTooShort"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
@@ -326,7 +332,10 @@ public partial class CreateCategoryPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Error al guardar: " + ex.Message, "OK");
+            await DisplayAlert(
+                 LocalizationService.GetString("Error"),
+                 LocalizationService.GetString("ErrorSaving", ex.Message),
+                 LocalizationService.GetString("OK"));
         }
     }
 }

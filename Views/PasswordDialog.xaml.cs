@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls;
+using NovelBook.Services;
 
 namespace NovelBook.Views.Dialogs;
 
@@ -63,7 +64,7 @@ public partial class PasswordDialog : ContentPage
         if (string.IsNullOrWhiteSpace(password))
         {
             // Mostrar error
-            ErrorLabel.Text = "Por favor ingresa tu contraseña";
+            ErrorLabel.Text = LocalizationService.GetString("PleaseEnterPassword");
             ErrorLabel.IsVisible = true;
 
             // Shake animation para el campo
@@ -78,7 +79,7 @@ public partial class PasswordDialog : ContentPage
 
         // Deshabilitar botones mientras procesa
         ConfirmButton.IsEnabled = false;
-        ConfirmButton.Text = "Verificando...";
+        ConfirmButton.Text = LocalizationService.GetString("Verifying");
 
         // Animar el cierre
         await this.FadeTo(0, 250);
@@ -97,7 +98,7 @@ public partial class PasswordDialog : ContentPage
 
         // Re-habilitar botones
         ConfirmButton.IsEnabled = true;
-        ConfirmButton.Text = "Confirmar";
+        ConfirmButton.Text = LocalizationService.GetString("Confirm");
     }
 
     protected override bool OnBackButtonPressed()

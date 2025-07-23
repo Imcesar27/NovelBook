@@ -27,20 +27,26 @@ public partial class ForgotPasswordPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(EmailEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor ingresa tu correo electrónico", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PleaseEnterEmail"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar formato de email
         if (!IsValidEmail(EmailEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor ingresa un correo electrónico válido", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PleaseEnterValidEmail"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Deshabilitar botón mientras procesa
         SendCodeButton.IsEnabled = false;
-        SendCodeButton.Text = "Enviando...";
+        SendCodeButton.Text = LocalizationService.GetString("Sending");
 
         try
         {
@@ -49,7 +55,10 @@ public partial class ForgotPasswordPage : ContentPage
 
             if (!emailExists)
             {
-                await DisplayAlert("Error", "No existe una cuenta con ese correo electrónico", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("AccountNotFound"),
+                    LocalizationService.GetString("OK"));
                 return;
             }
 
@@ -62,9 +71,10 @@ public partial class ForgotPasswordPage : ContentPage
             await SimulateSendEmail(_userEmail, _verificationCode);
 
             // Mostrar mensaje de éxito
-            await DisplayAlert("Código Enviado",
-                $"Se ha enviado un código de verificación a {_userEmail}. El código es válido por 15 minutos.",
-                "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("CodeSent"),
+                LocalizationService.GetString("CodeSentMessage", _userEmail),
+                LocalizationService.GetString("OK"));
 
             // Mostrar la sección de código
             EmailSection.IsVisible = false;
@@ -75,13 +85,16 @@ public partial class ForgotPasswordPage : ContentPage
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Ocurrió un error al enviar el código. Por favor intenta de nuevo.", "OK");
+            await DisplayAlert(
+                 LocalizationService.GetString("Error"),
+                 LocalizationService.GetString("ErrorSendingCode"),
+                 LocalizationService.GetString("OK"));
             System.Diagnostics.Debug.WriteLine($"Error enviando código: {ex.Message}");
         }
         finally
         {
             SendCodeButton.IsEnabled = true;
-            SendCodeButton.Text = "Enviar código";
+            SendCodeButton.Text = LocalizationService.GetString("SendCode");
         }
     }
 
@@ -92,27 +105,39 @@ public partial class ForgotPasswordPage : ContentPage
     {
         if (string.IsNullOrWhiteSpace(CodeEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor ingresa el código de verificación", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PleaseEnterCode"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         if (CodeEntry.Text.Length != 6)
         {
-            await DisplayAlert("Error", "El código debe tener 6 dígitos", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("CodeMustBe6Digits"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Verificar si el código ha expirado
         if (DateTime.Now > _codeExpirationTime)
         {
-            await DisplayAlert("Error", "El código ha expirado. Por favor solicita uno nuevo.", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("CodeExpired"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Verificar el código
         if (CodeEntry.Text == _verificationCode)
         {
-            await DisplayAlert("Éxito", "Código verificado correctamente", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                LocalizationService.GetString("CodeVerified"),
+                LocalizationService.GetString("OK"));
 
             // Mostrar la sección de nueva contraseña
             CodeSection.IsVisible = false;
@@ -120,7 +145,10 @@ public partial class ForgotPasswordPage : ContentPage
         }
         else
         {
-            await DisplayAlert("Error", "Código incorrecto. Por favor verifica e intenta de nuevo.", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("IncorrectCode"),
+                LocalizationService.GetString("OK"));
         }
     }
 
@@ -141,9 +169,10 @@ public partial class ForgotPasswordPage : ContentPage
             // Simular reenvío de email
             await SimulateSendEmail(_userEmail, _verificationCode);
 
-            await DisplayAlert("Código Reenviado",
-                "Se ha enviado un nuevo código de verificación a tu correo.",
-                "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("CodeResent"),
+                LocalizationService.GetString("NewCodeSent"),
+                LocalizationService.GetString("OK"));
 
             // Para testing: mostrar el código en la consola
             System.Diagnostics.Debug.WriteLine($"Nuevo código de verificación: {_verificationCode}");
@@ -167,27 +196,36 @@ public partial class ForgotPasswordPage : ContentPage
         if (string.IsNullOrWhiteSpace(NewPasswordEntry.Text) ||
             string.IsNullOrWhiteSpace(ConfirmPasswordEntry.Text))
         {
-            await DisplayAlert("Error", "Por favor completa todos los campos", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PleaseCompleteFields"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar que las contraseñas coincidan
         if (NewPasswordEntry.Text != ConfirmPasswordEntry.Text)
         {
-            await DisplayAlert("Error", "Las contraseñas no coinciden", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PasswordsDontMatch"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Validar longitud mínima
         if (NewPasswordEntry.Text.Length < 6)
         {
-            await DisplayAlert("Error", "La contraseña debe tener al menos 6 caracteres", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("PasswordMinLength"),
+                LocalizationService.GetString("OK"));
             return;
         }
 
         // Deshabilitar botón mientras procesa
         ResetPasswordButton.IsEnabled = false;
-        ResetPasswordButton.Text = "Restableciendo...";
+        ResetPasswordButton.Text = LocalizationService.GetString("Resetting");
 
         try
         {
@@ -196,27 +234,34 @@ public partial class ForgotPasswordPage : ContentPage
 
             if (success)
             {
-                await DisplayAlert("Éxito",
-                    "Tu contraseña ha sido restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña.",
-                    "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    LocalizationService.GetString("PasswordResetSuccess"),
+                    LocalizationService.GetString("OK"));
 
                 // Volver a la página de login
                 await Navigation.PopAsync();
             }
             else
             {
-                await DisplayAlert("Error", "No se pudo actualizar la contraseña. Por favor intenta de nuevo.", "OK");
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    LocalizationService.GetString("ErrorUpdatingPassword"),
+                    LocalizationService.GetString("OK"));
             }
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", "Ocurrió un error al restablecer la contraseña.", "OK");
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("ErrorResettingPassword"),
+                LocalizationService.GetString("OK"));
             System.Diagnostics.Debug.WriteLine($"Error actualizando contraseña: {ex.Message}");
         }
         finally
         {
             ResetPasswordButton.IsEnabled = true;
-            ResetPasswordButton.Text = "Restablecer contraseña";
+            ResetPasswordButton.Text = LocalizationService.GetString("ResetPassword");
         }
     }
 

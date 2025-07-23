@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:NovelBook.Extensions"
              x:Class="NovelBook.Views.CategoriesPage"
-             Title="Mis Categorías"
+             Title="{extensions:Translate Categories}"
              BackgroundColor="{StaticResource PageBackgroundColor}">
 
     <Grid>
@@ -13,15 +14,15 @@
 
         <!-- Header con estadísticas -->
         <Frame Grid.Row="0"
-               BackgroundColor="{StaticResource CardBackgroundColor}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                CornerRadius="0"
                HasShadow="False"
                Padding="20">
             <StackLayout>
-                <Label Text="Organiza tu biblioteca"
+                <Label Text="{extensions:Translate MyCategories}"
                        FontSize="24"
                        FontAttributes="Bold"
-                       TextColor="White" />
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}}" />
 
                 <Label x:Name="StatsLabel"
                        Text="0 categorías • 0 novelas organizadas"
@@ -37,7 +38,7 @@
                 <!-- Mensaje cuando no hay categorías -->
                 <Frame x:Name="EmptyStateFrame"
                        IsVisible="True"
-                       BackgroundColor="{StaticResource CardBackgroundColor}"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                        CornerRadius="15"
                        Padding="30"
                        Margin="0,20">
@@ -46,10 +47,10 @@
                                FontSize="60"
                                HorizontalOptions="Center" />
 
-                        <Label Text="No tienes categorías aún"
+                        <Label Text="{extensions:Translate NoCategories}"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="White"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                HorizontalOptions="Center" />
 
                         <Label Text="Las categorías te ayudan a organizar tu biblioteca personal en grupos personalizados"
@@ -58,9 +59,9 @@
                                HorizontalOptions="Center"
                                HorizontalTextAlignment="Center" />
 
-                        <Button Text="Crear primera categoría"
+                        <Button Text="{extensions:Translate CreateFirstCategory}"
                                 BackgroundColor="{StaticResource PrimaryColor}"
-                                TextColor="White"
+                                TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#606060}"
                                 CornerRadius="20"
                                 Padding="20,10"
                                 HorizontalOptions="Center"
@@ -91,7 +92,7 @@
                 FontSize="28"
                 FontAttributes="Bold"
                 BackgroundColor="{StaticResource PrimaryColor}"
-                TextColor="White"
+                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                 WidthRequest="60"
                 HeightRequest="60"
                 CornerRadius="30"

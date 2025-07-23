@@ -19,7 +19,7 @@
 
         <!-- Header con información de la categoría -->
         <Frame Grid.Row="0"
-               BackgroundColor="{StaticResource CardBackgroundColor}"
+               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                CornerRadius="0"
                HasShadow="False"
                Padding="20">
@@ -53,18 +53,18 @@
                            Text="Nombre de categoría"
                            FontSize="24"
                            FontAttributes="Bold"
-                           TextColor="White" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}}" />
 
                     <Label x:Name="CategoryDescriptionLabel"
                            Text="Descripción"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#606060}"
                            IsVisible="False" />
 
                     <Label x:Name="NovelCountLabel"
                            Text="0 novelas"
                            FontSize="14"
-                           TextColor="#B0B0B0"
+                           TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#606060}"
                            Margin="0,5,0,0" />
                 </StackLayout>
             </Grid>
@@ -76,7 +76,7 @@
                 <!-- Mensaje cuando no hay novelas -->
                 <Frame x:Name="EmptyStateFrame"
                        IsVisible="True"
-                       BackgroundColor="{StaticResource CardBackgroundColor}"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                        CornerRadius="15"
                        Padding="30"
                        Margin="0,20">
@@ -88,18 +88,18 @@
                         <Label Text="No hay novelas en esta categoría"
                                FontSize="20"
                                FontAttributes="Bold"
-                               TextColor="White"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}}"
                                HorizontalOptions="Center" />
 
                         <Label Text="Agrega novelas desde tu biblioteca para organizarlas mejor"
                                FontSize="14"
-                               TextColor="#B0B0B0"
+                               TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#606060}"
                                HorizontalOptions="Center"
                                HorizontalTextAlignment="Center" />
 
                         <Button Text="Agregar novelas"
                                 BackgroundColor="{StaticResource PrimaryColor}"
-                                TextColor="White"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                 CornerRadius="20"
                                 Padding="20,10"
                                 HorizontalOptions="Center"
@@ -120,7 +120,7 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame BackgroundColor="{StaticResource CardBackgroundColor}"
+                            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                                    CornerRadius="10"
                                    Padding="0"
                                    HasShadow="False">
@@ -143,7 +143,7 @@
                                     <Button Grid.Row="0"
                                             Text="×"
                                             BackgroundColor="#FF000080"
-                                            TextColor="White"
+                                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                             FontSize="20"
                                             WidthRequest="30"
                                             HeightRequest="30"
@@ -160,13 +160,13 @@
                                         <Label Text="{Binding Title}"
                                                FontSize="14"
                                                FontAttributes="Bold"
-                                               TextColor="White"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                                                MaxLines="2"
                                                LineBreakMode="TailTruncation" />
 
                                         <Label Text="{Binding Author}"
                                                FontSize="12"
-                                               TextColor="#B0B0B0"
+                                               TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark=#606060}"
                                                MaxLines="1"
                                                LineBreakMode="TailTruncation" />
                                     </StackLayout>
@@ -192,7 +192,7 @@
                 FontSize="28"
                 FontAttributes="Bold"
                 BackgroundColor="{StaticResource PrimaryColor}"
-                TextColor="White"
+                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark=White}"
                 WidthRequest="60"
                 HeightRequest="60"
                 CornerRadius="30"

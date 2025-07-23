@@ -3,50 +3,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NovelBook.Views.CreateNovelPage"
              Title="Crear Novela"
-             BackgroundColor="{StaticResource BackgroundDark}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundDarkLight}, Dark={StaticResource BackgroundDark}}">
 
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="20">
 
             <!-- Información básica -->
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="20">
                 <VerticalStackLayout Spacing="15">
                     <Label Text="Información Básica"
                            FontSize="18"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                     <!-- Título -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Título de la Novela *"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                         <Entry x:Name="TitleEntry"
                                Placeholder="Ingrese el título"
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
-                               BackgroundColor="{StaticResource BackgroundLight}"/>
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"/>
                     </VerticalStackLayout>
 
                     <!-- Autor -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Autor *"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                         <Entry x:Name="AuthorEntry"
                                Placeholder="Nombre del autor"
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
-                               BackgroundColor="{StaticResource BackgroundLight}"/>
+                               PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"/>
                     </VerticalStackLayout>
 
                     <!-- Estado -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Estado"
-                               TextColor="{StaticResource TextPrimary}"/>
+                               TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                         <Picker x:Name="StatusPicker"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}">
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}">
                             <Picker.Items>
                                 <x:String>En curso</x:String>
                                 <x:String>Completado</x:String>
@@ -59,7 +59,7 @@
                     <!-- Géneros -->
                     <VerticalStackLayout Spacing="5">
                         <Label Text="Géneros"
-           TextColor="{StaticResource TextPrimary}"/>
+           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
                         <ScrollView Orientation="Horizontal" HeightRequest="50">
                             <HorizontalStackLayout x:Name="GenresLayout" Spacing="10" Padding="0,0,0,5">
                        
@@ -70,14 +70,14 @@
             </Frame>
 
             <!-- Imagen de portada -->
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="20">
                 <VerticalStackLayout Spacing="15">
                     <Label Text="Imagen de Portada"
                            FontSize="18"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -87,7 +87,7 @@
 
                         <!-- Preview de imagen -->
                         <Frame Grid.Column="0"
-                               BackgroundColor="{StaticResource BackgroundLight}"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
                                CornerRadius="10"
                                Padding="0"
                                HeightRequest="160"
@@ -97,7 +97,7 @@
                                        FontSize="40"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                                        x:Name="NoImageLabel"/>
                                 <Image x:Name="CoverImagePreview"
                                        Aspect="AspectFill"
@@ -116,7 +116,7 @@
                                     CornerRadius="10"
                                     Clicked="OnSelectImageClicked"/>
                             <Label Text="JPG, PNG • Max 2MB"
-                                   TextColor="{StaticResource TextMuted}"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                                    FontSize="12"
                                    HorizontalOptions="Center"/>
                         </VerticalStackLayout>
@@ -125,36 +125,36 @@
             </Frame>
 
             <!-- Sinopsis -->
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="20">
                 <VerticalStackLayout Spacing="15">
                     <Label Text="Sinopsis *"
                            FontSize="18"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                     <!-- Barra de herramientas -->
                     <HorizontalStackLayout Spacing="10">
                         <Button Text="B"
                                 FontAttributes="Bold"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
                                 Clicked="OnBoldClicked"/>
                         <Button Text="I"
                                 FontAttributes="Italic"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
                                 Clicked="OnItalicClicked"/>
                         <Button Text="U̲"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
@@ -163,67 +163,67 @@
 
                     <Editor x:Name="SynopsisEditor"
                             Placeholder="Escribe la sinopsis de la novela..."
-                            PlaceholderColor="{StaticResource TextMuted}"
-                            TextColor="{StaticResource TextPrimary}"
-                            BackgroundColor="{StaticResource BackgroundLight}"
+                            PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
                             HeightRequest="200"
                             AutoSize="TextChanges"/>
 
                     <Label x:Name="CharCountLabel"
                            Text="0 / 2000 caracteres"
-                           TextColor="{StaticResource TextMuted}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
                            FontSize="12"
                            HorizontalOptions="End"/>
                 </VerticalStackLayout>
             </Frame>
 
             <!-- Primer capítulo -->
-            <Frame BackgroundColor="{StaticResource BackgroundMedium}"
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
                    CornerRadius="10"
                    Padding="20">
                 <VerticalStackLayout Spacing="15">
                     <Label Text="Primer Capítulo (Opcional)"
                            FontSize="18"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"/>
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"/>
 
                     <Entry x:Name="ChapterTitleEntry"
                            Placeholder="Título del capítulo"
-                           PlaceholderColor="{StaticResource TextMuted}"
-                           TextColor="{StaticResource TextPrimary}"
-                           BackgroundColor="{StaticResource BackgroundLight}"/>
+                           PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                           TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"/>
 
                     <!-- Barra de herramientas para capítulo -->
                     <HorizontalStackLayout Spacing="10">
                         <Button Text="B"
                                 FontAttributes="Bold"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
                                 Clicked="OnChapterBoldClicked"/>
                         <Button Text="I"
                                 FontAttributes="Italic"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
                                 Clicked="OnChapterItalicClicked"/>
                         <Button Text="U̲"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
                                 Clicked="OnChapterUnderlineClicked"/>
                         <BoxView WidthRequest="1" 
-                                 BackgroundColor="{StaticResource TextMuted}" 
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}" 
                                  Margin="10,5"/>
                         <Button Text="¶"
-                                BackgroundColor="{StaticResource BackgroundLight}"
-                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
+                                TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                                 WidthRequest="40"
                                 HeightRequest="40"
                                 CornerRadius="5"
@@ -233,9 +233,9 @@
 
                     <Editor x:Name="ChapterContentEditor"
                             Placeholder="Escribe el contenido del capítulo..."
-                            PlaceholderColor="{StaticResource TextMuted}"
-                            TextColor="{StaticResource TextPrimary}"
-                            BackgroundColor="{StaticResource BackgroundLight}"
+                            PlaceholderColor="{AppThemeBinding Light={StaticResource TextMutedLight}, Dark={StaticResource TextMuted}}"
+                            TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLightLight}, Dark={StaticResource BackgroundLight}}"
                             HeightRequest="300"
                             AutoSize="TextChanges"/>
                 </VerticalStackLayout>
@@ -250,8 +250,8 @@
 
                 <Button Grid.Column="0"
                         Text="Cancelar"
-                        BackgroundColor="{StaticResource BackgroundMedium}"
-                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundMediumLight}, Dark={StaticResource BackgroundMedium}}"
+                        TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
                         CornerRadius="10"
                         HeightRequest="50"
                         Clicked="OnCancelClicked"/>
