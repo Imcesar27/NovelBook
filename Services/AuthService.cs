@@ -119,8 +119,57 @@ public class AuthService
         await command.ExecuteNonQueryAsync();
     }
 
+    /// <summary>
+    /// Cierra la sesión del usuario actual
+    /// </summary>
     public void Logout()
     {
+        // Guardar las configuraciones importantes antes de limpiar
+        var savedLanguage = Preferences.Get("AppLanguage", "system");
+        var savedTheme = Preferences.Get("AppTheme", "System");
+        var savedFontSize = Preferences.Get("FontSize", 16.0);
+
+        // Limpiar datos del usuario
         _currentUser = null;
+
+        // Limpiar solo las preferencias relacionadas con el usuario
+        Preferences.Remove("user_email");
+        Preferences.Remove("user_password");
+        Preferences.Remove("remember_user");
+
+        // NO limpiar Preferences.Clear() para mantener las configuraciones
+
+        // Restaurar las configuraciones importantes
+        Preferences.Set("AppLanguage", savedLanguage);
+        Preferences.Set("AppTheme", savedTheme);
+        Preferences.Set("FontSize", savedFontSize);
+
+        // Limpiar credenciales biométricas
+        SecureStorage.Remove("biometric_email");
+    }
+
+    // Alternativamente método separado para limpiar solo datos del usuario:
+    public void ClearUserData()
+    {
+        _currentUser = null;
+
+        // Lista de claves relacionadas con el usuario
+        var userRelatedKeys = new[]
+        {
+        "user_email",
+        "user_password",
+        "remember_user",
+        "last_login",
+        "user_token"
+    };
+
+        // Limpiar solo las claves del usuario
+        foreach (var key in userRelatedKeys)
+        {
+            Preferences.Remove(key);
+        }
+
+        // Limpiar datos seguros
+        SecureStorage.RemoveAll();
     }
 }

@@ -1,27 +1,42 @@
 ﻿using NovelBook.Services;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace NovelBook.Extensions
 {
     /// <summary>
-    /// Extensión de marcado XAML para facilitar las traducciones
-    /// Uso: Text="{extensions:Translate Welcome}"
+    /// Extensión de marcado XAML para facilitar las traducciones reactivas.
+    /// Uso:
+    /// - Text="{extensions:Translate Welcome}"
+    /// - StringFormat="{extensions:Translate ViewReviews}"
     /// </summary>
     [ContentProperty(nameof(Key))]
-    public class TranslateExtension : IMarkupExtension<string>
+    public class TranslateExtension : IMarkupExtension, INotifyPropertyChanged
     {
         public string Key { get; set; }
 
-        public string ProvideValue(IServiceProvider serviceProvider)
+        public TranslateExtension()
         {
-            if (string.IsNullOrEmpty(Key))
-                return string.Empty;
-
-            return LocalizationService.GetString(Key);
+            // Escuchar el evento de cambio de idioma
+            LocalizationService.LanguageChanged += OnLanguageChanged;
         }
 
-        object IMarkupExtension.ProvideValue(IServiceProvider serviceProvider)
+        ~TranslateExtension()
         {
-            return ProvideValue(serviceProvider);
+            LocalizationService.LanguageChanged -= OnLanguageChanged;
         }
+
+        public object ProvideValue(IServiceProvider serviceProvider)
+        {
+            // Devuelve directamente el string traducido
+            return LocalizationService.GetString(Key ?? string.Empty);
+        }
+
+        private void OnLanguageChanged(object sender, EventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Key)));
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

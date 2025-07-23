@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace NovelBook.Services
 {
@@ -7,6 +9,9 @@ namespace NovelBook.Services
     /// </summary>
     public static class LocalizationService
     {
+        // Evento para notificar cambios de idioma
+        public static event EventHandler<EventArgs> LanguageChanged;
+
         // Diccionario de traducciones
         private static readonly Dictionary<string, Dictionary<string, string>> Translations = new()
         {
@@ -906,7 +911,7 @@ namespace NovelBook.Services
                 ["ErrorResettingPassword"] = "An error occurred while resetting the password.",
                 ["Verifying"] = "Verifying...",
 
-                // En inglés:
+                //
                 ["PasswordRequired"] = "Password required",
                 ["PleaseEnterPassword"] = "Please enter your password",
                 ["PasswordIncorrect"] = "Incorrect password",
@@ -1081,6 +1086,9 @@ namespace NovelBook.Services
             Thread.CurrentThread.CurrentUICulture = culture;
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            // Notificar el cambio de idioma
+            LanguageChanged?.Invoke(null, EventArgs.Empty);
         }
     }
 }

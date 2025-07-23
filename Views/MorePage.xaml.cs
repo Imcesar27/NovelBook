@@ -504,24 +504,20 @@ public partial class MorePage : ContentPage
     // Manejar el evento de cierre de sesión
     private async Task HandleLogout()
     {
-        bool confirm = await DisplayAlert(
-            LocalizationService.GetString("Logout"), // Título: "Cerrar Sesión"
-            LocalizationService.GetString("LogoutConfirmMessage"), // Mensaje: "¿Estás seguro de que deseas cerrar sesión?"
-            LocalizationService.GetString("Yes"), // Botón de confirmación: "Sí"
-            LocalizationService.GetString("No")   // Botón de cancelación: "No"
-);
-
+        var confirm = await DisplayAlert(
+        LocalizationService.GetString("Logout"),
+        LocalizationService.GetString("LogoutConfirmMessage"),
+        LocalizationService.GetString("Yes"),
+        LocalizationService.GetString("No")
+    );
 
         if (confirm)
         {
-            // Limpiar datos del usuario
+            // Usar el nuevo método que preserva las configuraciones
             var authService = new AuthService(new DatabaseService());
-            authService.Logout();
+            authService.Logout(); // Este método ahora preserva el idioma
 
-            // Limpiar preferencias
-            Preferences.Clear();
-
-            // Volver al login con tema dinámico
+            // Navegar al login
             var navigationPage = new NavigationPage(new LoginPage());
 
             // Aplicar colores según el tema actual

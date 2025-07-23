@@ -178,20 +178,62 @@ public partial class SettingsPage : ContentPage
 
         // Guardar preferencia
         Preferences.Set("AppLanguage", language);
-        UpdateLanguageStatusLabel(language);
 
         // Cambiar el idioma de la aplicación
         LocalizationService.SetLanguage(actualLanguage);
 
+        // Actualizar la UI actual
+        UpdateLanguageStatusLabel(language);
+
         // Mostrar mensaje de confirmación
         var message = actualLanguage == "es"
-            ? "El cambio de idioma se aplicará completamente al reiniciar la aplicación"
-            : "The language change will be fully applied after restarting the app";
+            ? "Los cambios se han aplicado. Algunas secciones podrían requerir reiniciar la aplicación."
+            : "Changes have been applied. Some sections might require restarting the app.";
 
-        await DisplayAlert(
+        var result = await DisplayAlert(
             actualLanguage == "es" ? "Idioma cambiado" : "Language changed",
             message,
-            "OK");
+            actualLanguage == "es" ? "Reiniciar ahora" : "Restart now",
+            actualLanguage == "es" ? "Más tarde" : "Later"
+        );
+
+        if (result)
+        {
+            // Reiniciar la aplicación reconstruyendo la MainPage
+            await RestartApplication();
+        }
+    }
+
+    /// <summary>
+    /// Reinicia la aplicación para aplicar los cambios de idioma
+    /// </summary>
+    private async Task RestartApplication()
+    {
+        try
+        {
+            // Guardar el estado actual del usuario
+            var currentUser = AuthService.CurrentUser;
+
+            // Recrear la página principal
+            if (currentUser != null)
+            {
+                // Si hay usuario logueado, ir al Shell
+                Application.Current.MainPage = new AppShell();
+            }
+            else
+            {
+                // Si no hay usuario, ir al login
+                Application.Current.MainPage = new NavigationPage(new LoginPage())
+                {
+                    BarBackgroundColor = Color.FromArgb("#1A1A1A"),
+                    BarTextColor = Colors.White
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error reiniciando aplicación: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -583,21 +625,19 @@ private async void OnChangePasswordTapped(object sender, EventArgs e)
     private async void OnLogoutTapped(object sender, EventArgs e)
     {
         var confirm = await DisplayAlert(
-            "Cerrar Sesión",
-            "¿Estás seguro de que deseas cerrar sesión?",
-            "Sí",
-            "No");
+               LocalizationService.GetString("Logout"),
+               LocalizationService.GetString("LogoutConfirmMessage"),
+               LocalizationService.GetString("Yes"),
+               LocalizationService.GetString("No")
+           );
 
         if (confirm)
         {
-            // Limpiar datos
+            // Usar el nuevo método que preserva las configuraciones
             var authService = new AuthService(new DatabaseService());
-            authService.Logout();
+            authService.Logout(); // Este método ahora preserva el idioma
 
-            // Limpiar preferencias
-            Preferences.Clear();
-
-            // Volver al login
+            // Navegar al login
             var navigationPage = new NavigationPage(new LoginPage());
 
             // Aplicar colores según el tema actual
