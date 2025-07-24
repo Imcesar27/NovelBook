@@ -110,7 +110,7 @@
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnFacebookLoginTapped"/>
                         </Frame.GestureRecognizers>
-                        <Label Text="f" 
+                        <Label Text="F" 
                            FontSize="24" 
                            FontAttributes="Bold"
                            TextColor="White"
@@ -135,6 +135,37 @@
                                HorizontalOptions="Center"
                                VerticalOptions="Center"/>
                     </Frame>
+
+                    <!-- NUEVO: Botón de GitHub -->
+                    <Frame BackgroundColor="#24292E"
+                           CornerRadius="10"
+                           Padding="0"
+                           HeightRequest="50"
+                           Margin="0,5">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnGitHubLoginTapped"/>
+                        </Frame.GestureRecognizers>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0"
+                                   Text="&#xf09b;"
+                                   FontFamily="FontAwesome"
+                                   FontSize="24"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                            <Label Grid.Column="1"
+                                   Text="{extensions:Translate ContinueWithGitHub}"
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start"/>
+                        </Grid>
+                    </Frame>
+
                 </HorizontalStackLayout>
 
                 <!-- Link para registro e invitado -->

@@ -9,6 +9,7 @@ public partial class LoginPage : ContentPage
     private readonly AuthService _authService;
     private readonly DatabaseService _databaseService;
     private readonly IFingerprint _fingerprint;
+    private readonly GitHubAuthService _githubAuthService; 
 
     public LoginPage()
     {
@@ -18,6 +19,9 @@ public partial class LoginPage : ContentPage
         _databaseService = new DatabaseService();
         _authService = new AuthService(_databaseService);
         _fingerprint = CrossFingerprint.Current;
+
+        // Crear instancia del servicio de GitHub
+        _githubAuthService = new GitHubAuthService(_databaseService, _authService);
 
         // Verificar si hay credenciales guardadas para biometría
         CheckBiometricLogin();
@@ -161,6 +165,10 @@ public partial class LoginPage : ContentPage
     {
         try
         {
+            // NO preguntar para usuarios de login social
+            if (_authService.IsCurrentUserSocialLogin())
+                return;
+
             var isAvailable = await _fingerprint.IsAvailableAsync();
             if (!isAvailable) return;
 
@@ -217,6 +225,66 @@ public partial class LoginPage : ContentPage
             "Google",
             LocalizationService.GetString("ComingSoon") ?? "Login con Google - Próximamente",
             LocalizationService.GetString("OK"));
+    }
+
+    /// <summary>
+    /// Maneja el login con GitHub
+    /// AGREGAR este método nuevo (no reemplazar el de Facebook)
+    /// </summary>
+    private async void OnGitHubLoginTapped(object sender, EventArgs e)
+    {
+        try
+        {
+            // Deshabilitar el botón mientras se procesa
+            var githubButton = sender as View;
+            if (githubButton != null)
+                githubButton.IsEnabled = false;
+
+            // Mostrar indicador de carga (opcional)
+            await DisplayAlert(
+                LocalizationService.GetString("PleaseWait") ?? "Por favor espera",
+                LocalizationService.GetString("ConnectingGitHub") ?? "Conectando con GitHub...",
+                LocalizationService.GetString("OK"));
+
+            // Intentar login con GitHub
+            var (success, message, user) = await _githubAuthService.LoginWithGitHubAsync();
+
+            if (success)
+            {
+                // Login exitoso
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    LocalizationService.GetString("WelcomeBack", user.Name) ?? $"¡Bienvenido {user.Name}!",
+                    LocalizationService.GetString("OK"));
+
+                // Navegar a la pantalla principal
+                App.SetMainPageToShell();
+            }
+            else
+            {
+                // Mostrar error
+                await DisplayAlert(
+                    LocalizationService.GetString("Error"),
+                    message,
+                    LocalizationService.GetString("OK"));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error en GitHub Login: {ex.Message}");
+
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("GitHubLoginError") ?? "Error al iniciar sesión con GitHub",
+                LocalizationService.GetString("OK"));
+        }
+        finally
+        {
+            // Re-habilitar el botón
+            var githubButton = sender as View;
+            if (githubButton != null)
+                githubButton.IsEnabled = true;
+        }
     }
 
     private async void OnRegisterTapped(object sender, EventArgs e)
