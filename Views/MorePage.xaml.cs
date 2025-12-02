@@ -494,6 +494,10 @@ public partial class MorePage : ContentPage
                     await Shell.Current.GoToAsync(nameof(ManageNovelsPage));
                     break;
 
+                case "AnalyticsDashboard":
+                    await Navigation.PushAsync(new AnalyticsDashboardPage());
+                    break;
+
                 case "Logout":
                     await HandleLogout();
                     break;

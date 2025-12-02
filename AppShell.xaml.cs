@@ -40,6 +40,9 @@ public partial class AppShell : Shell
         // Ruta para la página de logros
         Routing.RegisterRoute(nameof(Views.AchievementsPage), typeof(Views.AchievementsPage));
 
+        // Ruta para la página de metricas y análisis.
+        Routing.RegisterRoute(nameof(Views.AnalyticsDashboardPage), typeof(Views.AnalyticsDashboardPage));
+
         // Navegación segura
         this.Navigated += OnShellNavigated;
     }

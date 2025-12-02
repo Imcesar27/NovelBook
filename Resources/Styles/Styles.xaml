@@ -413,4 +413,12 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray200}}" />
     </Style>
 
+    <!-- Estilo para tarjetas de estadísticas del Dashboard de Analytics -->
+    <Style x:Key="StatCardStyle" TargetType="Frame">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="15"/>
+        <Setter Property="HasShadow" Value="False"/>
+    </Style>
+
 </ResourceDictionary>
