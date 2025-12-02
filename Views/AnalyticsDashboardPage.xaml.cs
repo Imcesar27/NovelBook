@@ -1,11 +1,11 @@
-using NovelBook.Models;
+Ôªøusing NovelBook.Models;
 using NovelBook.Services;
 
 namespace NovelBook.Views;
 
 /// <summary>
-/// P·gina del Dashboard de Analytics para administradores
-/// Muestra mÈtricas, recomendaciones y patrones de lectura
+/// P√°gina del Dashboard de Analytics para administradores
+/// Muestra m√©tricas, recomendaciones y patrones de lectura
 /// </summary>
 public partial class AnalyticsDashboardPage : ContentPage
 {
@@ -14,7 +14,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     private readonly DatabaseService _databaseService;
 
     /// <summary>
-    /// Constructor de la p·gina
+    /// Constructor de la p√°gina
     /// </summary>
     public AnalyticsDashboardPage()
     {
@@ -26,7 +26,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Se ejecuta cuando la p·gina aparece
+    /// Se ejecuta cuando la p√°gina aparece
     /// </summary>
     protected override async void OnAppearing()
     {
@@ -36,7 +36,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         if (AuthService.CurrentUser == null || AuthService.CurrentUser.Role != "admin")
         {
             await DisplayAlert("Acceso Denegado",
-                "Esta secciÛn es solo para administradores.", "OK");
+                "Esta secci√≥n es solo para administradores.", "OK");
             await Navigation.PopAsync();
             return;
         }
@@ -54,13 +54,13 @@ public partial class AnalyticsDashboardPage : ContentPage
         {
             ShowLoading(true);
 
-            // Cargar estadÌsticas generales
+            // Cargar estad√≠sticas generales
             await LoadGeneralStatsAsync();
 
             // Cargar top novelas
             await LoadTopNovelsAsync();
 
-            // Cargar top gÈneros
+            // Cargar top g√©neros
             await LoadTopGenresAsync();
 
             // Cargar top autores
@@ -73,7 +73,7 @@ public partial class AnalyticsDashboardPage : ContentPage
             await LoadExistingPatternsAsync();
 
             // Actualizar fecha
-            LastUpdateLabel.Text = $"⁄ltima actualizaciÛn: {DateTime.Now:HH:mm:ss}";
+            LastUpdateLabel.Text = $"√öltima actualizaci√≥n: {DateTime.Now:HH:mm:ss}";
         }
         catch (Exception ex)
         {
@@ -86,7 +86,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Carga las estadÌsticas generales
+    /// Carga las estad√≠sticas generales
     /// </summary>
     private async Task LoadGeneralStatsAsync()
     {
@@ -120,7 +120,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Carga las novelas m·s leÌdas
+    /// Carga las novelas m√°s le√≠das
     /// </summary>
     private async Task LoadTopNovelsAsync()
     {
@@ -147,7 +147,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Carga los gÈneros m·s populares
+    /// Carga los g√©neros m√°s populares
     /// </summary>
     private async Task LoadTopGenresAsync()
     {
@@ -159,7 +159,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
             if (topGenres.Count == 0)
             {
-                TopGenresContainer.Children.Add(CreateEmptyMessage("No hay datos de gÈneros disponibles"));
+                TopGenresContainer.Children.Add(CreateEmptyMessage("No hay datos de g√©neros disponibles"));
                 return;
             }
 
@@ -255,7 +255,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     #region ========== EVENTOS ==========
 
     /// <summary>
-    /// Evento al presionar el botÛn de actualizar
+    /// Evento al presionar el bot√≥n de actualizar
     /// </summary>
     private async void OnRefreshClicked(object sender, EventArgs e)
     {
@@ -263,13 +263,13 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Evento al presionar el botÛn de generar recomendaciones
+    /// Evento al presionar el bot√≥n de generar recomendaciones
     /// </summary>
     private async void OnGenerateRecommendationsClicked(object sender, EventArgs e)
     {
-        bool confirm = await DisplayAlert("Generar An·lisis",
-            "øDeseas ejecutar el an·lisis completo y generar nuevas recomendaciones?\n\n" +
-            "Esto puede tomar unos segundos.", "SÌ, generar", "Cancelar");
+        bool confirm = await DisplayAlert("Generar An√°lisis",
+            "¬øDeseas ejecutar el an√°lisis completo y generar nuevas recomendaciones?\n\n" +
+            "Esto puede tomar unos segundos.", "S√≠, generar", "Cancelar");
 
         if (!confirm) return;
 
@@ -287,15 +287,15 @@ public partial class AnalyticsDashboardPage : ContentPage
             await LoadExistingRecommendationsAsync();
             await LoadExistingPatternsAsync();
 
-            await DisplayAlert("An·lisis Completado",
+            await DisplayAlert("An√°lisis Completado",
                 $"Se generaron {recommendations.Count} recomendaciones y {patterns.Count} patrones.",
                 "OK");
 
-            LastUpdateLabel.Text = $"⁄ltima actualizaciÛn: {DateTime.Now:HH:mm:ss}";
+            LastUpdateLabel.Text = $"√öltima actualizaci√≥n: {DateTime.Now:HH:mm:ss}";
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Error al generar an·lisis: {ex.Message}", "OK");
+            await DisplayAlert("Error", $"Error al generar an√°lisis: {ex.Message}", "OK");
         }
         finally
         {
@@ -304,7 +304,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Marca una recomendaciÛn como leÌda
+    /// Marca una recomendaci√≥n como le√≠da
     /// </summary>
     private async void OnMarkAsReadClicked(object sender, EventArgs e)
     {
@@ -316,7 +316,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Marca una recomendaciÛn como implementada
+    /// Marca una recomendaci√≥n como implementada
     /// </summary>
     private async void OnMarkAsImplementedClicked(object sender, EventArgs e)
     {
@@ -329,7 +329,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
     #endregion
 
-    #region ========== CREACI”N DE TARJETAS UI ==========
+    #region ========== CREACI√ìN DE TARJETAS UI ==========
 
     /// <summary>
     /// Crea una tarjeta para mostrar una novela
@@ -385,11 +385,11 @@ public partial class AnalyticsDashboardPage : ContentPage
             TextColor = Color.FromArgb("#888888")
         });
 
-        // EstadÌsticas
+        // Estad√≠sticas
         var statsStack = new VerticalStackLayout { HorizontalOptions = LayoutOptions.End };
         statsStack.Children.Add(new Label
         {
-            Text = $"?? {readCount}",
+            Text = $"üìñ {readCount}",
             FontSize = 14,
             FontAttributes = FontAttributes.Bold,
             TextColor = Color.FromArgb("#4CAF50"),
@@ -397,7 +397,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         });
         statsStack.Children.Add(new Label
         {
-            Text = $"? {novel.Rating:F1}",
+            Text = $"‚≠ê {novel.Rating:F1}",
             FontSize = 12,
             TextColor = Color.FromArgb("#FFC107"),
             HorizontalOptions = LayoutOptions.End
@@ -417,7 +417,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Crea una tarjeta para mostrar un gÈnero
+    /// Crea una tarjeta para mostrar un g√©nero
     /// </summary>
     private Frame CreateGenreCard(int rank, string genre, int novelCount, int readCount, decimal avgRating)
     {
@@ -451,7 +451,7 @@ public partial class AnalyticsDashboardPage : ContentPage
             VerticalOptions = LayoutOptions.Center
         };
 
-        // Info del gÈnero
+        // Info del g√©nero
         var infoStack = new VerticalStackLayout { Margin = new Thickness(10, 0, 0, 0) };
         infoStack.Children.Add(new Label
         {
@@ -469,11 +469,11 @@ public partial class AnalyticsDashboardPage : ContentPage
             TextColor = Color.FromArgb("#888888")
         });
 
-        // EstadÌsticas
+        // Estad√≠sticas
         var statsStack = new VerticalStackLayout { HorizontalOptions = LayoutOptions.End };
         statsStack.Children.Add(new Label
         {
-            Text = $"?? {readCount}",
+            Text = $"üìñ {readCount}",
             FontSize = 14,
             FontAttributes = FontAttributes.Bold,
             TextColor = Color.FromArgb("#4CAF50"),
@@ -481,7 +481,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         });
         statsStack.Children.Add(new Label
         {
-            Text = $"? {avgRating:F1}",
+            Text = $"‚≠ê {avgRating:F1}",
             FontSize = 12,
             TextColor = Color.FromArgb("#FFC107"),
             HorizontalOptions = LayoutOptions.End
@@ -554,11 +554,11 @@ public partial class AnalyticsDashboardPage : ContentPage
             TextColor = Color.FromArgb("#888888")
         });
 
-        // EstadÌsticas
+        // Estad√≠sticas
         var statsStack = new VerticalStackLayout { HorizontalOptions = LayoutOptions.End };
         statsStack.Children.Add(new Label
         {
-            Text = $"?? {readCount}",
+            Text = $"üìñ {readCount}",
             FontSize = 14,
             FontAttributes = FontAttributes.Bold,
             TextColor = Color.FromArgb("#4CAF50"),
@@ -566,7 +566,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         });
         statsStack.Children.Add(new Label
         {
-            Text = $"? {avgRating:F1}",
+            Text = $"‚≠ê {avgRating:F1}",
             FontSize = 12,
             TextColor = Color.FromArgb("#FFC107"),
             HorizontalOptions = LayoutOptions.End
@@ -586,7 +586,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Crea una tarjeta para mostrar una recomendaciÛn
+    /// Crea una tarjeta para mostrar una recomendaci√≥n
     /// </summary>
     private Frame CreateRecommendationCard(AdminRecommendation rec)
     {
@@ -610,7 +610,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
         var mainStack = new VerticalStackLayout { Spacing = 8 };
 
-        // Header con icono y tÌtulo
+        // Header con icono y t√≠tulo
         var headerGrid = new Grid
         {
             ColumnDefinitions = new ColumnDefinitionCollection
@@ -665,7 +665,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
         mainStack.Children.Add(headerGrid);
 
-        // DescripciÛn
+        // Descripci√≥n
         mainStack.Children.Add(new Label
         {
             Text = rec.Description,
@@ -697,14 +697,14 @@ public partial class AnalyticsDashboardPage : ContentPage
         footerGrid.Children.Add(confidenceLabel);
         Grid.SetColumn(confidenceLabel, 0);
 
-        // Botones de acciÛn (solo si no est· implementada)
+        // Botones de acci√≥n (solo si no est√° implementada)
         if (!rec.IsImplemented)
         {
             if (!rec.IsRead)
             {
                 var readBtn = new Button
                 {
-                    Text = "? LeÌda",
+                    Text = "‚úì Le√≠da",
                     FontSize = 10,
                     BackgroundColor = Color.FromArgb("#2196F3"),
                     TextColor = Colors.White,
@@ -720,7 +720,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
             var implementBtn = new Button
             {
-                Text = "? Implementada",
+                Text = "‚úì Implementada",
                 FontSize = 10,
                 BackgroundColor = Color.FromArgb("#4CAF50"),
                 TextColor = Colors.White,
@@ -738,7 +738,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         {
             var implementedLabel = new Label
             {
-                Text = "? Implementada",
+                Text = "‚úì Implementada",
                 FontSize = 11,
                 TextColor = Color.FromArgb("#4CAF50"),
                 VerticalOptions = LayoutOptions.Center,
@@ -756,7 +756,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Crea una tarjeta para mostrar un patrÛn
+    /// Crea una tarjeta para mostrar un patr√≥n
     /// </summary>
     private Frame CreatePatternCard(ReadingPattern pattern)
     {
@@ -794,7 +794,7 @@ public partial class AnalyticsDashboardPage : ContentPage
 
         mainStack.Children.Add(headerStack);
 
-        // Valor/DescripciÛn
+        // Valor/Descripci√≥n
         mainStack.Children.Add(new Label
         {
             Text = pattern.PatternValue,
@@ -806,7 +806,7 @@ public partial class AnalyticsDashboardPage : ContentPage
         // Confianza
         mainStack.Children.Add(new Label
         {
-            Text = $"Confianza: {pattern.GetConfidenceText()} ï Tipo: {pattern.GetPatternTypeText()}",
+            Text = $"Confianza: {pattern.GetConfidenceText()} ‚Ä¢ Tipo: {pattern.GetPatternTypeText()}",
             FontSize = 10,
             TextColor = Color.FromArgb(pattern.GetConfidenceColor()),
             Margin = new Thickness(0, 5, 0, 0)
@@ -817,7 +817,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Crea un mensaje de estado vacÌo
+    /// Crea un mensaje de estado vac√≠o
     /// </summary>
     private Frame CreateEmptyMessage(string message)
     {
@@ -839,7 +839,7 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Obtiene el color seg˙n el ranking
+    /// Obtiene el color seg√∫n el ranking
     /// </summary>
     private Color GetRankColor(int rank)
     {
