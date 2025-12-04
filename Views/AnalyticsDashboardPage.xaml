@@ -193,12 +193,23 @@
                         Clicked="OnRecommendationTabClicked"/>
             </Grid>
 
-            <!-- Contador de recomendaciones -->
-            <Label x:Name="RecommendationCountLabel"
-                   Text="0 recomendaciones"
-                   FontSize="12"
-                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
-                   Margin="0,0,0,5"/>
+            <!-- Contador y botón limpiar -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,5">
+                <Label x:Name="RecommendationCountLabel"
+                       Text="0 recomendaciones"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                       VerticalOptions="Center"/>
+                <Button Grid.Column="1"
+                        x:Name="ClearRecommendationsButton"
+                        Text="🗑️ Limpiar"
+                        FontSize="11"
+                        BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D2020}"
+                        TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF5350}"
+                        CornerRadius="10"
+                        Padding="10,5"
+                        Clicked="OnClearRecommendationsClicked"/>
+            </Grid>
 
             <!-- Contenedor de recomendaciones -->
             <VerticalStackLayout x:Name="RecommendationsContainer" Spacing="10">

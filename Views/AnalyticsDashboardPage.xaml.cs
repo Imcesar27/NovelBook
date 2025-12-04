@@ -452,6 +452,68 @@ public partial class AnalyticsDashboardPage : ContentPage
         }
     }
 
+    /// <summary>
+    /// Evento al presionar el botón de limpiar recomendaciones
+    /// </summary>
+    private async void OnClearRecommendationsClicked(object sender, EventArgs e)
+    {
+        string filterName = _currentRecommendationFilter switch
+        {
+            "pending" => "pendientes",
+            "read" => "leídas",
+            "implemented" => "implementadas",
+            _ => "todas"
+        };
+
+        var action = await DisplayActionSheet(
+            $"¿Qué deseas eliminar?",
+            "Cancelar",
+            null,
+            $"Solo {filterName} (pestaña actual)",
+            "Todas las recomendaciones");
+
+        if (action == null || action == "Cancelar")
+            return;
+
+        string filterToDelete;
+        string confirmMessage;
+
+        if (action.StartsWith("Solo"))
+        {
+            filterToDelete = _currentRecommendationFilter;
+            confirmMessage = $"¿Estás seguro de eliminar todas las recomendaciones {filterName}?";
+        }
+        else
+        {
+            filterToDelete = "all";
+            confirmMessage = "¿Estás seguro de eliminar TODAS las recomendaciones?\n\nEsta acción no se puede deshacer.";
+        }
+
+        bool confirm = await DisplayAlert("Confirmar eliminación", confirmMessage, "Sí, eliminar", "Cancelar");
+
+        if (confirm)
+        {
+            try
+            {
+                ShowLoading(true);
+
+                int deleted = await _analyticsService.DeleteRecommendationsAsync(filterToDelete);
+
+                await DisplayAlert("Completado", $"Se eliminaron {deleted} recomendación(es).", "OK");
+
+                await LoadExistingRecommendationsAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudo eliminar: {ex.Message}", "OK");
+            }
+            finally
+            {
+                ShowLoading(false);
+            }
+        }
+    }
+
     #endregion
 
     #region ========== CREACIÓN DE TARJETAS UI ==========

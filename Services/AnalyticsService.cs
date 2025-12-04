@@ -473,10 +473,20 @@ public class AnalyticsService
     /// <summary>
     /// Guarda una recomendación en la base de datos
     /// </summary>
+    /// <summary>
+    /// Guarda una recomendación en la base de datos (evita duplicados)
+    /// </summary>
     public async Task<bool> SaveRecommendationAsync(AdminRecommendation recommendation)
     {
         try
         {
+            // Verificar si ya existe una recomendación similar no implementada
+            if (await RecommendationExistsAsync(recommendation.RecommendationType, recommendation.Title))
+            {
+                System.Diagnostics.Debug.WriteLine($"Recomendación duplicada ignorada: {recommendation.Title}");
+                return false; // No guardar duplicado
+            }
+
             using var connection = _database.GetConnection();
             await connection.OpenAsync();
 
@@ -768,6 +778,70 @@ public class AnalyticsService
             CreatedAt = reader.GetDateTime(reader.GetOrdinal("created_at")),
             Metadata = reader.IsDBNull(reader.GetOrdinal("metadata")) ? null : reader.GetString(reader.GetOrdinal("metadata"))
         };
+    }
+
+    /// <summary>
+    /// Verifica si ya existe una recomendación similar (mismo tipo y título)
+    /// </summary>
+    public async Task<bool> RecommendationExistsAsync(string type, string title)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"
+                SELECT COUNT(*) FROM admin_recommendations 
+                WHERE recommendation_type = @type 
+                AND title = @title 
+                AND is_implemented = 0";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@type", type);
+            command.Parameters.AddWithValue("@title", title);
+
+            var count = (int)await command.ExecuteScalarAsync();
+            return count > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error verificando duplicado: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Elimina todas las recomendaciones según el filtro
+    /// </summary>
+    /// <param name="filter">pending, read, implemented, o all</param>
+    public async Task<int> DeleteRecommendationsAsync(string filter)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            string whereClause = filter switch
+            {
+                "pending" => "WHERE is_read = 0 AND is_implemented = 0",
+                "read" => "WHERE is_read = 1 AND is_implemented = 0",
+                "implemented" => "WHERE is_implemented = 1",
+                "all" => "",
+                _ => "WHERE 1=0" // No eliminar nada si filtro inválido
+            };
+
+            var query = $"DELETE FROM admin_recommendations {whereClause}";
+
+            using var command = new SqlCommand(query, connection);
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            return rowsAffected;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error eliminando recomendaciones: {ex.Message}");
+            return 0;
+        }
     }
 
     #endregion
