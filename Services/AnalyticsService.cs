@@ -621,6 +621,136 @@ public class AnalyticsService
     }
 
     /// <summary>
+    /// Desmarca una recomendación como leída (vuelve a no leída)
+    /// </summary>
+    public async Task<bool> UnmarkRecommendationAsReadAsync(int recommendationId)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = "UPDATE admin_recommendations SET is_read = 0 WHERE id = @id";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@id", recommendationId);
+
+            await command.ExecuteNonQueryAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error desmarcando como leída: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Desmarca una recomendación como implementada (vuelve a leída o pendiente)
+    /// </summary>
+    public async Task<bool> UnmarkRecommendationAsImplementedAsync(int recommendationId)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = "UPDATE admin_recommendations SET is_implemented = 0 WHERE id = @id";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@id", recommendationId);
+
+            await command.ExecuteNonQueryAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error desmarcando como implementada: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Obtiene recomendaciones filtradas por estado
+    /// </summary>
+    /// <param name="filter">pending = no leídas, read = leídas no implementadas, implemented = implementadas</param>
+    public async Task<List<AdminRecommendation>> GetRecommendationsByStatusAsync(string filter, int limit = 100)
+    {
+        var recommendations = new List<AdminRecommendation>();
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            string whereClause = filter switch
+            {
+                "pending" => "WHERE is_read = 0 AND is_implemented = 0",
+                "read" => "WHERE is_read = 1 AND is_implemented = 0",
+                "implemented" => "WHERE is_implemented = 1",
+                _ => "" // all
+            };
+
+            var query = $@"
+                SELECT TOP {limit} * FROM admin_recommendations
+                {whereClause}
+                ORDER BY priority DESC, created_at DESC";
+
+            using var command = new SqlCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                recommendations.Add(MapRecommendation(reader));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo recomendaciones por estado: {ex.Message}");
+        }
+
+        return recommendations;
+    }
+
+    /// <summary>
+    /// Obtiene el conteo de recomendaciones por estado
+    /// </summary>
+    public async Task<(int Pending, int Read, int Implemented)> GetRecommendationCountsAsync()
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"
+                SELECT 
+                    SUM(CASE WHEN is_read = 0 AND is_implemented = 0 THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE WHEN is_read = 1 AND is_implemented = 0 THEN 1 ELSE 0 END) as read_count,
+                    SUM(CASE WHEN is_implemented = 1 THEN 1 ELSE 0 END) as implemented
+                FROM admin_recommendations";
+
+            using var command = new SqlCommand(query, connection);
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                return (
+                    reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
+                    reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
+                    reader.IsDBNull(2) ? 0 : reader.GetInt32(2)
+                );
+            }
+
+            return (0, 0, 0);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo conteos: {ex.Message}");
+            return (0, 0, 0);
+        }
+    }
+
+    /// <summary>
     /// Mapea un SqlDataReader a un objeto AdminRecommendation
     /// </summary>
     private AdminRecommendation MapRecommendation(SqlDataReader reader)

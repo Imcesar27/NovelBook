@@ -13,6 +13,9 @@ public partial class AnalyticsDashboardPage : ContentPage
     private readonly AnalyticsService _analyticsService;
     private readonly DatabaseService _databaseService;
 
+    // Filtro actual de recomendaciones
+    private string _currentRecommendationFilter = "pending";
+
     /// <summary>
     /// Constructor de la página
     /// </summary>
@@ -203,18 +206,39 @@ public partial class AnalyticsDashboardPage : ContentPage
     /// <summary>
     /// Carga las recomendaciones existentes
     /// </summary>
+    /// <summary>
+    /// Carga las recomendaciones según el filtro actual
+    /// </summary>
     private async Task LoadExistingRecommendationsAsync()
     {
-        var recommendations = await _analyticsService.GetAllRecommendationsAsync(10);
+        var recommendations = await _analyticsService.GetRecommendationsByStatusAsync(_currentRecommendationFilter, 20);
+        var counts = await _analyticsService.GetRecommendationCountsAsync();
 
         MainThread.BeginInvokeOnMainThread(() =>
         {
+            // Actualizar contador
+            int currentCount = _currentRecommendationFilter switch
+            {
+                "pending" => counts.Pending,
+                "read" => counts.Read,
+                "implemented" => counts.Implemented,
+                _ => 0
+            };
+            RecommendationCountLabel.Text = $"{currentCount} recomendación(es) • Total: {counts.Pending + counts.Read + counts.Implemented}";
+
+            // Actualizar contenedor
             RecommendationsContainer.Children.Clear();
 
             if (recommendations.Count == 0)
             {
-                RecommendationsContainer.Children.Add(
-                    CreateEmptyMessage("Presiona 'Generar' para analizar datos y obtener recomendaciones..."));
+                string emptyMessage = _currentRecommendationFilter switch
+                {
+                    "pending" => "No hay recomendaciones pendientes. ¡Presiona 'Generar' para crear nuevas!",
+                    "read" => "No hay recomendaciones marcadas como leídas.",
+                    "implemented" => "No hay recomendaciones implementadas aún.",
+                    _ => "No hay recomendaciones."
+                };
+                RecommendationsContainer.Children.Add(CreateEmptyMessage(emptyMessage));
                 return;
             }
 
@@ -324,6 +348,107 @@ public partial class AnalyticsDashboardPage : ContentPage
         {
             await _analyticsService.MarkRecommendationAsImplementedAsync(recId);
             await LoadExistingRecommendationsAsync();
+        }
+    }
+
+    /// <summary>
+    /// Desmarca una recomendación como leída
+    /// </summary>
+    private async void OnUnmarkAsReadClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is int recId)
+        {
+            bool confirm = await DisplayAlert("Confirmar",
+                "¿Deseas desmarcar esta recomendación como no leída?",
+                "Sí", "No");
+
+            if (confirm)
+            {
+                await _analyticsService.UnmarkRecommendationAsReadAsync(recId);
+                await LoadExistingRecommendationsAsync();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Desmarca una recomendación como implementada
+    /// </summary>
+    private async void OnUnmarkAsImplementedClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is int recId)
+        {
+            bool confirm = await DisplayAlert("Confirmar",
+                "¿Deseas revertir esta recomendación a pendiente?",
+                "Sí", "No");
+
+            if (confirm)
+            {
+                await _analyticsService.UnmarkRecommendationAsImplementedAsync(recId);
+                await LoadExistingRecommendationsAsync();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Evento al cambiar de pestaña en recomendaciones
+    /// </summary>
+    private async void OnRecommendationTabClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Determinar qué filtro aplicar
+            if (button == PendingTabButton)
+                _currentRecommendationFilter = "pending";
+            else if (button == ReadTabButton)
+                _currentRecommendationFilter = "read";
+            else if (button == ImplementedTabButton)
+                _currentRecommendationFilter = "implemented";
+
+            // Actualizar visual de pestañas
+            UpdateRecommendationTabsVisual();
+
+            // Recargar recomendaciones
+            await LoadExistingRecommendationsAsync();
+        }
+    }
+
+    /// <summary>
+    /// Actualiza el estilo visual de las pestañas de recomendaciones
+    /// </summary>
+    private void UpdateRecommendationTabsVisual()
+    {
+        var activeColor = Color.FromArgb("#6200EE");
+        var inactiveColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? Color.FromArgb("#E0E0E0")
+            : Color.FromArgb("#2D2D2D");
+        var activeTextColor = Colors.White;
+        var inactiveTextColor = Application.Current.RequestedTheme == AppTheme.Light
+            ? Color.FromArgb("#666666")
+            : Color.FromArgb("#AAAAAA");
+
+        // Resetear todos
+        PendingTabButton.BackgroundColor = inactiveColor;
+        PendingTabButton.TextColor = inactiveTextColor;
+        ReadTabButton.BackgroundColor = inactiveColor;
+        ReadTabButton.TextColor = inactiveTextColor;
+        ImplementedTabButton.BackgroundColor = inactiveColor;
+        ImplementedTabButton.TextColor = inactiveTextColor;
+
+        // Activar el seleccionado
+        switch (_currentRecommendationFilter)
+        {
+            case "pending":
+                PendingTabButton.BackgroundColor = activeColor;
+                PendingTabButton.TextColor = activeTextColor;
+                break;
+            case "read":
+                ReadTabButton.BackgroundColor = activeColor;
+                ReadTabButton.TextColor = activeTextColor;
+                break;
+            case "implemented":
+                ImplementedTabButton.BackgroundColor = activeColor;
+                ImplementedTabButton.TextColor = activeTextColor;
+                break;
         }
     }
 
@@ -588,6 +713,9 @@ public partial class AnalyticsDashboardPage : ContentPage
     /// <summary>
     /// Crea una tarjeta para mostrar una recomendación
     /// </summary>
+    /// <summary>
+    /// Crea una tarjeta para mostrar una recomendación
+    /// </summary>
     private Frame CreateRecommendationCard(AdminRecommendation rec)
     {
         var borderColor = rec.Priority switch
@@ -674,82 +802,98 @@ public partial class AnalyticsDashboardPage : ContentPage
             LineBreakMode = LineBreakMode.WordWrap
         });
 
-        // Footer con confianza y acciones
-        var footerGrid = new Grid
-        {
-            ColumnDefinitions = new ColumnDefinitionCollection
-            {
-                new ColumnDefinition(GridLength.Star),
-                new ColumnDefinition(GridLength.Auto),
-                new ColumnDefinition(GridLength.Auto)
-            },
-            Margin = new Thickness(0, 5, 0, 0)
-        };
+        // Footer con confianza y estado
+        var footerStack = new VerticalStackLayout { Spacing = 8, Margin = new Thickness(0, 5, 0, 0) };
 
-        var confidenceLabel = new Label
+        // Línea de confianza y fecha
+        var infoLabel = new Label
         {
-            Text = $"Confianza: {rec.GetConfidenceText()}",
+            Text = $"Confianza: {rec.GetConfidenceText()} • {rec.CreatedAt:dd/MM/yyyy HH:mm}",
             FontSize = 11,
-            TextColor = Color.FromArgb(rec.GetConfidenceColor()),
-            VerticalOptions = LayoutOptions.Center
+            TextColor = Color.FromArgb(rec.GetConfidenceColor())
         };
+        footerStack.Children.Add(infoLabel);
 
-        footerGrid.Children.Add(confidenceLabel);
-        Grid.SetColumn(confidenceLabel, 0);
+        // Botones de acción según el estado actual
+        var buttonsStack = new HorizontalStackLayout { Spacing = 10 };
 
-        // Botones de acción (solo si no está implementada)
-        if (!rec.IsImplemented)
+        if (_currentRecommendationFilter == "pending")
         {
-            if (!rec.IsRead)
+            // En pendientes: Marcar leída, Marcar implementada
+            var readBtn = new Button
             {
-                var readBtn = new Button
-                {
-                    Text = "✓ Leída",
-                    FontSize = 10,
-                    BackgroundColor = Color.FromArgb("#2196F3"),
-                    TextColor = Colors.White,
-                    CornerRadius = 10,
-                    Padding = new Thickness(10, 5),
-                    CommandParameter = rec.Id
-                };
-                readBtn.Clicked += OnMarkAsReadClicked;
-
-                footerGrid.Children.Add(readBtn);
-                Grid.SetColumn(readBtn, 1);
-            }
+                Text = "Marcar Leída",
+                FontSize = 11,
+                BackgroundColor = Color.FromArgb("#2196F3"),
+                TextColor = Colors.White,
+                CornerRadius = 10,
+                Padding = new Thickness(12, 6),
+                CommandParameter = rec.Id
+            };
+            readBtn.Clicked += OnMarkAsReadClicked;
+            buttonsStack.Children.Add(readBtn);
 
             var implementBtn = new Button
             {
-                Text = "✓ Implementada",
-                FontSize = 10,
+                Text = "Marcar Implementada",
+                FontSize = 11,
                 BackgroundColor = Color.FromArgb("#4CAF50"),
                 TextColor = Colors.White,
                 CornerRadius = 10,
-                Padding = new Thickness(10, 5),
-                Margin = new Thickness(5, 0, 0, 0),
+                Padding = new Thickness(12, 6),
                 CommandParameter = rec.Id
             };
             implementBtn.Clicked += OnMarkAsImplementedClicked;
-
-            footerGrid.Children.Add(implementBtn);
-            Grid.SetColumn(implementBtn, 2);
+            buttonsStack.Children.Add(implementBtn);
         }
-        else
+        else if (_currentRecommendationFilter == "read")
         {
-            var implementedLabel = new Label
+            // En leídas: Desmarcar, Marcar implementada
+            var unreadBtn = new Button
             {
-                Text = "✓ Implementada",
+                Text = "Desmarcar",
                 FontSize = 11,
-                TextColor = Color.FromArgb("#4CAF50"),
-                VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.End
+                BackgroundColor = Color.FromArgb("#FF9800"),
+                TextColor = Colors.White,
+                CornerRadius = 10,
+                Padding = new Thickness(12, 6),
+                CommandParameter = rec.Id
             };
+            unreadBtn.Clicked += OnUnmarkAsReadClicked;
+            buttonsStack.Children.Add(unreadBtn);
 
-            footerGrid.Children.Add(implementedLabel);
-            Grid.SetColumn(implementedLabel, 2);
+            var implementBtn = new Button
+            {
+                Text = "Marcar Implementada",
+                FontSize = 11,
+                BackgroundColor = Color.FromArgb("#4CAF50"),
+                TextColor = Colors.White,
+                CornerRadius = 10,
+                Padding = new Thickness(12, 6),
+                CommandParameter = rec.Id
+            };
+            implementBtn.Clicked += OnMarkAsImplementedClicked;
+            buttonsStack.Children.Add(implementBtn);
+        }
+        else if (_currentRecommendationFilter == "implemented")
+        {
+            // En implementadas: Solo revertir
+            var revertBtn = new Button
+            {
+                Text = "Revertir a Pendiente",
+                FontSize = 11,
+                BackgroundColor = Color.FromArgb("#F44336"),
+                TextColor = Colors.White,
+                CornerRadius = 10,
+                Padding = new Thickness(12, 6),
+                CommandParameter = rec.Id
+            };
+            revertBtn.Clicked += OnUnmarkAsImplementedClicked;
+            buttonsStack.Children.Add(revertBtn);
         }
 
-        mainStack.Children.Add(footerGrid);
+        footerStack.Children.Add(buttonsStack);
+        mainStack.Children.Add(footerStack);
 
         frame.Content = mainStack;
         return frame;

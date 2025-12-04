@@ -166,6 +166,40 @@
                         Clicked="OnGenerateRecommendationsClicked"/>
             </Grid>
 
+            <!-- Pestañas de filtro de recomendaciones -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,10,0,10">
+                <Button x:Name="PendingTabButton"
+                        Text="Pendientes"
+                        FontSize="12"
+                        BackgroundColor="#6200EE"
+                        TextColor="White"
+                        CornerRadius="10"
+                        Clicked="OnRecommendationTabClicked"/>
+                <Button x:Name="ReadTabButton"
+                        Grid.Column="1"
+                        Text="Leídas"
+                        FontSize="12"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#2D2D2D}"
+                        TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                        CornerRadius="10"
+                        Clicked="OnRecommendationTabClicked"/>
+                <Button x:Name="ImplementedTabButton"
+                        Grid.Column="2"
+                        Text="Implementadas"
+                        FontSize="12"
+                        BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#2D2D2D}"
+                        TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                        CornerRadius="10"
+                        Clicked="OnRecommendationTabClicked"/>
+            </Grid>
+
+            <!-- Contador de recomendaciones -->
+            <Label x:Name="RecommendationCountLabel"
+                   Text="0 recomendaciones"
+                   FontSize="12"
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                   Margin="0,0,0,5"/>
+
             <!-- Contenedor de recomendaciones -->
             <VerticalStackLayout x:Name="RecommendationsContainer" Spacing="10">
                 <!-- Se llena dinámicamente -->
