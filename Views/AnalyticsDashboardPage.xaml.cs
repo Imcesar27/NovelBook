@@ -75,6 +75,9 @@ public partial class AnalyticsDashboardPage : ContentPage
             // Cargar patrones existentes
             await LoadExistingPatternsAsync();
 
+            // Cargar tags populares
+            await LoadPopularTagsAsync();
+
             // Actualizar fecha
             LastUpdateLabel.Text = $"Última actualización: {DateTime.Now:HH:mm:ss}";
         }
@@ -85,6 +88,69 @@ public partial class AnalyticsDashboardPage : ContentPage
         finally
         {
             ShowLoading(false);
+        }
+    }
+
+    /// <summary>
+    /// Carga las etiquetas más populares
+    /// </summary>
+    private async Task LoadPopularTagsAsync()
+    {
+        try
+        {
+            var tags = await _analyticsService.GetPopularTagsStatsAsync(10);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                PopularTagsLayout.Children.Clear();
+
+                if (tags.Count == 0)
+                {
+                    PopularTagsLayout.Children.Add(new Label
+                    {
+                        Text = "No hay etiquetas aún",
+                        TextColor = Color.FromArgb("#888888"),
+                        FontSize = 12
+                    });
+                    return;
+                }
+
+                foreach (var tag in tags)
+                {
+                    var frame = new Frame
+                    {
+                        BackgroundColor = Color.FromArgb("#6200EE"),
+                        CornerRadius = 15,
+                        Padding = new Thickness(12, 6),
+                        HasShadow = false,
+                        Margin = new Thickness(0, 0, 8, 8)
+                    };
+
+                    var stack = new HorizontalStackLayout { Spacing = 5 };
+
+                    stack.Children.Add(new Label
+                    {
+                        Text = tag.TagName,
+                        TextColor = Colors.White,
+                        FontSize = 12
+                    });
+
+                    stack.Children.Add(new Label
+                    {
+                        Text = $"({tag.NovelCount} novelas, {tag.TotalVotes} votos)",
+                        TextColor = Colors.White,
+                        FontSize = 10,
+                        Opacity = 0.7
+                    });
+
+                    frame.Content = stack;
+                    PopularTagsLayout.Children.Add(frame);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando etiquetas populares: {ex.Message}");
         }
     }
 

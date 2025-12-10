@@ -15,6 +15,7 @@ namespace NovelBook.Services;
 public class AnalyticsService
 {
     private readonly DatabaseService _database;
+    private readonly TagService _tagService;
 
     /// <summary>
     /// Constructor que recibe el servicio de base de datos
@@ -22,6 +23,7 @@ public class AnalyticsService
     public AnalyticsService(DatabaseService database)
     {
         _database = database;
+        _tagService = new TagService(database);
     }
 
     #region ========== MÉTRICAS DE ENGAGEMENT ==========
@@ -167,6 +169,14 @@ public class AnalyticsService
     #endregion
 
     #region ========== MÉTRICAS DE POPULARIDAD ==========
+
+    /// <summary>
+    /// Obtiene las etiquetas más populares para el dashboard
+    /// </summary>
+    public async Task<List<(string TagName, int NovelCount, int TotalVotes)>> GetPopularTagsStatsAsync(int limit = 5)
+    {
+        return await _tagService.GetTagStatsAsync(limit);
+    }
 
     /// <summary>
     /// Obtiene las novelas más leídas (Top N)
@@ -1080,7 +1090,48 @@ public class AnalyticsService
             System.Diagnostics.Debug.WriteLine($"Error generando recomendaciones: {ex.Message}");
         }
 
+        // 6. Recomendaciones por etiquetas populares
+        await GenerateTagRecommendationsAsync();
+
         return recommendations;
+    }
+
+    /// <summary>
+    /// Genera recomendaciones basadas en etiquetas populares
+    /// </summary>
+    private async Task GenerateTagRecommendationsAsync()
+    {
+        try
+        {
+            var tagStats = await _tagService.GetTagStatsAsync(10);
+
+            foreach (var tag in tagStats)
+            {
+                // Si una etiqueta tiene muchos votos pero pocas novelas, recomendar agregar más
+                if (tag.TotalVotes >= 5 && tag.NovelCount <= 2)
+                {
+                    var ratio = (decimal)tag.TotalVotes / tag.NovelCount;
+
+                    var recommendation = new AdminRecommendation
+                    {
+                        RecommendationType = "tag_demand",
+                        Title = $"Alta demanda: etiqueta '{tag.TagName}'",
+                        Description = $"La etiqueta '{tag.TagName}' tiene {tag.TotalVotes} votos pero solo {tag.NovelCount} novela(s). " +
+                                      $"Los usuarios buscan más contenido con esta característica.",
+                        Priority = ratio > 5 ? 3 : (ratio > 2 ? 2 : 1),
+                        ConfidenceScore = Math.Min(0.5m + (tag.TotalVotes * 0.05m), 0.95m),
+                        CreatedAt = DateTime.Now,
+                        Metadata = $"{{\"tag\":\"{tag.TagName}\",\"votes\":{tag.TotalVotes},\"novels\":{tag.NovelCount}}}"
+                    };
+
+                    await SaveRecommendationAsync(recommendation);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error generando recomendaciones de etiquetas: {ex.Message}");
+        }
     }
 
     /// <summary>

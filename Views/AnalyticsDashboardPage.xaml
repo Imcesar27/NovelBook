@@ -281,6 +281,21 @@
                 </Frame>
             </VerticalStackLayout>
 
+            <!-- ========== ETIQUETAS POPULARES ========== -->
+            <Label Text="🏷️ Etiquetas Populares"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#FFFFFF}"
+                   Margin="0,20,0,10"/>
+
+            <FlexLayout x:Name="PopularTagsLayout"
+                        Wrap="Wrap"
+                        Direction="Row"
+                        JustifyContent="Start"
+                        AlignItems="Start">
+                <!-- Se llena dinámicamente -->
+            </FlexLayout>
+
             <!-- ========== PATRONES ========== -->
             <Grid ColumnDefinitions="*,Auto" Margin="0,20,0,5">
                 <Label Text="🔍 Patrones Identificados"
