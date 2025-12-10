@@ -227,6 +227,42 @@
                                   AlignItems="Start">
                             <!-- Los generos se agregaran dinamicamente -->
                         </FlexLayout>
+
+                        <!-- ========== ETIQUETAS DE USUARIOS ========== -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,20,0,0">
+                            <Label Text="{extensions:Translate Tags}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimary}}"
+                                   VerticalOptions="Center"/>
+                            <Button x:Name="AddTagButton"
+                                    Grid.Column="1"
+                                    Text="+ Agregar"
+                                    FontSize="12"
+                                    BackgroundColor="{StaticResource Primary}"
+                                    TextColor="White"
+                                    CornerRadius="12"
+                                    Padding="12,5"
+                                    Clicked="OnAddTagClicked"/>
+                        </Grid>
+
+                        <!-- Contenedor de etiquetas -->
+                        <FlexLayout x:Name="TagsLayout"
+                                    Wrap="Wrap"
+                                    Direction="Row"
+                                    JustifyContent="Start"
+                                    AlignItems="Start"
+                                    Margin="0,10,0,0">
+                            <!-- Las etiquetas se agregan dinámicamente -->
+                        </FlexLayout>
+
+                        <!-- Mensaje cuando no hay etiquetas -->
+                        <Label x:Name="NoTagsLabel"
+                               Text="{extensions:Translate AddFirstTag}"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondary}}"
+                               IsVisible="False"
+                               Margin="0,5,0,0"/>
                     </VerticalStackLayout>
 
                     <!-- Capitulos (oculto inicialmente) -->

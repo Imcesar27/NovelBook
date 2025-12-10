@@ -8,6 +8,8 @@ public partial class NovelDetailPage : ContentPage
     // Servicios necesarios para interactuar con la base de datos
     private readonly NovelService _novelService;
     private readonly LibraryService _libraryService;
+    private readonly TagService _tagService;
+    private List<NovelTag> _novelTags = new();
     private readonly DatabaseService _databaseService;
     private readonly ImageService _imageService;
 
@@ -34,8 +36,9 @@ public partial class NovelDetailPage : ContentPage
         _novelService = new NovelService(_databaseService);
         _libraryService = new LibraryService(_databaseService, new AuthService(_databaseService));
         _imageService = new ImageService(_databaseService);
+        _tagService = new TagService(_databaseService);
 
- 
+
 
         // Cargar datos de forma asíncrona
         Task.Run(async () => await LoadNovelDetailsAsync());
@@ -54,6 +57,8 @@ public partial class NovelDetailPage : ContentPage
         {
             await CheckAndUpdateLibraryStatus();
             await UpdateReadButtonStatus();
+            // Cargar etiquetas
+            await LoadTagsAsync();
         }
     }
 
@@ -1053,4 +1058,245 @@ private void UpdateButtonAppearance(Button button, bool isInLibrary)
     public NovelDetailPage() : this(1)
     {
     }
+
+    #region ========== SISTEMA DE ETIQUETAS ==========
+
+    /// <summary>
+    /// Carga las etiquetas de la novela
+    /// </summary>
+    private async Task LoadTagsAsync()
+    {
+        try
+        {
+            var currentUserId = AuthService.CurrentUser?.Id;
+            _novelTags = await _tagService.GetTagsByNovelAsync(_novelId, currentUserId);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                TagsLayout.Children.Clear();
+
+                if (_novelTags.Count == 0)
+                {
+                    NoTagsLabel.IsVisible = true;
+                    return;
+                }
+
+                NoTagsLabel.IsVisible = false;
+
+                foreach (var tag in _novelTags)
+                {
+                    var tagView = CreateTagView(tag);
+                    TagsLayout.Children.Add(tagView);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando etiquetas: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Crea la vista visual de una etiqueta
+    /// </summary>
+    private Frame CreateTagView(NovelTag tag)
+    {
+        var currentUserId = AuthService.CurrentUser?.Id ?? 0;
+        var isAdmin = AuthService.CurrentUser?.Role == "admin";
+        var canDelete = tag.CanBeDeletedByCreator(currentUserId) || isAdmin;
+
+        // Color según si el usuario votó
+        var bgColor = tag.UserHasVoted
+            ? Color.FromArgb("#6200EE")  // Púrpura si votó
+            : Application.Current.RequestedTheme == AppTheme.Light
+                ? Color.FromArgb("#E8E8E8")
+                : Color.FromArgb("#3D3D3D");
+
+        var textColor = tag.UserHasVoted
+            ? Colors.White
+            : Application.Current.RequestedTheme == AppTheme.Light
+                ? Color.FromArgb("#333333")
+                : Color.FromArgb("#FFFFFF");
+
+        var frame = new Frame
+        {
+            BackgroundColor = bgColor,
+            CornerRadius = 15,
+            Padding = new Thickness(10, 5),
+            HasShadow = false,
+            Margin = new Thickness(0, 0, 8, 8)
+        };
+
+        var stack = new HorizontalStackLayout { Spacing = 5 };
+
+        // Nombre de la etiqueta
+        var nameLabel = new Label
+        {
+            Text = tag.TagName,
+            TextColor = textColor,
+            FontSize = 12,
+            VerticalOptions = LayoutOptions.Center
+        };
+        stack.Children.Add(nameLabel);
+
+        // Contador de votos
+        if (tag.VoteCount > 0)
+        {
+            var voteLabel = new Label
+            {
+                Text = $"({tag.VoteCount + 1})", // +1 incluye al creador
+                TextColor = textColor,
+                FontSize = 10,
+                VerticalOptions = LayoutOptions.Center,
+                Opacity = 0.7
+            };
+            stack.Children.Add(voteLabel);
+        }
+
+        // Botón eliminar (solo si puede)
+        if (canDelete)
+        {
+            var deleteBtn = new Label
+            {
+                Text = "✕",
+                TextColor = textColor,
+                FontSize = 10,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(5, 0, 0, 0)
+            };
+
+            var deleteTap = new TapGestureRecognizer();
+            deleteTap.Tapped += async (s, e) => await OnDeleteTagClicked(tag);
+            deleteBtn.GestureRecognizers.Add(deleteTap);
+
+            stack.Children.Add(deleteBtn);
+        }
+
+        frame.Content = stack;
+
+        // Tap para votar o ver novelas con esta etiqueta
+        var tapGesture = new TapGestureRecognizer();
+        tapGesture.Tapped += async (s, e) => await OnTagTapped(tag);
+        frame.GestureRecognizers.Add(tapGesture);
+
+        return frame;
+    }
+
+    /// <summary>
+    /// Evento al presionar agregar etiqueta
+    /// </summary>
+    private async void OnAddTagClicked(object sender, EventArgs e)
+    {
+        if (AuthService.CurrentUser == null)
+        {
+            await DisplayAlert(
+                LocalizationService.GetString("Error"),
+                LocalizationService.GetString("LoginRequired"),
+                LocalizationService.GetString("OK"));
+            return;
+        }
+
+        // Abrir página modal para agregar etiqueta
+        var addTagPage = new AddTagPage(_novelId, AuthService.CurrentUser.Id);
+
+        addTagPage.Disappearing += async (s, args) =>
+        {
+            if (addTagPage.TagAdded)
+            {
+                await DisplayAlert(
+                    LocalizationService.GetString("Success"),
+                    addTagPage.ResultMessage,
+                    LocalizationService.GetString("OK"));
+
+                await LoadTagsAsync();
+            }
+            else if (!string.IsNullOrEmpty(addTagPage.ResultMessage))
+            {
+                await DisplayAlert(
+                    LocalizationService.GetString("Info"),
+                    addTagPage.ResultMessage,
+                    LocalizationService.GetString("OK"));
+            }
+        };
+
+        await Navigation.PushModalAsync(new NavigationPage(addTagPage));
+    }
+
+    /// <summary>
+    /// Evento al tocar una etiqueta (votar o ver novelas)
+    /// </summary>
+    private async Task OnTagTapped(NovelTag tag)
+    {
+        if (AuthService.CurrentUser == null)
+        {
+            // Si no está logueado, mostrar novelas con esta etiqueta
+            await NavigateToTaggedNovels(tag.TagName);
+            return;
+        }
+
+        var action = await DisplayActionSheet(
+            $"Etiqueta: {tag.TagName}",
+            LocalizationService.GetString("Cancel"),
+            null,
+            tag.UserHasVoted ? "Quitar mi voto" : "Votar esta etiqueta",
+            "Ver novelas con esta etiqueta");
+
+        if (action == null || action == LocalizationService.GetString("Cancel"))
+            return;
+
+        if (action.Contains("Votar") || action.Contains("Quitar"))
+        {
+            var voted = await _tagService.VoteTagAsync(tag.Id, AuthService.CurrentUser.Id);
+            await DisplayAlert(
+                LocalizationService.GetString("Success"),
+                voted ? LocalizationService.GetString("VoteAdded") : LocalizationService.GetString("VoteRemoved"),
+                LocalizationService.GetString("OK"));
+            await LoadTagsAsync();
+        }
+        else if (action.Contains("Ver novelas"))
+        {
+            await NavigateToTaggedNovels(tag.TagName);
+        }
+    }
+
+    /// <summary>
+    /// Evento al eliminar una etiqueta
+    /// </summary>
+    private async Task OnDeleteTagClicked(NovelTag tag)
+    {
+        var confirm = await DisplayAlert(
+            LocalizationService.GetString("DeleteTagConfirm"),
+            $"¿Eliminar la etiqueta \"{tag.TagName}\"?",
+            LocalizationService.GetString("Yes"),
+            LocalizationService.GetString("No"));
+
+        if (!confirm)
+            return;
+
+        var isAdmin = AuthService.CurrentUser?.Role == "admin";
+        var (success, message) = await _tagService.DeleteTagAsync(
+            tag.Id,
+            AuthService.CurrentUser?.Id ?? 0,
+            isAdmin);
+
+        await DisplayAlert(
+            success ? LocalizationService.GetString("Success") : LocalizationService.GetString("Error"),
+            message,
+            LocalizationService.GetString("OK"));
+
+        if (success)
+        {
+            await LoadTagsAsync();
+        }
+    }
+
+    /// <summary>
+    /// Navega a la página de novelas con la etiqueta seleccionada
+    /// </summary>
+    private async Task NavigateToTaggedNovels(string tagName)
+    {
+        await Navigation.PushAsync(new TaggedNovelsPage(tagName));
+    }
+
+    #endregion
 }

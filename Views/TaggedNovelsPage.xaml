@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelBook.Views.TaggedNovelsPage"
+             Title="Novelas con etiqueta">
+
+    <Grid RowDefinitions="Auto,*" Padding="15">
+
+        <!-- Header con etiqueta -->
+        <Frame Grid.Row="0"
+               BackgroundColor="{StaticResource Primary}"
+               CornerRadius="10"
+               Padding="15"
+               Margin="0,0,0,15"
+               HasShadow="False">
+            <VerticalStackLayout Spacing="5">
+                <Label Text="Etiqueta:"
+                       TextColor="White"
+                       FontSize="12"
+                       Opacity="0.8"/>
+                <Label x:Name="TagNameLabel"
+                       TextColor="White"
+                       FontSize="20"
+                       FontAttributes="Bold"/>
+                <Label x:Name="NovelCountLabel"
+                       TextColor="White"
+                       FontSize="12"
+                       Opacity="0.8"/>
+            </VerticalStackLayout>
+        </Frame>
+
+        <!-- Contenedor de novelas -->
+        <Grid Grid.Row="1">
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="True"
+                               IsVisible="True"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               Color="{StaticResource Primary}"/>
+
+            <ScrollView x:Name="NovelsScrollView" IsVisible="False">
+                <FlexLayout x:Name="NovelsContainer"
+                            Wrap="Wrap"
+                            Direction="Row"
+                            JustifyContent="Start"
+                            AlignItems="Start"/>
+            </ScrollView>
+
+            <!-- Mensaje sin resultados -->
+            <Label x:Name="EmptyLabel"
+                   Text="No hay novelas con esta etiqueta"
+                   IsVisible="False"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"/>
+        </Grid>
+    </Grid>
+</ContentPage>

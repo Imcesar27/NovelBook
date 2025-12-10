@@ -444,6 +444,24 @@ namespace NovelBook.Services
                 ["GitHubAccount"] = "Cuenta de GitHub",
                 ["EmailAccount"] = "Email y contraseña",
 
+                // Tags/Etiquetas
+                ["Tags"] = "Etiquetas",
+                ["AddTag"] = "Agregar etiqueta",
+                ["EnterTag"] = "Escribe una etiqueta...",
+                ["TagAdded"] = "Etiqueta agregada",
+                ["TagDeleted"] = "Etiqueta eliminada",
+                ["TagExists"] = "Esta etiqueta ya existe",
+                ["TagTooLong"] = "Máximo 25 caracteres",
+                ["TagLimitReached"] = "Límite de 3 etiquetas por novela",
+                ["CannotDeleteTag"] = "No puedes eliminar esta etiqueta",
+                ["DeleteTagConfirm"] = "¿Eliminar esta etiqueta?",
+                ["VoteAdded"] = "Voto agregado",
+                ["VoteRemoved"] = "Voto removido",
+                ["NoTags"] = "Sin etiquetas aún",
+                ["AddFirstTag"] = "¡Sé el primero en agregar una etiqueta!",
+                ["TaggedNovels"] = "Novelas con etiqueta",
+                ["PopularTags"] = "Etiquetas populares",
+
 
                 // Common
                 ["OK"] = "OK",
@@ -978,6 +996,24 @@ namespace NovelBook.Services
                 ["FacebookAccount"] = "Facebook account",
                 ["GitHubAccount"] = "GitHub account",
                 ["EmailAccount"] = "Email and password",
+
+                // Tags
+                ["Tags"] = "Tags",
+                ["AddTag"] = "Add tag",
+                ["EnterTag"] = "Enter a tag...",
+                ["TagAdded"] = "Tag added",
+                ["TagDeleted"] = "Tag deleted",
+                ["TagExists"] = "This tag already exists",
+                ["TagTooLong"] = "Maximum 25 characters",
+                ["TagLimitReached"] = "Limit of 3 tags per novel",
+                ["CannotDeleteTag"] = "Cannot delete this tag",
+                ["DeleteTagConfirm"] = "Delete this tag?",
+                ["VoteAdded"] = "Vote added",
+                ["VoteRemoved"] = "Vote removed",
+                ["NoTags"] = "No tags yet",
+                ["AddFirstTag"] = "Be the first to add a tag!",
+                ["TaggedNovels"] = "Novels with tag",
+                ["PopularTags"] = "Popular tags",
 
 
                 // Common

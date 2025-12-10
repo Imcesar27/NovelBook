@@ -1,4 +1,6 @@
-﻿namespace NovelBook;
+﻿using NovelBook.Views;
+
+namespace NovelBook;
 
 public partial class AppShell : Shell
 {
@@ -42,6 +44,12 @@ public partial class AppShell : Shell
 
         // Ruta para la página de metricas y análisis.
         Routing.RegisterRoute(nameof(Views.AnalyticsDashboardPage), typeof(Views.AnalyticsDashboardPage));
+
+        //Ruta para la página de novelas etiquetadas
+        Routing.RegisterRoute(nameof(TaggedNovelsPage), typeof(TaggedNovelsPage));
+
+        // Ruta para la página de agregar etiqueta
+        Routing.RegisterRoute(nameof(AddTagPage), typeof(AddTagPage));
 
         // Navegación segura
         this.Navigated += OnShellNavigated;
