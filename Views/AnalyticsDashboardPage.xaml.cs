@@ -251,20 +251,23 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Carga los patrones existentes
+    /// Carga los patrones existentes (máximo 6)
     /// </summary>
     private async Task LoadExistingPatternsAsync()
     {
-        var patterns = await _analyticsService.GetPatternsAsync(null, 10);
+        // Limitar a 6 patrones para no saturar la pantalla
+        var patterns = await _analyticsService.GetPatternsAsync(null, 6);
 
         MainThread.BeginInvokeOnMainThread(() =>
         {
+            // Actualizar contador
+            PatternsCountLabel.Text = $"{patterns.Count} patrón(es) identificado(s)";
+
             PatternsContainer.Children.Clear();
 
             if (patterns.Count == 0)
             {
-                PatternsContainer.Children.Add(
-                    CreateEmptyMessage("Los patrones se generan junto con las recomendaciones..."));
+                PatternsContainer.Children.Add(CreateEmptyMessage("No hay patrones identificados. Se generarán automáticamente con las recomendaciones."));
                 return;
             }
 
@@ -502,6 +505,40 @@ public partial class AnalyticsDashboardPage : ContentPage
                 await DisplayAlert("Completado", $"Se eliminaron {deleted} recomendación(es).", "OK");
 
                 await LoadExistingRecommendationsAsync();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudo eliminar: {ex.Message}", "OK");
+            }
+            finally
+            {
+                ShowLoading(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Evento al presionar el botón de limpiar patrones
+    /// </summary>
+    private async void OnClearPatternsClicked(object sender, EventArgs e)
+    {
+        bool confirm = await DisplayAlert(
+            "Confirmar eliminación",
+            "¿Estás seguro de eliminar todos los patrones identificados?\n\nSe regenerarán al presionar 'Generar' en recomendaciones.",
+            "Sí, eliminar",
+            "Cancelar");
+
+        if (confirm)
+        {
+            try
+            {
+                ShowLoading(true);
+
+                int deleted = await _analyticsService.DeleteAllPatternsAsync();
+
+                await DisplayAlert("Completado", $"Se eliminaron {deleted} patrón(es).", "OK");
+
+                await LoadExistingPatternsAsync();
             }
             catch (Exception ex)
             {
@@ -962,63 +999,111 @@ public partial class AnalyticsDashboardPage : ContentPage
     }
 
     /// <summary>
-    /// Crea una tarjeta para mostrar un patrón
+    /// Crea una tarjeta compacta para mostrar un patrón
     /// </summary>
     private Frame CreatePatternCard(ReadingPattern pattern)
     {
+        var borderColor = pattern.PatternType switch
+        {
+            "content_preference" => Color.FromArgb("#2196F3"),    // Azul
+            "engagement_pattern" => Color.FromArgb("#4CAF50"),    // Verde
+            "abandonment_pattern" => Color.FromArgb("#F44336"),   // Rojo
+            "completion_pattern" => Color.FromArgb("#9C27B0"),    // Púrpura
+            _ => Color.FromArgb("#FF9800")                         // Naranja
+        };
+
+        var icon = pattern.PatternType switch
+        {
+            "content_preference" => "📚",
+            "engagement_pattern" => "📈",
+            "abandonment_pattern" => "📉",
+            "completion_pattern" => "✅",
+            _ => "🔍"
+        };
+
         var frame = new Frame
         {
             BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
                 ? Color.FromArgb("#FFFFFF")
                 : Color.FromArgb("#1E1E1E"),
-            BorderColor = Color.FromArgb(pattern.GetThemeColor()),
-            CornerRadius = 10,
-            Padding = 15,
+            BorderColor = borderColor,
+            CornerRadius = 8,
+            Padding = 12,
             HasShadow = false
         };
 
-        var mainStack = new VerticalStackLayout { Spacing = 5 };
-
-        // Header
-        var headerStack = new HorizontalStackLayout { Spacing = 10 };
-        headerStack.Children.Add(new Label
+        // Layout horizontal compacto
+        var grid = new Grid
         {
-            Text = pattern.GetIcon(),
+            ColumnDefinitions = new ColumnDefinitionCollection
+            {
+                new ColumnDefinition(GridLength.Auto),
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Auto)
+            },
+            ColumnSpacing = 10
+        };
+
+        // Icono
+        var iconLabel = new Label
+        {
+            Text = icon,
             FontSize = 20,
             VerticalOptions = LayoutOptions.Center
-        });
-        headerStack.Children.Add(new Label
+        };
+
+        // Contenido central
+        var contentStack = new VerticalStackLayout { Spacing = 2 };
+
+        contentStack.Children.Add(new Label
         {
             Text = pattern.PatternName,
-            FontSize = 14,
+            FontSize = 13,
             FontAttributes = FontAttributes.Bold,
             TextColor = Application.Current.RequestedTheme == AppTheme.Light
                 ? Color.FromArgb("#1A1A1A")
                 : Color.FromArgb("#FFFFFF"),
-            VerticalOptions = LayoutOptions.Center
+            LineBreakMode = LineBreakMode.TailTruncation
         });
 
-        mainStack.Children.Add(headerStack);
-
-        // Valor/Descripción
-        mainStack.Children.Add(new Label
+        contentStack.Children.Add(new Label
         {
             Text = pattern.PatternValue,
-            FontSize = 12,
+            FontSize = 11,
             TextColor = Color.FromArgb("#888888"),
-            LineBreakMode = LineBreakMode.WordWrap
+            LineBreakMode = LineBreakMode.TailTruncation
         });
 
-        // Confianza
-        mainStack.Children.Add(new Label
+        // Badge de confianza
+        var confidenceBadge = new Frame
         {
-            Text = $"Confianza: {pattern.GetConfidenceText()} • Tipo: {pattern.GetPatternTypeText()}",
-            FontSize = 10,
-            TextColor = Color.FromArgb(pattern.GetConfidenceColor()),
-            Margin = new Thickness(0, 5, 0, 0)
-        });
+            BackgroundColor = pattern.Confidence >= 0.7m
+                ? Color.FromArgb("#4CAF50")
+                : pattern.Confidence >= 0.5m
+                    ? Color.FromArgb("#FF9800")
+                    : Color.FromArgb("#9E9E9E"),
+            CornerRadius = 8,
+            Padding = new Thickness(8, 4),
+            HasShadow = false,
+            VerticalOptions = LayoutOptions.Center,
+            Content = new Label
+            {
+                Text = $"{pattern.Confidence:P0}",
+                FontSize = 10,
+                TextColor = Colors.White
+            }
+        };
 
-        frame.Content = mainStack;
+        grid.Children.Add(iconLabel);
+        Grid.SetColumn(iconLabel, 0);
+
+        grid.Children.Add(contentStack);
+        Grid.SetColumn(contentStack, 1);
+
+        grid.Children.Add(confidenceBadge);
+        Grid.SetColumn(confidenceBadge, 2);
+
+        frame.Content = grid;
         return frame;
     }
 

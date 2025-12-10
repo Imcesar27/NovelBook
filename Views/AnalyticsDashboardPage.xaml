@@ -281,22 +281,39 @@
                 </Frame>
             </VerticalStackLayout>
 
-            <!-- ========== PATRONES IDENTIFICADOS ========== -->
-            <Label Text="🔍 Patrones Identificados"
-                   FontSize="18"
-                   FontAttributes="Bold"
-                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#FFFFFF}"
-                   Margin="0,20,0,5"/>
+            <!-- ========== PATRONES ========== -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,20,0,5">
+                <Label Text="🔍 Patrones Identificados"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#FFFFFF}"/>
+                <Button Grid.Column="1"
+                        Text="🗑️ Limpiar"
+                        FontSize="11"
+                        BackgroundColor="{AppThemeBinding Light=#FFEBEE, Dark=#3D2020}"
+                        TextColor="{AppThemeBinding Light=#D32F2F, Dark=#EF5350}"
+                        CornerRadius="10"
+                        Padding="10,5"
+                        Clicked="OnClearPatternsClicked"/>
+            </Grid>
 
-            <VerticalStackLayout x:Name="PatternsContainer" Spacing="10">
-                <!-- Se llena dinámicamente -->
+            <!-- Contador de patrones -->
+            <Label x:Name="PatternsCountLabel"
+                   Text="0 patrones identificados"
+                   FontSize="12"
+                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
+                   Margin="0,0,0,5"/>
+
+            <!-- Contenedor de patrones (máximo 6) -->
+            <VerticalStackLayout x:Name="PatternsContainer" Spacing="8">
                 <Frame BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E1E1E}"
                        CornerRadius="10"
                        Padding="15"
                        HasShadow="False">
-                    <Label Text="Los patrones se generan junto con las recomendaciones..."
+                    <Label Text="Los patrones se generarán al presionar 'Generar' en recomendaciones..."
                            TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}"
-                           HorizontalOptions="Center"/>
+                           HorizontalOptions="Center"
+                           FontSize="12"/>
                 </Frame>
             </VerticalStackLayout>
 

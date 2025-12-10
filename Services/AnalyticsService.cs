@@ -849,9 +849,9 @@ public class AnalyticsService
     #region ========== GESTIÓN DE PATRONES (CRUD) ==========
 
     /// <summary>
-    /// Guarda un patrón identificado en la base de datos
+    /// Verifica si ya existe un patrón similar
     /// </summary>
-    public async Task<bool> SavePatternAsync(ReadingPattern pattern)
+    public async Task<bool> PatternExistsAsync(string patternType, string patternName)
     {
         try
         {
@@ -859,10 +859,113 @@ public class AnalyticsService
             await connection.OpenAsync();
 
             var query = @"
+                SELECT COUNT(*) FROM reading_patterns 
+                WHERE pattern_type = @type 
+                AND pattern_name = @name";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@type", patternType);
+            command.Parameters.AddWithValue("@name", patternName);
+
+            var count = (int)await command.ExecuteScalarAsync();
+            return count > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error verificando patrón duplicado: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Elimina todos los patrones
+    /// </summary>
+    public async Task<int> DeleteAllPatternsAsync()
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = "DELETE FROM reading_patterns";
+
+            using var command = new SqlCommand(query, connection);
+            var rowsAffected = await command.ExecuteNonQueryAsync();
+
+            return rowsAffected;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error eliminando patrones: {ex.Message}");
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// Actualiza un patrón existente en lugar de crear duplicado
+    /// </summary>
+    public async Task<bool> UpdatePatternAsync(string patternType, string patternName, string patternValue, decimal confidence, int frequency)
+    {
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"
+                UPDATE reading_patterns 
+                SET pattern_value = @value, 
+                    confidence = @confidence, 
+                    frequency = @frequency,
+                    identified_at = @identifiedAt
+                WHERE pattern_type = @type AND pattern_name = @name";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@type", patternType);
+            command.Parameters.AddWithValue("@name", patternName);
+            command.Parameters.AddWithValue("@value", patternValue);
+            command.Parameters.AddWithValue("@confidence", confidence);
+            command.Parameters.AddWithValue("@frequency", frequency);
+            command.Parameters.AddWithValue("@identifiedAt", DateTime.Now);
+
+            await command.ExecuteNonQueryAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error actualizando patrón: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Guarda un patrón en la base de datos (actualiza si existe, crea si no)
+    /// </summary>
+    public async Task<bool> SavePatternAsync(ReadingPattern pattern)
+    {
+        try
+        {
+            // Verificar si ya existe el patrón
+            if (await PatternExistsAsync(pattern.PatternType, pattern.PatternName))
+            {
+                // Actualizar el existente en lugar de crear duplicado
+                return await UpdatePatternAsync(
+                    pattern.PatternType,
+                    pattern.PatternName,
+                    pattern.PatternValue,
+                    pattern.Confidence,
+                    pattern.Frequency
+                );
+            }
+
+            // Crear nuevo patrón
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"
                 INSERT INTO reading_patterns 
-                    (pattern_type, pattern_name, pattern_value, frequency, confidence, identified_at, metadata)
+                    (pattern_type, pattern_name, pattern_value, frequency, confidence, identified_at)
                 VALUES 
-                    (@type, @name, @value, @frequency, @confidence, @identifiedAt, @metadata)";
+                    (@type, @name, @value, @frequency, @confidence, @identifiedAt)";
 
             using var command = new SqlCommand(query, connection);
             command.Parameters.AddWithValue("@type", pattern.PatternType);
@@ -871,7 +974,6 @@ public class AnalyticsService
             command.Parameters.AddWithValue("@frequency", pattern.Frequency);
             command.Parameters.AddWithValue("@confidence", pattern.Confidence);
             command.Parameters.AddWithValue("@identifiedAt", pattern.IdentifiedAt);
-            command.Parameters.AddWithValue("@metadata", (object)pattern.Metadata ?? DBNull.Value);
 
             await command.ExecuteNonQueryAsync();
             return true;
