@@ -179,6 +179,14 @@ public class AnalyticsService
     }
 
     /// <summary>
+    /// Obtiene las etiquetas más recientes para el dashboard
+    /// </summary>
+    public async Task<List<(string TagName, int Count, DateTime CreatedAt)>> GetRecentTagsAsync(int limit = 10)
+    {
+        return await _tagService.GetRecentTagsAsync(limit);
+    }
+
+    /// <summary>
     /// Obtiene las novelas más leídas (Top N)
     /// </summary>
     public async Task<List<(Novel Novel, int ReadCount)>> GetMostReadNovelsAsync(int topN = 10)

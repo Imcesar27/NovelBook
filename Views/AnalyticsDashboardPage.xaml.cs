@@ -78,6 +78,9 @@ public partial class AnalyticsDashboardPage : ContentPage
             // Cargar tags populares
             await LoadPopularTagsAsync();
 
+            // Cargar tags recientes
+            await LoadRecentTagsAsync();
+
             // Actualizar fecha
             LastUpdateLabel.Text = $"Última actualización: {DateTime.Now:HH:mm:ss}";
         }
@@ -108,9 +111,10 @@ public partial class AnalyticsDashboardPage : ContentPage
                 {
                     PopularTagsLayout.Children.Add(new Label
                     {
-                        Text = "No hay etiquetas aún",
+                        Text = "Aún no hay etiquetas populares",
                         TextColor = Color.FromArgb("#888888"),
-                        FontSize = 12
+                        FontSize = 12,
+                        FontAttributes = FontAttributes.Italic
                     });
                     return;
                 }
@@ -132,15 +136,16 @@ public partial class AnalyticsDashboardPage : ContentPage
                     {
                         Text = tag.TagName,
                         TextColor = Colors.White,
-                        FontSize = 12
+                        FontSize = 12,
+                        FontAttributes = FontAttributes.Bold
                     });
 
                     stack.Children.Add(new Label
                     {
-                        Text = $"({tag.NovelCount} novelas, {tag.TotalVotes} votos)",
+                        Text = $"({tag.NovelCount} nov, {tag.TotalVotes} votos)",
                         TextColor = Colors.White,
                         FontSize = 10,
-                        Opacity = 0.7
+                        Opacity = 0.8
                     });
 
                     frame.Content = stack;
@@ -152,6 +157,96 @@ public partial class AnalyticsDashboardPage : ContentPage
         {
             System.Diagnostics.Debug.WriteLine($"Error cargando etiquetas populares: {ex.Message}");
         }
+    }
+
+    /// <summary>
+    /// Carga las etiquetas más recientes
+    /// </summary>
+    private async Task LoadRecentTagsAsync()
+    {
+        try
+        {
+            var tags = await _analyticsService.GetRecentTagsAsync(10);
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                RecentTagsLayout.Children.Clear();
+
+                if (tags.Count == 0)
+                {
+                    RecentTagsLayout.Children.Add(new Label
+                    {
+                        Text = "No hay etiquetas aún",
+                        TextColor = Color.FromArgb("#888888"),
+                        FontSize = 12
+                    });
+                    return;
+                }
+
+                foreach (var tag in tags)
+                {
+                    // Calcular tiempo transcurrido
+                    var timeAgo = GetTimeAgo(tag.CreatedAt);
+
+                    var frame = new Frame
+                    {
+                        BackgroundColor = Application.Current.RequestedTheme == AppTheme.Light
+                            ? Color.FromArgb("#E8E8E8")
+                            : Color.FromArgb("#3D3D3D"),
+                        CornerRadius = 15,
+                        Padding = new Thickness(12, 6),
+                        HasShadow = false,
+                        Margin = new Thickness(0, 0, 8, 8)
+                    };
+
+                    var stack = new HorizontalStackLayout { Spacing = 5 };
+
+                    stack.Children.Add(new Label
+                    {
+                        Text = tag.TagName,
+                        TextColor = Application.Current.RequestedTheme == AppTheme.Light
+                            ? Color.FromArgb("#333333")
+                            : Colors.White,
+                        FontSize = 12
+                    });
+
+                    stack.Children.Add(new Label
+                    {
+                        Text = $"· {timeAgo}",
+                        TextColor = Color.FromArgb("#888888"),
+                        FontSize = 10
+                    });
+
+                    frame.Content = stack;
+                    RecentTagsLayout.Children.Add(frame);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error cargando etiquetas recientes: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Convierte una fecha en texto relativo (hace X minutos/horas/días)
+    /// </summary>
+    private string GetTimeAgo(DateTime dateTime)
+    {
+        var span = DateTime.Now - dateTime;
+
+        if (span.TotalMinutes < 1)
+            return "ahora";
+        if (span.TotalMinutes < 60)
+            return $"hace {(int)span.TotalMinutes}m";
+        if (span.TotalHours < 24)
+            return $"hace {(int)span.TotalHours}h";
+        if (span.TotalDays < 7)
+            return $"hace {(int)span.TotalDays}d";
+        if (span.TotalDays < 30)
+            return $"hace {(int)(span.TotalDays / 7)}sem";
+
+        return $"hace {(int)(span.TotalDays / 30)}mes";
     }
 
     /// <summary>

@@ -282,18 +282,40 @@
             </VerticalStackLayout>
 
             <!-- ========== ETIQUETAS POPULARES ========== -->
-            <Label Text="🏷️ Etiquetas Populares"
+            <Label Text="🔥 Etiquetas Populares"
                    FontSize="18"
                    FontAttributes="Bold"
                    TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#FFFFFF}"
-                   Margin="0,20,0,10"/>
+                   Margin="0,20,0,5"/>
+            <Label x:Name="PopularTagsSubtitle"
+                   Text="Etiquetas en más de 1 novela o con votos"
+                   FontSize="11"
+                   TextColor="{AppThemeBinding Light=#888888, Dark=#AAAAAA}"
+                   Margin="0,0,0,10"/>
 
             <FlexLayout x:Name="PopularTagsLayout"
                         Wrap="Wrap"
                         Direction="Row"
                         JustifyContent="Start"
                         AlignItems="Start">
-                <!-- Se llena dinámicamente -->
+            </FlexLayout>
+
+            <!-- ========== ETIQUETAS RECIENTES ========== -->
+            <Label Text="🕐 Etiquetas Recientes"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#1A1A1A, Dark=#FFFFFF}"
+                   Margin="0,20,0,5"/>
+            <Label Text="Últimas etiquetas agregadas"
+                   FontSize="11"
+                   TextColor="{AppThemeBinding Light=#888888, Dark=#AAAAAA}"
+                   Margin="0,0,0,10"/>
+
+            <FlexLayout x:Name="RecentTagsLayout"
+                        Wrap="Wrap"
+                        Direction="Row"
+                        JustifyContent="Start"
+                        AlignItems="Start">
             </FlexLayout>
 
             <!-- ========== PATRONES ========== -->

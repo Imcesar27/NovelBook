@@ -122,6 +122,49 @@ public class TagService
     }
 
     /// <summary>
+    /// Obtiene las etiquetas más recientes del sistema
+    /// </summary>
+    public async Task<List<(string TagName, int Count, DateTime CreatedAt)>> GetRecentTagsAsync(int limit = 10)
+    {
+        var tags = new List<(string, int, DateTime)>();
+
+        try
+        {
+            using var connection = _database.GetConnection();
+            await connection.OpenAsync();
+
+            var query = @"
+                SELECT TOP (@limit) 
+                    tag_name,
+                    COUNT(*) as usage_count,
+                    MAX(created_at) as last_created
+                FROM novel_tags
+                WHERE is_active = 1
+                GROUP BY tag_name
+                ORDER BY last_created DESC";
+
+            using var command = new SqlCommand(query, connection);
+            command.Parameters.AddWithValue("@limit", limit);
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                tags.Add((
+                    reader.GetString(0),
+                    reader.GetInt32(1),
+                    reader.GetDateTime(2)
+                ));
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error obteniendo etiquetas recientes: {ex.Message}");
+        }
+
+        return tags;
+    }
+
+    /// <summary>
     /// Busca novelas por etiqueta
     /// </summary>
     public async Task<List<int>> GetNovelIdsByTagAsync(string tagName)
@@ -338,7 +381,7 @@ public class TagService
     #region ========== ANALYTICS (para módulo inteligente) ==========
 
     /// <summary>
-    /// Obtiene estadísticas de etiquetas para analytics
+    /// Obtiene estadísticas de etiquetas populares (más de 1 novela o con votos)
     /// </summary>
     public async Task<List<(string TagName, int NovelCount, int TotalVotes)>> GetTagStatsAsync(int limit = 10)
     {
@@ -355,10 +398,14 @@ public class TagService
                     COUNT(DISTINCT t.novel_id) as novel_count,
                     (SELECT COUNT(*) FROM tag_votes tv 
                      INNER JOIN novel_tags nt ON tv.tag_id = nt.id 
-                     WHERE nt.tag_name = t.tag_name) as total_votes
+                     WHERE nt.tag_name = t.tag_name AND nt.is_active = 1) as total_votes
                 FROM novel_tags t
                 WHERE t.is_active = 1
                 GROUP BY t.tag_name
+                HAVING COUNT(DISTINCT t.novel_id) > 1 
+                    OR (SELECT COUNT(*) FROM tag_votes tv 
+                        INNER JOIN novel_tags nt ON tv.tag_id = nt.id 
+                        WHERE nt.tag_name = t.tag_name AND nt.is_active = 1) > 0
                 ORDER BY novel_count DESC, total_votes DESC";
 
             using var command = new SqlCommand(query, connection);
